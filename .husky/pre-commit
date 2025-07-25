@@ -1,0 +1,4 @@
+pnpm --filter frontend build
+pnpm --filter backend build
+pnpm --filter backend test
+pnpm lint-staged

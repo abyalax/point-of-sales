@@ -1,0 +1,21 @@
+{
+  "name": "boilerplate",
+  "version": "0.0.1",
+  "description": "",
+  "author": "abya",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}
