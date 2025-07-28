@@ -8,7 +8,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { FaBox, FaFacebookMessenger, FaGalacticRepublic, FaSun, FaSync, FaUser } from 'react-icons/fa';
 import { FaHome, FaMoon, FaPhotoVideo, FaMoneyBill, FaSignOutAlt } from 'react-icons/fa';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { PermissionGate } from '~/components/middlewares/permission-gate';
 import { LinksGroup } from './_components/link-group';
@@ -66,6 +66,12 @@ function RouteComponent() {
   const isDesktop = useMediaQuery('(min-width: 56.25em)', true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log('navbarOpened: ', navbarOpened);
+    console.log('isDesktop: ', isDesktop);
+    return () => {};
+  }, [isDesktop, navbarOpened]);
+
   const links = data.map(item => <LinksGroup {...item} key={item.label} />);
 
   return (
@@ -88,7 +94,7 @@ function RouteComponent() {
                   Abya's POS
                 </Text>
               </Group>
-              <Burger opened={!navbarOpened} onClick={toggle} size="sm" />
+              <Burger opened={navbarOpened && !isDesktop} onClick={toggle} size="sm" />
             </Flex>
             <SegmentedControl
               styles={{
@@ -107,7 +113,6 @@ function RouteComponent() {
             />
             {links}
           </div>
-
           <UserButton />
         </AppShell.Navbar>
 
@@ -119,44 +124,44 @@ function RouteComponent() {
           }}
         >
           <Grid style={{ padding: '20px', width: '100%', margin: '0 0 20px 0' }}>
-            <Grid.Col span={4}>
-              <Burger opened={!navbarOpened} onClick={toggle} size="sm" style={{ display: navbarOpened ? 'block' : 'none' }} />
-            </Grid.Col>
-            <Grid.Col span={4}>
-              <Tabs value={activeTab} onChange={setActiveTab} style={{ display: isDesktop ? 'block' : 'none' }}>
-                <Tabs.List>
-                  <Tabs.Tab
-                    className={styles.tab}
-                    value="home"
-                    size={'lg'}
-                    fz={'h5'}
-                    onClick={() => navigate({ to: '/dashboard' })}
-                    leftSection={<FaHome size={16} />}
-                  >
-                    Home
-                  </Tabs.Tab>
-                  <Tabs.Tab
-                    className={styles.tab}
-                    value="products"
-                    size={'lg'}
-                    fz={'h5'}
-                    onClick={() => navigate({ to: '/products' })}
-                    leftSection={<FaBox size={16} />}
-                  >
-                    Products
-                  </Tabs.Tab>
-                  <Tabs.Tab
-                    className={styles.tab}
-                    value="pos"
-                    size={'lg'}
-                    fz={'h5'}
-                    onClick={() => navigate({ to: '/pos' })}
-                    leftSection={<FaMoneyBill size={16} />}
-                  >
-                    Point Of Sales
-                  </Tabs.Tab>
-                </Tabs.List>
-              </Tabs>
+            <Grid.Col span={8}>
+              <Flex>
+                <Burger opened={!navbarOpened && isDesktop} onClick={toggle} size="sm" />
+                <Tabs value={activeTab} onChange={setActiveTab} style={{ display: isDesktop ? 'block' : 'none' }}>
+                  <Tabs.List>
+                    <Tabs.Tab
+                      className={styles.tab}
+                      value="home"
+                      size={'lg'}
+                      fz={'h5'}
+                      onClick={() => navigate({ to: '/dashboard' })}
+                      leftSection={<FaHome size={16} />}
+                    >
+                      Home
+                    </Tabs.Tab>
+                    <Tabs.Tab
+                      className={styles.tab}
+                      value="products"
+                      size={'lg'}
+                      fz={'h5'}
+                      onClick={() => navigate({ to: '/products' })}
+                      leftSection={<FaBox size={16} />}
+                    >
+                      Products
+                    </Tabs.Tab>
+                    <Tabs.Tab
+                      className={styles.tab}
+                      value="pos"
+                      size={'lg'}
+                      fz={'h5'}
+                      onClick={() => navigate({ to: '/pos' })}
+                      leftSection={<FaMoneyBill size={16} />}
+                    >
+                      Point Of Sales
+                    </Tabs.Tab>
+                  </Tabs.List>
+                </Tabs>
+              </Flex>
             </Grid.Col>
             <Grid.Col span={4} style={{ textAlign: 'right' }}>
               <Menu shadow="md" width={200}>
@@ -193,7 +198,6 @@ function RouteComponent() {
               </Menu>
             </Grid.Col>
           </Grid>
-
           <Outlet />
         </AppShell.Main>
       </AppShell>

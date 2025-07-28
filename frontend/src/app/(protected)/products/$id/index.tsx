@@ -27,7 +27,7 @@ function RouteComponent() {
 
             <Table.Tr>
               <Table.Th>Category</Table.Th>
-              <Table.Td>{product?.category.name}</Table.Td>
+              <Table.Td>{product?.category?.name}</Table.Td>
             </Table.Tr>
 
             <Table.Tr>
