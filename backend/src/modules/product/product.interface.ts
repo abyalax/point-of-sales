@@ -25,7 +25,7 @@ export interface IProduct {
   name: string;
   price: string;
   status: EProductStatus;
-  category: string;
+  category: ICategory;
   stock: number;
   createdAt?: Date;
   updatedAt?: Date;

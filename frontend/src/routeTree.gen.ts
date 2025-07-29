@@ -19,6 +19,7 @@ import { Route as publicAuthRegisterRouteImport } from './app/(public)/auth/regi
 import { Route as publicAuthLoginRouteImport } from './app/(public)/auth/login';
 import { Route as protectedProductsCreateIndexRouteImport } from './app/(protected)/products/create/index';
 import { Route as protectedProductsIdIndexRouteImport } from './app/(protected)/products/$id/index';
+import { Route as protectedProductsIdUpdateIndexRouteImport } from './app/(protected)/products/$id/update/index';
 
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
@@ -69,6 +70,11 @@ const protectedProductsIdIndexRoute = protectedProductsIdIndexRouteImport.update
   path: '/products/$id/',
   getParentRoute: () => protectedRouteRoute,
 } as any);
+const protectedProductsIdUpdateIndexRoute = protectedProductsIdUpdateIndexRouteImport.update({
+  id: '/products/$id/update/',
+  path: '/products/$id/update/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof protectedRouteRouteWithChildren;
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof protectedProductsIndexRoute;
   '/products/$id': typeof protectedProductsIdIndexRoute;
   '/products/create': typeof protectedProductsCreateIndexRoute;
+  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof protectedRouteRouteWithChildren;
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/products': typeof protectedProductsIndexRoute;
   '/products/$id': typeof protectedProductsIdIndexRoute;
   '/products/create': typeof protectedProductsCreateIndexRoute;
+  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -104,12 +112,33 @@ export interface FileRoutesById {
   '/(protected)/products/': typeof protectedProductsIndexRoute;
   '/(protected)/products/$id/': typeof protectedProductsIdIndexRoute;
   '/(protected)/products/create/': typeof protectedProductsCreateIndexRoute;
+  '/(protected)/products/$id/update/': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/auth' | '/auth/login' | '/auth/register' | '/dashboard' | '/pos' | '/products' | '/products/$id' | '/products/create';
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/auth/login'
+    | '/auth/register'
+    | '/dashboard'
+    | '/pos'
+    | '/products'
+    | '/products/$id'
+    | '/products/create'
+    | '/products/$id/update';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/auth' | '/auth/login' | '/auth/register' | '/dashboard' | '/pos' | '/products' | '/products/$id' | '/products/create';
+  to:
+    | '/'
+    | '/auth'
+    | '/auth/login'
+    | '/auth/register'
+    | '/dashboard'
+    | '/pos'
+    | '/products'
+    | '/products/$id'
+    | '/products/create'
+    | '/products/$id/update';
   id:
     | '__root__'
     | '/'
@@ -121,7 +150,8 @@ export interface FileRouteTypes {
     | '/(protected)/pos/'
     | '/(protected)/products/'
     | '/(protected)/products/$id/'
-    | '/(protected)/products/create/';
+    | '/(protected)/products/create/'
+    | '/(protected)/products/$id/update/';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -202,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedProductsIdIndexRouteImport;
       parentRoute: typeof protectedRouteRoute;
     };
+    '/(protected)/products/$id/update/': {
+      id: '/(protected)/products/$id/update/';
+      path: '/products/$id/update';
+      fullPath: '/products/$id/update';
+      preLoaderRoute: typeof protectedProductsIdUpdateIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
   }
 }
 
@@ -211,6 +248,7 @@ interface protectedRouteRouteChildren {
   protectedProductsIndexRoute: typeof protectedProductsIndexRoute;
   protectedProductsIdIndexRoute: typeof protectedProductsIdIndexRoute;
   protectedProductsCreateIndexRoute: typeof protectedProductsCreateIndexRoute;
+  protectedProductsIdUpdateIndexRoute: typeof protectedProductsIdUpdateIndexRoute;
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
@@ -219,6 +257,7 @@ const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedProductsIndexRoute: protectedProductsIndexRoute,
   protectedProductsIdIndexRoute: protectedProductsIdIndexRoute,
   protectedProductsCreateIndexRoute: protectedProductsCreateIndexRoute,
+  protectedProductsIdUpdateIndexRoute: protectedProductsIdUpdateIndexRoute,
 };
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(protectedRouteRouteChildren);

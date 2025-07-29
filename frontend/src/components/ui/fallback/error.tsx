@@ -7,6 +7,7 @@ interface ErrorFallbackProps {
 }
 
 export const ErrorPage = ({ error, reset }: ErrorFallbackProps) => {
+  console.log(error);
   const getErrorTitle = (error: Error) => {
     if (error.name === 'ChunkLoadError') {
       return 'Failed to load application';

@@ -1,6 +1,7 @@
 import Big from 'big.js';
 
 export const formatCurrency = (value: string) => {
+  if (!value) return '';
   const balance = new Big(value);
   const formatted = new Intl.NumberFormat('id-ID', {
     style: 'currency',

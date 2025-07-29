@@ -1,4 +1,4 @@
-import { IsOptional, IsNumber, IsString, IsEnum } from 'class-validator';
+import { IsOptional, IsNumber, IsEnum } from 'class-validator';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { EProductStatus } from '../product.interface';
 import { MetaRequestDto } from '~/common/dto/meta-request.dto';

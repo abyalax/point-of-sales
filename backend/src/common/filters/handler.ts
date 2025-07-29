@@ -3,13 +3,14 @@ import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from '@nestjs/jw
 import { QueryFailedError, EntityNotFoundError } from 'typeorm';
 import { EMessage } from '../types/response';
 
+type ErrorConstructor<T extends Error = Error> = new (...args: unknown[]) => T;
 type ExceptionHandler<T = unknown> = (e: T) => {
   statusCode: number;
   message: string;
   error: string;
 };
 
-export const handlers = new Map<Function, ExceptionHandler>([
+export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
   [
     NotBeforeError,
     (e: NotBeforeError) => {
@@ -72,6 +73,7 @@ export const handlers = new Map<Function, ExceptionHandler>([
       const response = e.getResponse();
       return {
         statusCode: e.getStatus(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         message: (response as any).message,
         error: e.message,
       };

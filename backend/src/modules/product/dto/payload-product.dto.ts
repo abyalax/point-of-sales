@@ -1,9 +1,8 @@
 import { IsEnum, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { EProductStatus } from '../product.interface';
-import { CategoryDto } from './category-product.dto';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
-export class UpdateProductDto {
+export class PayloadProductDto {
   @Expose()
   @IsString()
   name: string;
@@ -21,6 +20,6 @@ export class UpdateProductDto {
   stock: number;
 
   @Expose()
-  @Type(() => CategoryDto)
-  category: CategoryDto;
+  @IsString()
+  category: string;
 }

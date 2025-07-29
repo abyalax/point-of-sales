@@ -6,7 +6,7 @@ export enum EProductStatus {
   UNAVAILABLE = 'UNAVAILABLE',
 }
 
-export type TProductCreate = Omit<IProduct, 'id' | 'category'> & { category: string };
+export type TPayloadProduct = Omit<IProduct, 'id' | 'category'> & { category: string; id?: string };
 
 export interface IProduct {
   id: string;

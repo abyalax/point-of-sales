@@ -8,14 +8,18 @@ import { zodResolver } from 'mantine-form-zod-resolver';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import z from 'zod';
 
-import useGetProductCategories from '../_hooks/use-get-categories';
-import { useCreateProduct } from './_hooks/use-create-products';
+import useGetProductCategories from '~/app/(protected)/products/_hooks/use-get-categories';
+import { useUpdateProduct } from '~/app/(protected)/products/$id/_hooks/use-update-product';
+import { useCreateCategory } from '~/app/(protected)/products/create/_hooks/use-create-category';
+import useGetProduct, { queryProductByID } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
 import { EProductStatus } from '~/api/product/type';
-import { useCreateCategory } from './_hooks/use-create-category';
 import { formatCurrency } from '~/utils/format';
 
-export const Route = createFileRoute('/(protected)/products/create/')({
+export const Route = createFileRoute('/(protected)/products/$id/update/')({
   component: RouteComponent,
+  beforeLoad: async ({ context, params }) => {
+    await context.queryClient.fetchQuery(queryProductByID({ id: params.id }));
+  },
 });
 
 function RouteComponent() {
@@ -23,9 +27,10 @@ function RouteComponent() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const { data: dataCategories } = useGetProductCategories();
-  const { mutate: mutateCreateProduct } = useCreateProduct();
+  const { mutate: mutateUpdateProduct } = useUpdateProduct();
   const { mutate: mutateCreateCategory } = useCreateCategory();
-
+  const { data: dataProduct } = useGetProduct(Route.useParams());
+  const product = dataProduct?.data.data;
   const categories = dataCategories?.data.data?.map((e) => {
     return {
       label: e.name,
@@ -44,11 +49,12 @@ function RouteComponent() {
   const formProduct = useForm({
     mode: 'controlled',
     initialValues: {
-      name: '',
-      price: '0',
-      stock: 0,
-      status: EProductStatus.AVAILABLE,
-      category: '',
+      id: product?.id || '',
+      name: product?.name || '',
+      price: Number(product?.price) || '0',
+      stock: product?.stock || 0,
+      status: product?.status || EProductStatus.AVAILABLE,
+      category: product?.category?.name || '',
     },
     validate: zodResolver(schema),
     validateInputOnBlur: true,
@@ -67,7 +73,7 @@ function RouteComponent() {
 
   const submitProduct = () =>
     formProduct.onSubmit((values) => {
-      mutateCreateProduct({
+      mutateUpdateProduct({
         ...values,
         price: values.price.toString(),
       });
@@ -135,7 +141,7 @@ function RouteComponent() {
                 {...formProduct.getInputProps('status')}
               />
             </Group>
-            <Button type="submit">Create</Button>
+            <Button type="submit">Update</Button>
           </Flex>
         </Form>
         <Container unstyled bdrs={'md'} style={{ padding: '1rem' }}>
@@ -148,7 +154,7 @@ function RouteComponent() {
 
               <Table.Tr>
                 <Table.Th w={80}>Price</Table.Th>
-                <Table.Td w={'300px'}>{formProduct.values.price && formatCurrency(formProduct.values.price)}</Table.Td>
+                <Table.Td w={'300px'}>{formProduct.values.price && formatCurrency(formProduct.values.price as string)}</Table.Td>
               </Table.Tr>
 
               <Table.Tr>
@@ -158,7 +164,7 @@ function RouteComponent() {
 
               <Table.Tr>
                 <Table.Th w={80}>Category</Table.Th>
-                <Table.Td w={'300px'}>{categories?.find((e) => e.value === formProduct.values.category)?.label}</Table.Td>
+                <Table.Td w={'300px'}>{formProduct.values.category}</Table.Td>
               </Table.Tr>
 
               <Table.Tr>

@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductDto } from './dto/product.dto';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { PayloadProductDto } from './dto/payload-product.dto';
 import { TResponse } from '~/common/types/response';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { JwtGuard } from '~/common/guards/jwt.guard';
@@ -38,8 +37,8 @@ export class ProductController {
   }
 
   @Post()
-  async create(@Body() createProductDto: CreateProductDto): Promise<TResponse<ProductDto>> {
-    const product = await this.productService.create(createProductDto);
+  async create(@Body() PayloadProductDto: PayloadProductDto): Promise<TResponse<ProductDto>> {
+    const product = await this.productService.create(PayloadProductDto);
     return {
       statusCode: HttpStatus.CREATED,
       data: product,
@@ -48,11 +47,19 @@ export class ProductController {
 
   @Post('/categories')
   async createCategory(@Body() createCategoryDto: CreateCategoryDto): Promise<TResponse<CategoryDto>> {
-    console.log('createCategoryDto: ', createCategoryDto.name);
     const data = await this.productService.createCategory(createCategoryDto);
     return {
       statusCode: HttpStatus.CREATED,
       data: data,
+    };
+  }
+
+  @Get('ids')
+  async getIdProducts(): Promise<TResponse<number[]>> {
+    const ids = await this.productService.getIds();
+    return {
+      statusCode: HttpStatus.OK,
+      data: ids,
     };
   }
 
@@ -66,8 +73,8 @@ export class ProductController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto): Promise<TResponse<boolean>> {
-    const isUpdated = await this.productService.update(id, updateProductDto);
+  async update(@Param('id') id: number, @Body() PayloadProductDto: PayloadProductDto): Promise<TResponse<boolean>> {
+    const isUpdated = await this.productService.update(id, PayloadProductDto);
     return {
       statusCode: HttpStatus.OK,
       data: isUpdated,

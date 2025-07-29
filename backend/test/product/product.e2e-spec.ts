@@ -22,6 +22,7 @@ describe('Product Module', () => {
   describe('Response Success', () => {
     let access_token: string;
     let refresh_token: string;
+    let ids: number[] = [];
 
     beforeEach(async () => {
       const credentials = {
@@ -34,21 +35,34 @@ describe('Product Module', () => {
       const cookies = res.headers['set-cookie'];
       access_token = extractHttpOnlyCookie('access_token', cookies) ?? '';
       refresh_token = extractHttpOnlyCookie('refresh_token', cookies) ?? '';
+
+      await request(app.getHttpServer())
+        .get('/products/ids')
+        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
+        .expect(200)
+        .expect((res) => {
+          ids = res.body.data;
+        });
     });
 
     test('Test Token Cookie for Request', async () => {
       expect(refresh_token).toBeDefined();
       expect(access_token).toBeDefined();
 
+      const max = ids.length;
+      const id = ids[Math.floor(Math.random() * max)];
+
       return await request(app.getHttpServer())
-        .get('/products/1')
+        .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200);
     });
 
     test('GET /products/:id', async () => {
+      const max = ids.length;
+      const id = ids[Math.floor(Math.random() * max)];
       return request(app.getHttpServer())
-        .get('/products/1')
+        .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200)
         .expect((res) => {
@@ -107,12 +121,24 @@ describe('Product Module', () => {
     });
 
     test('POST /products', async () => {
+      let category: string = '';
+      const max = ids.length;
+      const id = ids[Math.floor(Math.random() * max)];
+      await request(app.getHttpServer())
+        .get('/products/' + id)
+        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
+        .expect(200)
+        .expect((res) => {
+          category = res.body.data.category.name;
+          return res;
+        });
+
       const product = {
         name: faker.commerce.productName(),
         price: faker.commerce.price({ min: 5000, max: 1000000 }).toString(),
         status: EProductStatus.AVAILABLE,
         stock: faker.number.int({ min: 0, max: 300 }),
-        category: faker.commerce.product(),
+        category,
       };
       return request(app.getHttpServer())
         .post('/products')
@@ -134,15 +160,28 @@ describe('Product Module', () => {
     });
 
     test('PATCH /products/:id', async () => {
+      let category: string = '';
+      const max = ids.length;
+      const id = ids[Math.floor(Math.random() * max)];
+      await request(app.getHttpServer())
+        .get('/products/' + id)
+        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
+        .expect(200)
+        .expect((res) => {
+          category = res.body.data.category.name;
+          return res;
+        });
+
       const product = {
+        id,
         name: faker.commerce.productName(),
         price: faker.commerce.price({ min: 5000, max: 1000000 }).toString(),
         status: EProductStatus.AVAILABLE,
         stock: faker.number.int({ min: 0, max: 300 }),
-        category: faker.commerce.product(),
+        category,
       };
       return request(app.getHttpServer())
-        .patch('/products/3')
+        .patch('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .send(product)
         .expect((res) => {
@@ -156,15 +195,8 @@ describe('Product Module', () => {
     });
 
     test('DELETE /products/:id', async () => {
-      let countData = 0;
-      await request(app.getHttpServer())
-        .get('/products')
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect((res) => {
-          countData = res.body.data.data.length;
-        });
-
-      const id = faker.number.int({ min: 1, max: countData });
+      const max = ids.length;
+      const id = ids[Math.floor(Math.random() * max)];
 
       return request(app.getHttpServer())
         .delete(`/products/${id}`)

@@ -76,7 +76,6 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
   }, debounceSearch);
 
   const clientSearch = useDebouncedCallback((value: string) => {
-    console.log(globalFilter);
     setGlobalFilter(value);
   }, debounceSearch);
 
@@ -169,7 +168,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
     },
   });
 
-  const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
+  const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
 
   useEffect(() => {
     table.setGlobalFilter(globalFilter);
@@ -180,13 +179,15 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
   }, [search.search, isClientControl, setGlobalFilter]);
 
   useEffect(() => {
-    navigate({
-      search: {
-        ...search,
-        engine: 'server_side',
-      },
-      replace: true,
-    });
+    if (!search.engine) {
+      navigate({
+        search: {
+          ...search,
+          engine: 'server_side',
+        },
+        replace: true,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -295,9 +296,9 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
       >
         <TableMantine highlightOnHover stickyHeader stickyHeaderOffset={-10} striped>
           <TableMantine.Thead>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableMantine.Tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <TableMantine.Th key={header.id} colSpan={header.colSpan}>
                     <Tooltip
                       label={
@@ -343,7 +344,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
                         transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
                       }}
                     >
-                      {row.getVisibleCells().map(cell => (
+                      {row.getVisibleCells().map((cell) => (
                         <TableMantine.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableMantine.Td>
                       ))}
                     </TableMantine.Tr>
@@ -357,16 +358,16 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
                     style={{ cursor: 'pointer' }}
                     key={row.id}
                   >
-                    {row.getVisibleCells().map(cell => (
+                    {row.getVisibleCells().map((cell) => (
                       <TableMantine.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableMantine.Td>
                     ))}
                   </TableMantine.Tr>
                 ))}
           </TableMantine.Tbody>
           <TableMantine.Tfoot>
-            {table.getFooterGroups().map(footerGroup => (
+            {table.getFooterGroups().map((footerGroup) => (
               <TableMantine.Tr key={footerGroup.id}>
-                {footerGroup.headers.map(header => (
+                {footerGroup.headers.map((header) => (
                   <TableMantine.Th key={header.id}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableMantine.Th>
                 ))}
               </TableMantine.Tr>
@@ -397,7 +398,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
               size="xs"
               style={{ width: '70px' }}
               value={table.getState().pagination.pageSize.toString()}
-              onChange={value => table.setPageSize(Number(value))}
+              onChange={(value) => table.setPageSize(Number(value))}
               data={['10', '20', '30', '50', '100']}
             />
           </Group>
@@ -408,7 +409,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
           size="md"
           total={table.getPageCount()}
           value={table.getState().pagination.pageIndex + 1}
-          onChange={page => table.setPageIndex(page - 1)}
+          onChange={(page) => table.setPageIndex(page - 1)}
           onNextPage={table.nextPage}
           onPreviousPage={table.previousPage}
         />

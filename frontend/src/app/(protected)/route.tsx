@@ -8,7 +8,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { FaBox, FaFacebookMessenger, FaGalacticRepublic, FaSun, FaSync, FaUser } from 'react-icons/fa';
 import { FaHome, FaMoon, FaPhotoVideo, FaMoneyBill, FaSignOutAlt } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { PermissionGate } from '~/components/middlewares/permission-gate';
 import { LinksGroup } from './_components/link-group';
@@ -66,13 +66,7 @@ function RouteComponent() {
   const isDesktop = useMediaQuery('(min-width: 56.25em)', true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('navbarOpened: ', navbarOpened);
-    console.log('isDesktop: ', isDesktop);
-    return () => {};
-  }, [isDesktop, navbarOpened]);
-
-  const links = data.map(item => <LinksGroup {...item} key={item.label} />);
+  const links = data.map((item) => <LinksGroup {...item} key={item.label} />);
 
   return (
     <PermissionGate permissions={['product:read']}>

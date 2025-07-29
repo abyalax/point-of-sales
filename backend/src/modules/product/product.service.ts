@@ -1,9 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { REPOSITORY } from '~/common/constants/database';
 import { Product } from './entity/product.entity';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { PayloadProductDto } from './dto/payload-product.dto';
 import { ProductDto } from './dto/product.dto';
 import { plainToInstance } from 'class-transformer';
 import { QueryProductDto } from './dto/query-product.dto';
@@ -24,11 +23,10 @@ export class ProductService {
   ) {}
 
   async find(query?: QueryProductDto): Promise<{ data: ProductDto[]; meta: MetaResponse }> {
-    console.log(query);
     const page = query?.page ?? DEFAULT.PAGINATION.page;
     const per_page = query?.per_page ?? DEFAULT.PAGINATION.per_page;
     const offset = (page - 1) * per_page;
-    const params: unknown[] = [];
+    const params: (string | number)[] = [];
     const whereClauses: string[] = [];
 
     if (query?.search) {
@@ -118,14 +116,22 @@ export class ProductService {
     return plainToInstance(CategoryDto, data, { excludeExtraneousValues: true });
   }
 
+  async getIds(): Promise<number[]> {
+    const data = await this.productRepository.query<{ id: number }[]>('SELECT id FROM products');
+    return data.map((product) => product.id);
+  }
+
   async createCategory(category: CreateCategoryDto): Promise<CategoryDto> {
-    console.log(category);
     const data = await this.categoryRepository.save({ name: category.name });
     return plainToInstance(CategoryDto, data, { excludeExtraneousValues: true });
   }
 
-  async create(createProductDto: CreateProductDto): Promise<ProductDto> {
-    const product = await this.productRepository.save(createProductDto);
+  async create(payloadProductDto: PayloadProductDto): Promise<ProductDto> {
+    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProductDto.category } });
+    const product = await this.productRepository.save({
+      ...payloadProductDto,
+      category,
+    });
     return plainToInstance(ProductDto, product, { excludeExtraneousValues: true });
   }
 
@@ -135,13 +141,17 @@ export class ProductService {
     return plainToInstance(ProductDto, products, { excludeExtraneousValues: true });
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto): Promise<boolean> {
-    const product = await this.productRepository.update(id, updateProductDto);
+  async update(id: number, payloadProductDto: PayloadProductDto): Promise<boolean> {
+    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProductDto.category } });
+    const product = await this.productRepository.update(id, {
+      ...payloadProductDto,
+      category,
+    });
     if (product.affected === 0) throw new NotFoundException();
     return true;
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<boolean> {
     const product = await this.productRepository.delete(id);
     if (product.affected === 0) throw new NotFoundException();
     return true;
