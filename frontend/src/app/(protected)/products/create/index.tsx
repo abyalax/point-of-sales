@@ -8,7 +8,7 @@ import { zodResolver } from 'mantine-form-zod-resolver';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import z from 'zod';
 
-import useGetProductCategories from '../_hooks/use-get-categories';
+import { useGetProductCategories } from '../_hooks/use-get-categories';
 import { useCreateProduct } from './_hooks/use-create-products';
 import { EProductStatus } from '~/api/product/type';
 import { useCreateCategory } from './_hooks/use-create-category';

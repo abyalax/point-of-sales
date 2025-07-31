@@ -71,9 +71,8 @@
   --color-primary: var(--mantine-color-white);
   --color-secondary: var(--color-snow-light);
   --color-surface: var(--color-snow-dark);
-  --color-black: var(--mantine-color-black);
-  --color-white: var(--mantine-color-white);
-
+  --color-black: var(--mantine-color-white);
+  --color-white: var(--mantine-color-black);
   /* Override */
   --mantine-primary-color-contrast: var(--mantine-color-white);
   --mantine-color-bright: var(--mantine-color-black);

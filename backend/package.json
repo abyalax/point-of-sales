@@ -18,18 +18,19 @@
     "test:cov": "jest --config ./test/jest-spec.config.ts --coverage --detectOpenHandles",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.ts --detectOpenHandles",
-    "orm": "typeorm-ts-node-commonjs",
+    "orm": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migrate:generate": "pnpm orm migration:generate -d ./typeorm.config.ts src/infrastructure/database/migrations/generated",
     "migrate:create": "pnpm orm migration:create src/infrastructure/database/migrations/created",
     "migrate:run": "pnpm orm migration:run -d ./typeorm.config.ts",
     "migrate:show": "pnpm orm migration:show -d ./typeorm.config.ts",
     "migrate:revert": "pnpm orm migration:revert -d ./typeorm.config.ts",
     "schema:drop": "pnpm orm schema:drop -d ./typeorm.config.ts",
-    "seed": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d ./typeorm.seed.ts",
-    "seed:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create --name ./src/infrastructure/database/seeds/created.seed.ts"
+    "seed": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d ./typeorm.seed.ts",
+    "seed:create": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:create --name ./src/infrastructure/database/seeds/created.seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "*",
@@ -42,6 +43,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.1",
+    "env-cmd": "^10.1.0",
     "mysql2": "^3.14.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
@@ -79,6 +82,9 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/jest.setup.ts"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",

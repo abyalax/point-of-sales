@@ -4,7 +4,9 @@ import { Product } from '~/modules/product/entity/product.entity';
 import { Permission } from '~/modules/auth/entity/permission.entity';
 import { Category } from '~/modules/product/entity/category.entity';
 import { Role } from '~/modules/auth/entity/role.entity';
-import { User } from '~/modules/user/user.entity';
+import { User } from '~/modules/user/entity/user.entity';
+import { TransactionItem } from '~/modules/transaction/entities/transaction-item.entity';
+import { Transaction } from '~/modules/transaction/entities/transaction.entity';
 
 type TDatabaseCollection = 'MYSQL';
 
@@ -32,9 +34,9 @@ export const DATABASE: TDatabaseOptions = {
       port: 3306,
       username: 'root',
       password: '',
-      database: 'db_boilerplate_v1',
+      database: 'db_point_of_sales',
       dateStrings: false,
-      entities: [Category, Product, User, Role, Permission],
+      entities: [Category, Product, User, Role, Permission, Transaction, TransactionItem],
       synchronize: false,
     },
   },

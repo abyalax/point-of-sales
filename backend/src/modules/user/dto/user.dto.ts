@@ -23,8 +23,8 @@ export class UserDto {
   permissions: string[];
 
   @Exclude()
-  createdAt?: Date;
+  created_at?: Date;
 
   @Exclude()
-  updatedAt?: Date;
+  updated_at?: Date;
 }

@@ -22,7 +22,12 @@ export class ProductService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async find(query?: QueryProductDto): Promise<{ data: ProductDto[]; meta: MetaResponse }> {
+  async getAll(): Promise<ProductDto[]> {
+    const data = await this.productRepository.find();
+    return plainToInstance(ProductDto, data, { excludeExtraneousValues: true });
+  }
+
+  async find(query: QueryProductDto): Promise<{ data: ProductDto[]; meta: MetaResponse }> {
     const page = query?.page ?? DEFAULT.PAGINATION.page;
     const per_page = query?.per_page ?? DEFAULT.PAGINATION.per_page;
     const offset = (page - 1) * per_page;
@@ -61,8 +66,8 @@ export class ProductService {
 
     const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
     const allowedSortFields = ['name', 'price', 'status', 'stock', 'created_at', 'updated_at'];
-    const sort_by = allowedSortFields.includes(query?.sort_by ?? '') ? query!.sort_by : 'created_at';
-    const sort_order = ['ASC', 'DESC'].includes(query?.sort_order ?? '') ? query!.sort_order : 'DESC';
+    const sort_by = allowedSortFields.includes(query?.sort_by ?? '') ? query?.sort_by : 'created_at';
+    const sort_order = ['ASC', 'DESC'].includes(query?.sort_order ?? '') ? query?.sort_order : 'DESC';
 
     const baseQuery = `
       FROM products product
@@ -83,7 +88,11 @@ export class ProductService {
       SELECT
         product.id AS id,
         product.name AS name,
+        product.barcode AS barcode,
         product.price AS price,
+        product.cost_price AS cost_price,
+        product.tax_rate AS tax_rate,
+        product.discount AS discount,
         product.status AS status,
         product.stock AS stock,
         product.category_id AS category_id,
@@ -97,7 +106,11 @@ export class ProductService {
       ${isServerSide ? pagination : ';'}
     `;
 
-    const data = await this.productRepository.query<Product[]>(dataQuery, [...params, isServerSide ? per_page : '', isServerSide ? offset : '']);
+    const data = await this.productRepository.query<Product[]>(dataQuery, [
+      ...params,
+      isServerSide ? parseInt(per_page as unknown as string) : '',
+      isServerSide ? parseInt(offset as unknown as string) : '',
+    ]);
     const mappedData = mapProductRows(data as unknown as RowProducts[]);
     const meta: MetaResponse = {
       page,

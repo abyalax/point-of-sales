@@ -47,11 +47,21 @@ export const useColumn = ({ defaultVisible }: Params) => {
         id: 'name',
         header: 'Product Name',
       }),
+      columnHelper.accessor('barcode', {
+        id: 'barcode',
+        header: 'Barcode',
+      }),
       columnHelper.accessor('category', {
         id: 'category',
         header: 'Category',
         sortingFn: 'text',
         cell: (e) => e.getValue().name,
+      }),
+      columnHelper.accessor('cost_price', {
+        id: 'cost_price',
+        header: 'Cost Price',
+        sortingFn: 'alphanumeric',
+        cell: (e) => formatCurrency(e.getValue()),
       }),
       columnHelper.accessor('price', {
         id: 'price',
@@ -63,6 +73,16 @@ export const useColumn = ({ defaultVisible }: Params) => {
         id: 'stock',
         header: 'Stock',
         cell: (e) => e.getValue(),
+      }),
+      columnHelper.accessor('discount', {
+        id: 'discount',
+        header: 'Discount',
+        sortingFn: 'alphanumeric',
+      }),
+      columnHelper.accessor('tax_rate', {
+        id: 'tax_rate',
+        header: 'Tax Rate',
+        sortingFn: 'alphanumeric',
       }),
       columnHelper.accessor('status', {
         id: 'status',

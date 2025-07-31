@@ -4,9 +4,13 @@ import type { QueryProducts, IProduct, ICategory, TPayloadProduct } from './type
 import type { TAxiosResponse } from '~/common/types/response';
 import type { MetaResponse } from '~/common/types/meta';
 
-export const getProducts = async (params: QueryProducts): Promise<TAxiosResponse<{ data: IProduct[]; meta: MetaResponse }>> => {
+export const getProducts = async (): Promise<TAxiosResponse<IProduct[]>> => {
+  return api.get('/products');
+};
+
+export const searchProducts = async (params: QueryProducts): Promise<TAxiosResponse<{ data: IProduct[]; meta: MetaResponse }>> => {
   console.log(params);
-  return api.get('/products', { params });
+  return api.get('/products/search', { params });
 };
 
 export const getProductCategories = async (): Promise<TAxiosResponse<ICategory[]>> => {

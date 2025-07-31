@@ -49,7 +49,7 @@ function RootRouteComponent() {
       <Outlet />
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
-          {transitionStyles => (
+          {(transitionStyles) => (
             <Button style={transitionStyles} bdrs={'xl'} onClick={() => scrollTo({ y: 0 })}>
               <FaArrowUp size={16} />
             </Button>

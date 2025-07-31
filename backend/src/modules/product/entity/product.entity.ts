@@ -11,8 +11,20 @@ export class Product {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
+  @Column({ type: 'varchar', length: 100 })
+  barcode: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  cost_price: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  tax_rate: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  discount: string;
 
   @Column({ type: 'enum', enum: EProductStatus })
   status: EProductStatus;

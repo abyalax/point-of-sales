@@ -13,8 +13,24 @@ export class ProductDto {
   name: string;
 
   @Expose()
+  @IsString()
+  barcode: string;
+
+  @Expose()
   @IsNumber()
   price: string;
+
+  @Expose()
+  @IsNumber()
+  cost_price: string;
+
+  @Expose()
+  @IsNumber()
+  tax_rate: string;
+
+  @Expose()
+  @IsNumber()
+  discount: string;
 
   @Expose()
   @IsEnum(EProductStatus)

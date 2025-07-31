@@ -8,8 +8,8 @@ import { Table } from '~/components/fragments/table/index';
 import { DEFAULT } from '~/common/const/default';
 import { useDebouncedCallback } from '@mantine/hooks';
 
-import useGetProductCategories from './_hooks/use-get-categories';
-import useGetProducts from './_hooks/use-get-products';
+import { useGetProductCategories } from './_hooks/use-get-categories';
+import { useSearchProducts } from './_hooks/use-search-products';
 import { useColumn, type TProductColumn } from './_hooks/use-column';
 
 export const Route = createFileRoute('/(protected)/products/')({
@@ -21,7 +21,7 @@ function RouteComponent() {
   const defaultVisible: TProductColumn[] = ['name', 'price', 'status', 'category', 'select', 'stock'];
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { data: dataProducts, isLoading: isLoadingProducts } = useGetProducts(search);
+  const { data: dataProducts, isLoading: isLoadingProducts } = useSearchProducts(search);
   const { data: dataCategories, isLoading } = useGetProductCategories();
   const { columns, columnIds, initialColumnVisibility } = useColumn({ defaultVisible });
 

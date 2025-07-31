@@ -1,5 +1,5 @@
 import { DATABASE, REPOSITORY } from '~/common/constants/database';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import { DataSource } from 'typeorm';
 import { Permission } from '../auth/entity/permission.entity';
 import { Role } from '../auth/entity/role.entity';

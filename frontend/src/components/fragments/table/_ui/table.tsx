@@ -292,89 +292,91 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
         p={10}
         bdrs={10}
         ref={table.getRowModel().rows.length > virtualizeAt ? parentRef : undefined}
-        style={{ height: '63vh', overflow: 'auto', backgroundColor: getColors('primary') }}
+        style={{ height: '60vh', backgroundColor: getColors('primary') }}
       >
-        <TableMantine highlightOnHover stickyHeader stickyHeaderOffset={-10} striped>
-          <TableMantine.Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableMantine.Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableMantine.Th key={header.id} colSpan={header.colSpan}>
-                    <Tooltip
-                      label={
-                        header.column.getCanSort()
-                          ? engine === 'client_side'
-                            ? header.column.getNextSortingOrder() === 'asc'
-                              ? 'Sort Ascending'
-                              : header.column.getNextSortingOrder() === 'desc'
-                                ? 'Sort Descending'
-                                : 'Clear sort'
-                            : 'Change to Local Search for Enable Sorting'
-                          : engine === 'server_side'
-                            ? 'Please Change to Local Search'
-                            : ''
-                      }
-                    >
-                      <UnstyledButton onClick={header.column.getToggleSortingHandler()}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                        {{
-                          asc: <FaArrowUp style={{ margin: '0 5px' }} />,
-                          desc: <FaArrowDown style={{ margin: '0 5px' }} />,
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </UnstyledButton>
-                    </Tooltip>
-                  </TableMantine.Th>
-                ))}
-              </TableMantine.Tr>
-            ))}
-          </TableMantine.Thead>
-          <TableMantine.Tbody>
-            {table.getRowModel().rows.length > virtualizeAt
-              ? virtualizer.getVirtualItems().map((virtualRow, index) => {
-                  const rows = table.getRowModel().rows;
-                  const row = rows[virtualRow.index];
-                  console.log('virtualizer active');
+        <TableMantine.ScrollContainer minWidth={'100%'} maxHeight={'57vh'}>
+          <TableMantine highlightOnHover stickyHeader stickyHeaderOffset={-10} striped>
+            <TableMantine.Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableMantine.Tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableMantine.Th key={header.id} colSpan={header.colSpan}>
+                      <Tooltip
+                        label={
+                          header.column.getCanSort()
+                            ? engine === 'client_side'
+                              ? header.column.getNextSortingOrder() === 'asc'
+                                ? 'Sort Ascending'
+                                : header.column.getNextSortingOrder() === 'desc'
+                                  ? 'Sort Descending'
+                                  : 'Clear sort'
+                              : 'Change to Local Search for Enable Sorting'
+                            : engine === 'server_side'
+                              ? 'Please Change to Local Search'
+                              : ''
+                        }
+                      >
+                        <UnstyledButton onClick={header.column.getToggleSortingHandler()}>
+                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          {{
+                            asc: <FaArrowUp style={{ margin: '0 5px' }} />,
+                            desc: <FaArrowDown style={{ margin: '0 5px' }} />,
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </UnstyledButton>
+                      </Tooltip>
+                    </TableMantine.Th>
+                  ))}
+                </TableMantine.Tr>
+              ))}
+            </TableMantine.Thead>
+            <TableMantine.Tbody>
+              {table.getRowModel().rows.length > virtualizeAt
+                ? virtualizer.getVirtualItems().map((virtualRow, index) => {
+                    const rows = table.getRowModel().rows;
+                    const row = rows[virtualRow.index];
+                    console.log('virtualizer active');
 
-                  return (
+                    return (
+                      <TableMantine.Tr
+                        onClick={() => navigate({ to: props.path.detail, params: { id: row.id } })}
+                        key={row.id}
+                        style={{
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                        }}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableMantine.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableMantine.Td>
+                        ))}
+                      </TableMantine.Tr>
+                    );
+                  })
+                : /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+                  table.getRowModel().rows.map((row: Row<any>) => (
                     <TableMantine.Tr
-                      onClick={() => navigate({ to: props.path.detail, params: { id: row.id } })}
+                      bg={row.getIsSelected() ? getColors('secondary') : undefined}
+                      onClick={() => navigate({ to: props.path.detail, params: { id: row.original.id } })}
+                      style={{ cursor: 'pointer' }}
                       key={row.id}
-                      style={{
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
-                      }}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableMantine.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableMantine.Td>
                       ))}
                     </TableMantine.Tr>
-                  );
-                })
-              : /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-                table.getRowModel().rows.map((row: Row<any>) => (
-                  <TableMantine.Tr
-                    bg={row.getIsSelected() ? getColors('secondary') : undefined}
-                    onClick={() => navigate({ to: props.path.detail, params: { id: row.original.id } })}
-                    style={{ cursor: 'pointer' }}
-                    key={row.id}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableMantine.Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableMantine.Td>
-                    ))}
-                  </TableMantine.Tr>
-                ))}
-          </TableMantine.Tbody>
-          <TableMantine.Tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <TableMantine.Tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <TableMantine.Th key={header.id}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableMantine.Th>
-                ))}
-              </TableMantine.Tr>
-            ))}
-          </TableMantine.Tfoot>
-          <TableMantine.Caption>{table.getRowModel().rows.length} Rows Found</TableMantine.Caption>
-        </TableMantine>
+                  ))}
+            </TableMantine.Tbody>
+            <TableMantine.Tfoot>
+              {table.getFooterGroups().map((footerGroup) => (
+                <TableMantine.Tr key={footerGroup.id}>
+                  {footerGroup.headers.map((header) => (
+                    <TableMantine.Th key={header.id}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableMantine.Th>
+                  ))}
+                </TableMantine.Tr>
+              ))}
+            </TableMantine.Tfoot>
+            <TableMantine.Caption>{table.getRowModel().rows.length} Rows Found</TableMantine.Caption>
+          </TableMantine>
+        </TableMantine.ScrollContainer>
       </Container>
       <Group justify="space-between" mt="md" align="center">
         <Flex gap="xs" justify="start" align="start" direction={'column'}>

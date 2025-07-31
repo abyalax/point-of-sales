@@ -1,20 +1,24 @@
-//* It Does Not Support Path Alias Shorthand */
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
-import { Product } from './src/modules/product/entity/product.entity';
-import { User } from './src/modules/user/user.entity';
-import { Role } from './src/modules/auth/entity/role.entity';
-import { Permission } from './src/modules/auth/entity/permission.entity';
-import { Category } from './src/modules/product/entity/category.entity';
+import { Product } from '~/modules/product/entity/product.entity';
+import { User } from '~/modules/user/entity/user.entity';
+import { Role } from '~/modules/auth/entity/role.entity';
+import { Permission } from '~/modules/auth/entity/permission.entity';
+import { Category } from '~/modules/product/entity/category.entity';
+import { Transaction } from '~/modules/transaction/entities/transaction.entity';
+import { TransactionItem } from '~/modules/transaction/entities/transaction-item.entity';
+import { configDotenv } from 'dotenv';
+
+configDotenv();
 
 const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'mysql',
-  host: 'localhost',
-  port: 3306,
-  username: 'root',
-  password: '',
-  database: 'db_boilerplate_v1',
-  entities: [Category, Product, User, Role, Permission],
+  host: process.env.DATABASE_HOST,
+  port: parseInt(process.env.DATABASE_PORT!),
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  entities: [Category, Product, User, Role, Permission, Transaction, TransactionItem],
   synchronize: false,
   seeds: ['./src/infrastructure/database/seeds/*.seed.ts'],
 };

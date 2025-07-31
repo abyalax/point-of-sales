@@ -23,20 +23,24 @@ interface IFilter {
 export interface IProduct {
   id: string;
   name: string;
+  barcode: string;
   price: string;
+  cost_price: string;
+  tax_rate: string;
+  discount: string;
   status: EProductStatus;
   category: ICategory;
   stock: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface ICategory {
   id: string;
   name: string;
   products?: IProduct[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface IQueryProducts extends MetaRequest<IProduct>, IFilter {}

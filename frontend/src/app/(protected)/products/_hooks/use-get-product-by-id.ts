@@ -7,8 +7,6 @@ export const queryProductByID = (query: { id: string }) => ({
   queryFn: () => getProductByID(query),
 });
 
-const useGetProduct = (query: { id: string }) => {
+export const useGetProduct = (query: { id: string }) => {
   return useQuery(queryProductByID(query));
 };
-
-export default useGetProduct;

@@ -8,10 +8,10 @@ import { zodResolver } from 'mantine-form-zod-resolver';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import z from 'zod';
 
-import useGetProductCategories from '~/app/(protected)/products/_hooks/use-get-categories';
+import { useGetProductCategories } from '~/app/(protected)/products/_hooks/use-get-categories';
 import { useUpdateProduct } from '~/app/(protected)/products/$id/_hooks/use-update-product';
 import { useCreateCategory } from '~/app/(protected)/products/create/_hooks/use-create-category';
-import useGetProduct, { queryProductByID } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
+import { queryProductByID, useGetProduct } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
 import { EProductStatus } from '~/api/product/type';
 import { formatCurrency } from '~/utils/format';
 

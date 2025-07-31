@@ -1,12 +1,14 @@
 import { useNavigate } from '@tanstack/react-router';
+
 import { useEffect } from 'react';
+
+import { useSessionStore } from '~/stores/use-session';
 import { EMessage } from '~/common/types/response';
 import { api } from '~/lib/axios/api';
-import { useSessionStore } from '~/stores/use-session';
 
 const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const session = useSessionStore(s => s.session);
-  const setStatus = useSessionStore(s => s.setStatus);
+  const session = useSessionStore((s) => s.session);
+  const setStatus = useSessionStore((s) => s.setStatus);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,9 +17,10 @@ const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       return;
     }
     const interceptor = api.interceptors.response.use(
-      response => response,
-      async error => {
+      (response) => response,
+      async (error) => {
         const originalRequest = error.config;
+        console.log('error: ', error);
 
         if (error?.response?.data?.error === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
           originalRequest._retry = true;
@@ -33,6 +36,11 @@ const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             navigate({ to: '/auth/login' });
             return Promise.reject(refreshErr);
           }
+        } else if (error?.response?.data?.statusCode === 403) {
+          console.log('Access denied...', error.response.data);
+
+          setStatus('unauthenticated');
+          navigate({ to: '/auth/login' });
         }
 
         return Promise.reject(error);

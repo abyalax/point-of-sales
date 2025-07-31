@@ -1,6 +1,7 @@
 //* It Does Not Support Path Alias Shorthand */
-import { Column, CreateDateColumn, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Role } from '../auth/entity/role.entity';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Role } from '../../auth/entity/role.entity';
+import { Transaction } from '~/modules/transaction/entities/transaction.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,12 +25,12 @@ export class User {
   })
   roles: Role[];
 
-  @Column({ name: 'refresh_token', type: 'text', nullable: true })
-  refreshToken?: string | null;
+  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt?: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt?: Date;
+  updated_at: Date;
 }

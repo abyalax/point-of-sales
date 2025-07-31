@@ -18,7 +18,16 @@ export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get()
-  async get(@Query() query: QueryProductDto): Promise<TResponse<{ data: ProductDto[]; meta: MetaResponse }>> {
+  async get(): Promise<TResponse<ProductDto[]>> {
+    const products = await this.productService.getAll();
+    return {
+      statusCode: HttpStatus.OK,
+      data: products,
+    };
+  }
+
+  @Get('/search')
+  async search(@Query() query: QueryProductDto): Promise<TResponse<{ data: ProductDto[]; meta: MetaResponse }>> {
     console.log(query);
     const products = await this.productService.find(query);
     return {
@@ -37,8 +46,8 @@ export class ProductController {
   }
 
   @Post()
-  async create(@Body() PayloadProductDto: PayloadProductDto): Promise<TResponse<ProductDto>> {
-    const product = await this.productService.create(PayloadProductDto);
+  async create(@Body() payloadProductDto: PayloadProductDto): Promise<TResponse<ProductDto>> {
+    const product = await this.productService.create(payloadProductDto);
     return {
       statusCode: HttpStatus.CREATED,
       data: product,

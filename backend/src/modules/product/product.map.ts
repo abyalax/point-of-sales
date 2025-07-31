@@ -19,8 +19,8 @@ export function mapProductRows(rows: RowProducts[]): Product[] {
       category = {
         id: row.category_id,
         name: row.category_name,
-        createdAt: row.category_created_at,
-        updatedAt: row.category_updated_at,
+        created_at: row.category_created_at,
+        updated_at: row.category_updated_at,
       };
       categoryCache.set(category.id, category);
     }
@@ -28,6 +28,10 @@ export function mapProductRows(rows: RowProducts[]): Product[] {
     const product: Product = {
       id: row.id,
       name: row.name,
+      barcode: row.barcode,
+      cost_price: row.cost_price,
+      discount: row.discount,
+      tax_rate: row.tax_rate,
       category_id: row.category_id,
       category: category,
       price: row.price,

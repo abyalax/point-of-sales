@@ -1,4 +1,3 @@
-//* It Does Not Support Path Alias Shorthand */
 import { Role } from '~/modules/auth/entity/role.entity';
 
 export const mockRoles: Role[] = [

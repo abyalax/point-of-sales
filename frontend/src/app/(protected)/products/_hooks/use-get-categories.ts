@@ -7,8 +7,6 @@ export const queryProductCategories = () => ({
   queryFn: () => getProductCategories(),
 });
 
-const useGetProductCategories = () => {
+export const useGetProductCategories = () => {
   return useQuery(queryProductCategories());
 };
-
-export default useGetProductCategories;

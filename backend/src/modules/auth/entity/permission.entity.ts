@@ -1,4 +1,3 @@
-//* It Does Not Support Path Alias Shorthand */
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './role.entity';
 

@@ -11,12 +11,16 @@ export type TPayloadProduct = Omit<IProduct, 'id' | 'category'> & { category: st
 export interface IProduct {
   id: string;
   name: string;
+  barcode: string;
   price: string;
+  cost_price: string;
+  tax_rate: string;
+  discount: string;
   status: EProductStatus;
   category: ICategory;
   stock: number;
-  created_at?: Date | string;
-  updated_at?: Date | string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface QueryProducts extends MetaRequest<IProduct> {

@@ -14,8 +14,8 @@ export class Category {
   products?: Product[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  createdAt?: Date;
+  created_at?: Date;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updatedAt?: Date;
+  updated_at?: Date;
 }

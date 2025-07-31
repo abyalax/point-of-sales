@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import useGetProduct from '~/app/(protected)/products/_hooks/use-get-product-by-id';
+import { useGetProduct } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
 import { formatCurrency } from '~/utils/format';
 import { FaPencilAlt } from 'react-icons/fa';
 import { EProductStatus } from '~/api/product/type';

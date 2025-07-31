@@ -10,6 +10,7 @@ import { ProductDto } from '~/modules/product/dto/product.dto';
 import { EProductStatus } from '~/modules/product/product.interface';
 import { USER } from '~/test/common/constant';
 import { extractHttpOnlyCookie } from '~/test/utils';
+import { PayloadProductDto } from '~/modules/product/dto/payload-product.dto';
 
 describe('Product Module', () => {
   let app: INestApplication<App>;
@@ -74,7 +75,14 @@ describe('Product Module', () => {
                 name: expect.any(String),
                 price: expect.any(String),
                 stock: expect.any(Number),
-              }),
+                barcode: expect.any(String),
+                cost_price: expect.any(String),
+                discount: expect.any(String),
+                status: expect.any(String),
+                tax_rate: expect.any(String),
+                created_at: expect.any(String),
+                updated_at: expect.any(String),
+              } as ProductDto),
             }),
           );
         });
@@ -85,36 +93,73 @@ describe('Product Module', () => {
         .get('/products')
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect((res) => {
-          const items: ProductDto[] = res.body.data.data as ProductDto[];
-          const item: ProductDto = items[0];
-
-          // Check first item structure
-          expect(item).toHaveProperty('id');
-          expect(item).toHaveProperty('name');
-          expect(item).toHaveProperty('price');
-          expect(item).toHaveProperty('stock');
-
-          // Validate data types
-          expect(typeof item.id).toBe('number');
-          expect(typeof item.name).toBe('string');
-          expect(typeof item.price).toBe('string');
-          expect(typeof item.stock).toBe('number');
-
-          // Optional: Check specific data if needed
           expect(res.body).toEqual(
             expect.objectContaining({
               statusCode: 200,
-              data: {
+              data: expect.arrayContaining([
+                expect.objectContaining({
+                  barcode: expect.any(String),
+                  id: expect.any(Number),
+                  name: expect.any(String),
+                  price: expect.any(String),
+                  stock: expect.any(Number),
+                  cost_price: expect.any(String),
+                  discount: expect.any(String),
+                  status: expect.any(String),
+                  tax_rate: expect.any(String),
+                  created_at: expect.any(String),
+                  updated_at: expect.any(String),
+                  category: expect.objectContaining({
+                    id: expect.any(Number),
+                    name: expect.any(String),
+                    created_at: expect.any(String),
+                    updated_at: expect.any(String),
+                  }),
+                } as ProductDto),
+              ]),
+            }),
+          );
+        });
+    });
+
+    test('GET /products/search', async () => {
+      return request(app.getHttpServer())
+        .get('/products/search')
+        .query({ page: 1, per_page: 10, engine: 'server_side' })
+        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
+        .expect((res) => {
+          expect(res.body).toEqual(
+            expect.objectContaining({
+              statusCode: 200,
+              data: expect.objectContaining({
                 data: expect.arrayContaining([
                   expect.objectContaining({
+                    barcode: expect.any(String),
                     id: expect.any(Number),
                     name: expect.any(String),
                     price: expect.any(String),
                     stock: expect.any(Number),
-                  }),
+                    cost_price: expect.any(String),
+                    discount: expect.any(String),
+                    status: expect.any(String),
+                    tax_rate: expect.any(String),
+                    created_at: expect.any(String),
+                    updated_at: expect.any(String),
+                    category: expect.objectContaining({
+                      id: expect.any(Number),
+                      name: expect.any(String),
+                      created_at: expect.any(String),
+                      updated_at: expect.any(String),
+                    }),
+                  } as ProductDto),
                 ]),
-                meta: expect.any(Object),
-              },
+                meta: expect.objectContaining({
+                  page: expect.any(String),
+                  per_page: expect.any(String),
+                  total_count: expect.any(Number),
+                  total_pages: expect.any(Number),
+                }),
+              }),
             }),
           );
         });
@@ -132,12 +177,16 @@ describe('Product Module', () => {
           category = res.body.data.category.name;
           return res;
         });
-
-      const product = {
+      const price = parseInt(faker.commerce.price({ min: 5000, max: 1000000 }));
+      const product: PayloadProductDto = {
         name: faker.commerce.productName(),
-        price: faker.commerce.price({ min: 5000, max: 1000000 }).toString(),
+        barcode: `89910011012${faker.number.int({ min: 64, max: 99 })}`,
+        price: price.toString(),
+        cost_price: faker.commerce.price({ min: price - 50000, max: price }).toString(),
+        tax_rate: faker.number.float({ min: 0, max: 10 }).toString(),
+        discount: faker.number.float({ min: 0, max: 10 }).toString(),
         status: EProductStatus.AVAILABLE,
-        stock: faker.number.int({ min: 0, max: 300 }),
+        stock: faker.number.int({ min: 1, max: 300 }),
         category,
       };
       return request(app.getHttpServer())
@@ -153,7 +202,18 @@ describe('Product Module', () => {
                 name: expect.any(String),
                 price: expect.any(String),
                 stock: expect.any(Number),
-              }),
+                barcode: expect.any(String),
+                cost_price: expect.any(String),
+                discount: expect.any(String),
+                status: expect.any(String),
+                tax_rate: expect.any(String),
+                category: expect.objectContaining({
+                  id: expect.any(Number),
+                  name: expect.any(String),
+                }),
+                created_at: expect.any(String),
+                updated_at: expect.any(String),
+              } as ProductDto),
             }),
           );
         });

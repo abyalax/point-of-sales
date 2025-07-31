@@ -8,8 +8,24 @@ export class PayloadProductDto {
   name: string;
 
   @Expose()
+  @IsString()
+  barcode: string;
+
+  @Expose()
   @IsNumberString()
   price: string;
+
+  @Expose()
+  @IsNumberString()
+  cost_price: string;
+
+  @Expose()
+  @IsNumberString()
+  tax_rate: string;
+
+  @Expose()
+  @IsNumberString()
+  discount: string;
 
   @Expose()
   @IsEnum(EProductStatus)

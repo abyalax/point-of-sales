@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { REPOSITORY } from '~/common/constants/database';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Permission } from '../auth/entity/permission.entity';
@@ -15,11 +15,6 @@ export class UserService {
     @Inject(REPOSITORY.PERMISSION)
     private permissionRepository: Repository<Permission>,
   ) {}
-
-  async getRefreshToken(userId: number): Promise<string | null | undefined> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    return user?.refreshToken;
-  }
 
   async getFlattenPermissions(userId: number): Promise<string[]> {
     const raw = await this.permissionRepository
@@ -42,14 +37,6 @@ export class UserService {
       .where('user.id = :userId', { userId })
       .getMany();
     return permissions;
-  }
-
-  async saveRefreshToken(userId: number, refreshToken: string) {
-    return await this.userRepository.update(userId, { refreshToken });
-  }
-
-  async removeRefreshToken(userId: number) {
-    return await this.userRepository.update(userId, { refreshToken: null });
   }
 
   async findAll(): Promise<User[]> {

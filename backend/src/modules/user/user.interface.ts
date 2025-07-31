@@ -31,6 +31,6 @@ export interface IUser {
   password: string;
   roles: IRole[];
   refreshToken: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
