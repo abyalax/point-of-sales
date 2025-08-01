@@ -3,20 +3,20 @@ import { AppShell, Tabs, Burger, Button, Flex } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconActivity, IconCashPlus, IconLock, IconNotes, IconPackage, IconSettingsAutomation, IconUser } from '@tabler/icons-react';
 import { IconPresentationAnalytics } from '@tabler/icons-react';
-import { AiFillSetting } from 'react-icons/ai';
 
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { FaBox, FaFacebookMessenger, FaGalacticRepublic, FaSun, FaSync, FaUser } from 'react-icons/fa';
 import { FaHome, FaMoon, FaPhotoVideo, FaMoneyBill, FaSignOutAlt } from 'react-icons/fa';
+import { AiFillSetting } from 'react-icons/ai';
 import { useState } from 'react';
 
-import { PermissionGate } from '~/components/middlewares/permission-gate';
 import { LinksGroup } from './_components/link-group';
 import { UserButton } from './_components/user-button';
-import { getColors } from '~/components/themes';
-
 import styles from './layout.module.css';
-import { CartProvider } from './pos/_hooks/cashier/provider-cashier';
+
+import { PermissionGate } from '~/components/middlewares/permission-gate';
+import { CartProvider } from '~/components/provider/cart';
+import { getColors } from '~/components/themes';
 
 export const Route = createFileRoute('/(protected)')({
   component: RouteComponent,

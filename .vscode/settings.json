@@ -4,6 +4,12 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.encoding": "utf8",
+  "search.exclude": {
+    "**/routeTree.gen.ts": true,
+    "node_modules": true,
+    ".husky": true,
+    "backend/coverage": true
+  },
   "eslint.rules.customizations": [
     {
       "rule": "prettier/prettier",

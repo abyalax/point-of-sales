@@ -1,8 +1,12 @@
 import { Button, Flex, Table, Text } from '@mantine/core';
 import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa';
 import styles from '../styles.module.css';
+import type { ICartItem } from '../_types';
+import { useCartStore } from '../_hooks/use-cart-store';
 
-export function TableMain() {
+export function TableMain({ carts }: { carts: ICartItem[] }) {
+  const removeItem = useCartStore((s) => s.removeItem);
+
   return (
     <Table.ScrollContainer minWidth={'100%'} maxHeight={'60vh'}>
       <Table highlightOnHover striped style={{ width: '100%' }}>
@@ -18,56 +22,33 @@ export function TableMain() {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          <Table.Tr>
-            <Table.Td>8998765432101</Table.Td>
-            <Table.Td>Aqua Botol 500ml</Table.Td>
-            <Table.Td>
-              <Flex align={'center'}>
-                <Button variant="default" size="xs" p={'5px'}>
-                  <FaPlus className={styles.icon} />
+          {carts.map((cart) => (
+            <Table.Tr key={cart.id}>
+              <Table.Td>{cart.barcode}</Table.Td>
+              <Table.Td>{cart.name}</Table.Td>
+              <Table.Td>
+                <Flex align={'center'}>
+                  <Button variant="default" size="xs" p={'5px'}>
+                    <FaPlus className={styles.icon} />
+                  </Button>
+                  <Text fz={'h3'} fw={350} size="lg" style={{ margin: '0 10px' }}>
+                    {cart.quantity}
+                  </Text>
+                  <Button variant="default" size="xs" p={'5px'}>
+                    <FaMinus className={styles.icon} />
+                  </Button>
+                </Flex>
+              </Table.Td>
+              <Table.Td>{cart.price}</Table.Td>
+              <Table.Td>{cart.discount}</Table.Td>
+              <Table.Td>{cart.price * cart.quantity}</Table.Td>
+              <Table.Td>
+                <Button size="xs" variant="default" onClick={() => removeItem(cart.id)}>
+                  <FaTrash />
                 </Button>
-                <Text fz={'h3'} fw={350} size="lg" style={{ margin: '0 10px' }}>
-                  2
-                </Text>
-                <Button variant="default" size="xs" p={'5px'}>
-                  <FaMinus className={styles.icon} />
-                </Button>
-              </Flex>
-            </Table.Td>
-            <Table.Td>1000</Table.Td>
-            <Table.Td>0</Table.Td>
-            <Table.Td>1000</Table.Td>
-            <Table.Td>
-              <Button size="xs" variant="default">
-                <FaTrash />
-              </Button>
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>8998765432101</Table.Td>
-            <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-            <Table.Td>
-              <Flex align={'center'}>
-                <Button variant="default" size="xs" p={'5px'}>
-                  <FaPlus className={styles.icon} />
-                </Button>
-                <Text fz={'h3'} fw={350} size="lg" style={{ margin: '0 10px' }}>
-                  2
-                </Text>
-                <Button variant="default" size="xs" p={'5px'}>
-                  <FaMinus className={styles.icon} />
-                </Button>
-              </Flex>
-            </Table.Td>
-            <Table.Td>1000</Table.Td>
-            <Table.Td>0</Table.Td>
-            <Table.Td>1000</Table.Td>
-            <Table.Td>
-              <Button size="xs" variant="default">
-                <FaTrash />
-              </Button>
-            </Table.Td>
-          </Table.Tr>
+              </Table.Td>
+            </Table.Tr>
+          ))}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>

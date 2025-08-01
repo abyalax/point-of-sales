@@ -1,15 +1,17 @@
-import { Container } from '~/components/ui/container/container';
-import { createFileRoute } from '@tanstack/react-router';
 import { Autocomplete, Button, Flex, Text, Input, InputWrapper, Textarea, Grid, Modal, Table } from '@mantine/core';
-import { FaExternalLinkAlt, FaPlus, FaPrint, FaSave, FaSearch } from 'react-icons/fa';
-
-import { useGetProducts } from './_hooks/use-get-products';
-import { IconCommand } from '@tabler/icons-react';
-import { TableMain } from './_components/table-main';
-import { TableCard } from './_components/table-card';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useCart } from './_hooks/cashier/use-cart';
+import { createFileRoute } from '@tanstack/react-router';
+import { IconCommand } from '@tabler/icons-react';
+
+import { FaExternalLinkAlt, FaPlus, FaPrint, FaSave, FaSearch } from 'react-icons/fa';
+
+import { Container } from '~/components/ui/container/container';
+
+import { useGetProducts } from './_hooks/use-get-products';
+import { TableMain } from './_components/table-main';
+import { TableCard } from './_components/table-card';
+import { useCartStore } from './_hooks/use-cart-store';
 
 export const Route = createFileRoute('/(protected)/pos/')({
   component: RouteComponent,
@@ -18,9 +20,8 @@ export const Route = createFileRoute('/(protected)/pos/')({
 function RouteComponent() {
   const { data } = useGetProducts();
   const [opened, { open, close }] = useDisclosure(false);
-  const cart = useCart();
-  const cartState = cart.getCart();
-  console.log(cartState);
+  const carts = useCartStore((s) => s.getCart().items);
+  const addItem = useCartStore((s) => s.addItem);
   const products = data?.data.data;
 
   return (
@@ -56,222 +57,32 @@ function RouteComponent() {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml asc ds cwc dw cw cew </Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
-                    <Table.Tr>
-                      <Table.Td>8998765432101</Table.Td>
-                      <Table.Td>NIVEA MEN Extra Bright 50ml</Table.Td>
-                      <Table.Td>
-                        <Button size="xs">
-                          <FaPlus size={15} />
-                        </Button>
-                      </Table.Td>
-                    </Table.Tr>
+                    {products?.map((product) => (
+                      <Table.Tr key={product.id}>
+                        <Table.Td>{product.barcode}</Table.Td>
+                        <Table.Td>{product.name}</Table.Td>
+                        <Table.Td>
+                          <Button
+                            size="xs"
+                            onClick={() =>
+                              addItem({
+                                id: product.id,
+                                name: product.name,
+                                price: parseInt(product.price),
+                                quantity: 1,
+                                barcode: product.barcode,
+                                category: product.category.name,
+                                cost_price: parseInt(product.cost_price),
+                                tax_rate: parseFloat(product.tax_rate),
+                                discount: parseFloat(product.discount),
+                              })
+                            }
+                          >
+                            <FaPlus size={15} />
+                          </Button>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
                   </Table.Tbody>
                 </Table>
               </Table.ScrollContainer>
@@ -282,7 +93,7 @@ function RouteComponent() {
             </Button>
           </Flex>
           <Container style={{ overflow: 'auto', maxHeight: '65vh', minWidth: '100%' }}>
-            <TableMain />
+            <TableMain carts={carts} />
           </Container>
           <Flex justify={'space-between'} w={'100%'} align={'end'} mt={'lg'}>
             <Flex w={'100%'} direction={'column'}>
