@@ -1,13 +1,11 @@
-import Big from 'big.js';
-
 export const formatCurrency = (value: string) => {
   if (!value) return '';
-  const balance = new Big(value);
-  const formatted = new Intl.NumberFormat('id-ID', {
+  // Langsung format string sebagai integer
+  const intValue = parseInt(value);
+  return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-  }).format(balance.toNumber());
-  return formatted;
+  }).format(intValue);
 };
 
 export const convertCamelToTitleCase = (text: string | undefined) => {

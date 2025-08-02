@@ -20,10 +20,10 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   cost_price: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'decimal', precision: 5, scale: 4, nullable: false })
   tax_rate: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'decimal', precision: 5, scale: 4, nullable: false })
   discount: string;
 
   @Column({ type: 'enum', enum: EProductStatus })

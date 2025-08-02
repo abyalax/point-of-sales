@@ -30,10 +30,10 @@ export class TransactionItem {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   final_price: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 5, scale: 4 })
   tax_rate: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 5, scale: 4 })
   discount: string;
 
   @ManyToOne(() => Transaction, (transaction) => transaction.items, { onDelete: 'CASCADE' })

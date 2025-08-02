@@ -1,28 +1,69 @@
-import { Autocomplete, Button, Flex, Text, Input, InputWrapper, Textarea, Grid, Modal, Table } from '@mantine/core';
+import { Autocomplete, Button, Flex, Text, Textarea, Grid, Modal, Table } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
 import { createFileRoute } from '@tanstack/react-router';
 import { IconCommand } from '@tabler/icons-react';
 
-import { FaExternalLinkAlt, FaPlus, FaPrint, FaSave, FaSearch } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPlus, FaSearch } from 'react-icons/fa';
 
+import { queryProductsSchema, type IProduct } from '~/api/product/type';
 import { Container } from '~/components/ui/container/container';
 
-import { useGetProducts } from './_hooks/use-get-products';
-import { TableMain } from './_components/table-main';
-import { TableCard } from './_components/table-card';
+import { useInfiniteProducts } from './_hooks/use-infinite-products';
+import { useCartState } from './_hooks/use-cart-state';
+import { usePOSSearch } from './_hooks/use-pos-search';
 import { useCartStore } from './_hooks/use-cart-store';
+import { TableModal } from './_components/table-modal';
+import { TableCard } from './_components/table-card';
+import { InputPay } from './_components/input-pay';
+import { RowCart } from './_components/row-cart';
+import { useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/(protected)/pos/')({
   component: RouteComponent,
+  validateSearch: queryProductsSchema,
 });
 
 function RouteComponent() {
-  const { data } = useGetProducts();
   const [opened, { open, close }] = useDisclosure(false);
-  const carts = useCartStore((s) => s.getCart().items);
+  const navigate = Route.useNavigate();
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const search = Route.useSearch();
+
+  const { data: dataProducts, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({ ...search });
+
+  const { data } = usePOSSearch(searchQuery);
   const addItem = useCartStore((s) => s.addItem);
-  const products = data?.data.data;
+  const items = useCartState((s) => s.items);
+  const pay_received = useCartState((s) => s.pay_received);
+  const pay_return = useCartState((s) => s.pay_return);
+  const subtotal = useCartState((s) => s.subtotal);
+  const tax = useCartState((s) => s.tax);
+  const total = useCartState((s) => s.total);
+  const total_discount = useCartState((s) => s.total_discount);
+
+  console.log({
+    items,
+    subtotal,
+    pay_received,
+    pay_return,
+    tax,
+    total,
+    total_discount,
+  });
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const products: IProduct[] = useMemo(() => {
+    const result =
+      (dataProducts?.pages?.flatMap((page) => {
+        return page?.data?.filter((e) => e !== undefined);
+      }) as IProduct[]) ?? [];
+    return result;
+  }, [dataProducts?.pages]);
 
   return (
     <Grid>
@@ -30,10 +71,38 @@ function RouteComponent() {
         <Container unstyled p={'md'}>
           <Flex justify="space-between" align="center" mb="md">
             <Autocomplete
-              data={products?.map((product) => product.name)}
+              data={data.map((product) => product.name)}
               style={{ minWidth: '300px' }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e)}
+              clearable
               leftSection={<FaSearch />}
-              rightSection={<FaPlus onClick={() => notifications.show({ title: 'Success', message: 'Successfully add product' })} />}
+              rightSection={
+                <FaPlus
+                  onClick={() => {
+                    const findProduct = data?.find((product) => product.name === searchQuery);
+                    if (findProduct) {
+                      addItem({
+                        quantity: 1,
+                        barcode: findProduct.barcode,
+                        category: findProduct.category.name,
+                        discount: findProduct.discount,
+                        cost_price: findProduct.cost_price,
+                        name: findProduct.name,
+                        price: findProduct.price,
+                        id: findProduct.id,
+                        tax_rate: findProduct.tax_rate,
+                      });
+                      navigate({
+                        search: (prev) => ({
+                          ...prev,
+                          search: '',
+                        }),
+                      });
+                    }
+                  }}
+                />
+              }
               placeholder="Search..."
             />
             <Modal
@@ -47,53 +116,33 @@ function RouteComponent() {
               centered
               size={'auto'}
             >
-              <Table.ScrollContainer minWidth={'100%'} maxHeight={'60vh'}>
-                <Table striped stickyHeader highlightOnHover stickyHeaderOffset={-10}>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th style={{ fontSize: '1rem' }}>Barcode</Table.Th>
-                      <Table.Th style={{ fontSize: '1rem' }}>Name</Table.Th>
-                      <Table.Th style={{ fontSize: '1rem' }}>Action</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {products?.map((product) => (
-                      <Table.Tr key={product.id}>
-                        <Table.Td>{product.barcode}</Table.Td>
-                        <Table.Td>{product.name}</Table.Td>
-                        <Table.Td>
-                          <Button
-                            size="xs"
-                            onClick={() =>
-                              addItem({
-                                id: product.id,
-                                name: product.name,
-                                price: parseInt(product.price),
-                                quantity: 1,
-                                barcode: product.barcode,
-                                category: product.category.name,
-                                cost_price: parseInt(product.cost_price),
-                                tax_rate: parseFloat(product.tax_rate),
-                                discount: parseFloat(product.discount),
-                              })
-                            }
-                          >
-                            <FaPlus size={15} />
-                          </Button>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              </Table.ScrollContainer>
+              <TableModal products={products} handleLoadMore={handleLoadMore} />
             </Modal>
-
             <Button variant="default" onClick={open} rightSection={<FaExternalLinkAlt />}>
               Select
             </Button>
           </Flex>
           <Container style={{ overflow: 'auto', maxHeight: '65vh', minWidth: '100%' }}>
-            <TableMain carts={carts} />
+            <Table.ScrollContainer minWidth={'100%'} maxHeight={'45vh'}>
+              <Table highlightOnHover striped style={{ width: '100%' }}>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Barcode</Table.Th>
+                    <Table.Th>Product</Table.Th>
+                    <Table.Th>Quantity</Table.Th>
+                    <Table.Th>Unit Price</Table.Th>
+                    <Table.Th>Discount</Table.Th>
+                    <Table.Th>Price</Table.Th>
+                    <Table.Th>Delete</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {items.map((cart) => (
+                    <RowCart cart={cart} key={cart.id} />
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
           </Container>
           <Flex justify={'space-between'} w={'100%'} align={'end'} mt={'lg'}>
             <Flex w={'100%'} direction={'column'}>
@@ -113,24 +162,7 @@ function RouteComponent() {
                 </Flex>
               </Flex>
             </Flex>
-            <Flex w={'100%'} justify={'start'} direction={'column'} gap={'md'}>
-              <InputWrapper style={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '10px' }}>
-                <label htmlFor="bayar">Bayar</label>
-                <Input placeholder="Jumlah Pembayaran" name="bayar" />
-              </InputWrapper>
-              <InputWrapper style={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '10px' }}>
-                <label htmlFor="kembalian">Kembali</label>
-                <Input placeholder="Kembalian" disabled name="kembalian" />
-              </InputWrapper>
-              <Flex gap={'lg'} mt={'lg'} justify={'end'}>
-                <Button variant="default" leftSection={<FaPrint />}>
-                  Cetak
-                </Button>
-                <Button variant="default" leftSection={<FaSave />}>
-                  Simpan
-                </Button>
-              </Flex>
-            </Flex>
+            <InputPay />
           </Flex>
         </Container>
       </Grid.Col>

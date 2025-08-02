@@ -1,8 +1,8 @@
 export enum EPaymentMethod {
-  Cash = 'cash',
-  Qris = 'qris',
-  Debit = 'debit',
-  Ewallet = 'ewallet',
+  Cash = 'Cash',
+  Qris = 'Qris',
+  Debit = 'Debit',
+  Ewallet = 'E-Wallet',
 }
 
 export interface ICartItem {
@@ -10,22 +10,22 @@ export interface ICartItem {
   barcode: string;
   name: string;
   category: string;
-  price: number;
-  cost_price: number;
-  tax_rate: number;
-  discount: number;
+  price: string;
+  cost_price: string;
+  tax_rate: string;
+  discount: string;
   quantity: number;
 }
 
 export interface ICartState {
   items: ICartItem[];
-  subtotal: number;
-  total: number;
+  subtotal: string;
+  total: string;
   total_item: number;
-  total_discount: number;
+  total_discount: string;
   payment_method: EPaymentMethod;
-  pay_received: number;
-  pay_return: number;
-  tax: number;
+  pay_received: string;
+  pay_return: string;
+  tax: string;
   notes: string;
 }

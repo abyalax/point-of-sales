@@ -3,6 +3,9 @@ export const QUERY_KEY = {
     GET_ALL: 'get-product-all',
     GET_BY_ID: 'get-product-by-id',
     GET_CATEGORIES: 'get-product-categories',
+    GET_INFINITE: 'get-infinite-product',
+    GET_POPULAR: 'get-popular-product',
+    GET_SEARCH: 'get-search-product',
   },
 } as const;
 

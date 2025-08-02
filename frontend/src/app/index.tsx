@@ -19,7 +19,7 @@ function Index() {
       <Text fz={'h1'} fw={'bold'}>
         Welcome Home!
       </Text>
-      <Button variant="filled" component={Link} to="/auth/login" mt="md">
+      <Button variant="filled" component={Link} to="/dashboard" mt="md">
         Get Started
       </Button>
     </Container>

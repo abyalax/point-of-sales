@@ -27,6 +27,21 @@ export class ProductService {
     return plainToInstance(ProductDto, data, { excludeExtraneousValues: true });
   }
 
+  async searchByName(query: { search: string }): Promise<ProductDto[]> {
+    const data = await this.productRepository.query(
+      `SELECT product.*, category.id AS category_id, category.name AS category_name
+        FROM products product
+        LEFT JOIN categories category
+        ON category.id = product.category_id
+      WHERE MATCH(product.name) AGAINST (? IN NATURAL LANGUAGE MODE)
+      ;`,
+      [query.search],
+    );
+
+    const mappedData = mapProductRows(data as unknown as RowProducts[]);
+    return plainToInstance(ProductDto, mappedData, { excludeExtraneousValues: true });
+  }
+
   async find(query: QueryProductDto): Promise<{ data: ProductDto[]; meta: MetaResponse }> {
     const page = query?.page ?? DEFAULT.PAGINATION.page;
     const per_page = query?.per_page ?? DEFAULT.PAGINATION.per_page;
@@ -86,18 +101,7 @@ export class ProductService {
     // Data query
     const dataQuery = `
       SELECT
-        product.id AS id,
-        product.name AS name,
-        product.barcode AS barcode,
-        product.price AS price,
-        product.cost_price AS cost_price,
-        product.tax_rate AS tax_rate,
-        product.discount AS discount,
-        product.status AS status,
-        product.stock AS stock,
-        product.category_id AS category_id,
-        product.created_at AS created_at,
-        product.updated_at AS updated_at,
+        product.*,
         category.name AS category_name,
         category.created_at AS category_created_at,
         category.updated_at AS category_updated_at

@@ -36,6 +36,15 @@ export class ProductController {
     };
   }
 
+  @Get('/search/name')
+  async searchByName(@Query() query: { search: string }): Promise<TResponse<ProductDto[]>> {
+    const products = await this.productService.searchByName(query);
+    return {
+      statusCode: HttpStatus.OK,
+      data: products,
+    };
+  }
+
   @Get('categories')
   async getCategories(): Promise<TResponse<CategoryDto[]>> {
     const data = await this.productService.getCategories();

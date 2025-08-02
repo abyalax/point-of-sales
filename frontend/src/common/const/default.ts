@@ -1,3 +1,3 @@
 export const DEFAULT = {
-  DEBOUNCE_INPUT: 800,
+  DEBOUNCE_INPUT: 900,
 };

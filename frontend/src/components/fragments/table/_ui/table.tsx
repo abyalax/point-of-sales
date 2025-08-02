@@ -56,7 +56,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
   const isClientControl = engine === 'client_side';
   const isServerControl = engine === 'server_side';
 
-  const options: T[] | { name: string }[] = props.data?.data.data?.data || [{ name: 'No Data' }];
+  const options: T[] | { name: string }[] = props.data?.data?.data?.data || [{ name: 'No Data' }];
 
   const pageIndex = isServerControl ? (search.page ?? 1) - 1 : pagination.pageIndex;
   const pageSize = isServerControl ? (search.per_page ?? 10) : pagination.pageSize;

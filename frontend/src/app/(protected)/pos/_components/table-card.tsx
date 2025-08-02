@@ -1,7 +1,18 @@
 import { Button, Flex, Table } from '@mantine/core';
 import { FaEraser, FaEye } from 'react-icons/fa';
+import { useCartState } from '../_hooks/use-cart-state';
+import { formatCurrency } from '~/utils/format';
+import dayjs from 'dayjs';
 
 export function TableCard() {
+  const total_item = useCartState((s) => s.total_item);
+  const subtotal = useCartState((s) => s.subtotal);
+  const tax = useCartState((s) => s.tax);
+  const total_discount = useCartState((s) => s.total_discount);
+  const total = useCartState((s) => s.total);
+  const payment_method = useCartState((s) => s.payment_method);
+  const day = dayjs(new Date()).format('DD MMMM YYYY');
+
   return (
     <Table variant="vertical">
       <Table.Caption mt={'lg'}>
@@ -16,23 +27,38 @@ export function TableCard() {
       </Table.Caption>
       <Table.Tbody>
         <Table.Tr>
-          <Table.Th w={160}>Epic name</Table.Th>
-          <Table.Td>7.x migration</Table.Td>
+          <Table.Th w={160}>Tanggal</Table.Th>
+          <Table.Td>{day}</Table.Td>
         </Table.Tr>
 
         <Table.Tr>
-          <Table.Th>Status</Table.Th>
-          <Table.Td>Open</Table.Td>
+          <Table.Th>Total Item</Table.Th>
+          <Table.Td>{total_item}</Table.Td>
         </Table.Tr>
 
         <Table.Tr>
-          <Table.Th>Total issues</Table.Th>
-          <Table.Td>135</Table.Td>
+          <Table.Th>Subtotal Price</Table.Th>
+          <Table.Td>{formatCurrency(subtotal)}</Table.Td>
         </Table.Tr>
 
         <Table.Tr>
-          <Table.Th>Total story points</Table.Th>
-          <Table.Td>874</Table.Td>
+          <Table.Th>Total Tax Product</Table.Th>
+          <Table.Td>{formatCurrency(tax)}</Table.Td>
+        </Table.Tr>
+
+        <Table.Tr>
+          <Table.Th>Total Discount</Table.Th>
+          <Table.Td>{formatCurrency(total_discount)}</Table.Td>
+        </Table.Tr>
+
+        <Table.Tr>
+          <Table.Th>Total Price</Table.Th>
+          <Table.Td>{formatCurrency(total)}</Table.Td>
+        </Table.Tr>
+
+        <Table.Tr>
+          <Table.Th>Payment Method</Table.Th>
+          <Table.Td>{payment_method}</Table.Td>
         </Table.Tr>
 
         <Table.Tr>

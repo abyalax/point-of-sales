@@ -8,8 +8,11 @@ export const getProducts = async (): Promise<TAxiosResponse<IProduct[]>> => {
   return api.get('/products');
 };
 
-export const searchProducts = async (params: QueryProducts): Promise<TAxiosResponse<{ data: IProduct[]; meta: MetaResponse }>> => {
-  console.log(params);
+export const searchProducts = async (params: { search: string }): Promise<TAxiosResponse<IProduct[]>> => {
+  return api.get('/products/search/name', { params });
+};
+
+export const filterProducts = async (params: QueryProducts): Promise<TAxiosResponse<{ data: IProduct[]; meta: MetaResponse }>> => {
   return api.get('/products/search', { params });
 };
 

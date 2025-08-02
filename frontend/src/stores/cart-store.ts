@@ -1,24 +1,27 @@
+import { notifications } from '@mantine/notifications';
 import type { ICartState, ICartItem } from '~/app/(protected)/pos/_types';
 import { EPaymentMethod } from '~/app/(protected)/pos/_types';
 import { produce } from '~/utils';
+import Big from 'big.js';
 
 export class CartStore {
-  private _stateCart: ICartState;
+  public _stateCart: ICartState;
   private _listeners: Set<VoidFunction>;
 
   constructor() {
     this._stateCart = {
-      subtotal: 0,
-      tax: 0,
-      total: 0,
+      subtotal: '0',
+      tax: '0',
+      total: '0',
       total_item: 0,
-      total_discount: 0,
+      total_discount: '0',
       payment_method: EPaymentMethod.Cash,
-      pay_return: 0,
-      pay_received: 0,
+      pay_return: '0',
+      pay_received: '0',
       notes: '',
       items: [],
     };
+    console.log('create new CartStore');
     this._listeners = new Set();
     this.loadFromStorage();
   }
@@ -32,18 +35,6 @@ export class CartStore {
     this._listeners.forEach((listener) => listener());
   };
 
-  public fetchByName = (name: string) => {
-    const fetchData = fetch('api/product/name', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `name=${encodeURIComponent(name)}`,
-    });
-    const response = fetchData.then((response) => response.json());
-    return response;
-  };
-
   public addItem = (product: ICartItem): void => {
     console.log('Adding item:', product);
     this._stateCart = produce(this._stateCart, (draft) => {
@@ -53,12 +44,13 @@ export class CartStore {
       } else {
         draft.items.push({
           ...product,
-          quantity: product.quantity || 1,
+          quantity: product.quantity ?? '1',
         });
       }
     });
     this.calculateTotals();
     this.save();
+    console.log('trigger notify addItem');
     this.notify();
   };
 
@@ -68,59 +60,78 @@ export class CartStore {
     });
     this.calculateTotals();
     this.save();
+    console.log('trigger notify removeItem');
     this.notify();
   };
 
-  public updateQuantity = (productId: string, newQuantity: number): void => {
-    console.log('Updating item with:', 'productId: ', productId, 'newQuantity: ', newQuantity);
+  public updateQuantity = (productId: string, qty: number | string): void => {
+    if (qty === '') return;
+    const newQty = parseInt(qty.toString());
+    if (newQty < 1) {
+      notifications.show({
+        color: 'yellow',
+        title: 'Failed to update quantity',
+        message: 'Quantity must be greater than 0',
+      });
+      return;
+    }
+
     this._stateCart = produce(this._stateCart, (draft) => {
       const item = draft.items.find((item) => item.id === productId);
-      console.log('Updating quantity for item:', item);
       if (item) {
-        item.quantity = newQuantity;
-        this.calculateTotals();
-        this.save();
-        this.notify();
-        console.log('Cart after update:', this._stateCart);
+        item.quantity = newQty;
+      } else {
+        notifications.show({
+          color: 'red',
+          title: 'Failed to update quantity',
+          message: 'Item not found in cart',
+        });
       }
     });
+    this.calculateTotals();
+    this.save();
+    console.log('trigger notify updateQuantity');
+    this.notify();
   };
 
   private calculateTotals = (): void => {
-    console.log('Calculating totals...');
     this._stateCart = produce(this._stateCart, (draft) => {
-      const cart = draft;
-      const items = cart.items;
+      let subtotal = new Big(0);
+      let total_discount = new Big(0);
+      let tax = new Big(0);
+      let total_quantity = 0;
 
-      let subtotal = 0;
-      let total_discount = 0;
-      let tax = 0;
-      let total_item = 0;
+      for (let i = 0; i < draft.items.length; i++) {
+        const item = draft.items[i];
 
-      for (const item of items) {
-        const itemTotal = item.price * item.quantity;
-        const itemDiscount = item.price * (item.discount || 0) * item.quantity;
-        const itemTax = (item.tax_rate || 0) * item.price * item.quantity;
+        const price = new Big(item.price);
+        const quantity = new Big(item.quantity);
+        const discount = new Big(item.discount);
+        const tax_rate = new Big(item.tax_rate);
 
-        subtotal += itemTotal;
-        total_discount += itemDiscount;
-        tax += itemTax;
-        total_item += item.quantity;
+        const item_total = price.times(quantity);
+        const total_item_discount = price.times(discount).times(quantity);
+        const item_tax = tax_rate.times(price).times(quantity);
+
+        subtotal = subtotal.plus(item_total);
+        total_discount = total_discount.plus(total_item_discount);
+        tax = tax.plus(item_tax);
+        total_quantity += quantity.toNumber();
+
+        draft.items[i] = {
+          ...item,
+          price: price.toString(),
+          quantity: quantity.toNumber(),
+          discount: discount.toString(),
+          tax_rate: tax_rate.toString(),
+        };
       }
 
-      cart.subtotal = subtotal;
-      cart.total_discount = total_discount;
-      cart.tax = tax;
-      cart.total = subtotal - total_discount + tax;
-      cart.total_item = total_item;
-
-      console.log('Cart calculated:', {
-        subtotal,
-        total_discount,
-        tax,
-        total: cart.total,
-        total_item,
-      });
+      draft.subtotal = subtotal.toString();
+      draft.total_discount = total_discount.toString();
+      draft.tax = tax.toString();
+      draft.total = subtotal.minus(total_discount).plus(tax).toString();
+      draft.total_item = total_quantity;
     });
   };
 
@@ -133,8 +144,12 @@ export class CartStore {
     console.log('Load from storage...');
     const savedCart = localStorage.getItem('pos_cart');
     if (savedCart) {
-      this._stateCart = JSON.parse(savedCart);
       console.log('stateCart : ', this._stateCart);
+      this._stateCart = produce(this._stateCart, (draft) => {
+        Object.assign(draft, JSON.parse(savedCart));
+      });
+      console.log('trigger notify loadFromStorage');
+      this.notify();
     }
   };
 
@@ -145,24 +160,22 @@ export class CartStore {
   public clearCart = (): void => {
     this._stateCart = produce(this._stateCart, (draft) => {
       draft.items = [];
-      draft.subtotal = 0;
-      draft.tax = 0;
-      draft.total = 0;
+      draft.subtotal = '0';
+      draft.tax = '0';
+      draft.total = '0';
       draft.total_item = 0;
-      draft.total_discount = 0;
+      draft.total_discount = '0';
       draft.payment_method = EPaymentMethod.Cash;
-      draft.pay_return = 0;
-      draft.pay_received = 0;
+      draft.pay_return = '0';
+      draft.pay_received = '0';
       draft.notes = '';
     });
     this.save();
+    console.log('trigger notify clearCart');
     this.notify();
-    console.log('Cart cleared...');
   };
 
-  public getCart = (): ICartState => {
-    return this._stateCart;
-  };
+  public getCart = (): ICartState => this._stateCart;
 
   public setPaymentMethod = (paymentMethod: EPaymentMethod) => {
     this._stateCart = produce(this._stateCart, (draft) => {
@@ -170,14 +183,14 @@ export class CartStore {
     });
   };
 
-  public setPayReceived = (pay: number) => {
+  public setPayReceived = (pay: string) => {
     console.log('setPayReceived: ', pay);
     this._stateCart = produce(this._stateCart, (draft) => {
       draft.pay_received = pay;
     });
   };
 
-  public setPayChange = (pay: number) => {
+  public setPayChange = (pay: string) => {
     console.log('setPayChange: ', pay);
     this._stateCart = produce(this._stateCart, (draft) => {
       draft.pay_return = pay;
