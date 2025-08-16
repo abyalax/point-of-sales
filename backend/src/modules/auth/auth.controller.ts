@@ -46,9 +46,8 @@ export class AuthController {
   @Post('refresh')
   async refreshToken(@Request() req: RequestExpress, @Res() response: ResponseExpress): Promise<void> {
     const refresh_token: string = req.signedCookies.refresh_token;
-    const data = await this.authService.refreshToken(refresh_token);
-    console.log('getting new access_token: ', data.access_token);
-    response.cookie('access_token', data.access_token, {
+    const { access_token } = await this.authService.refreshToken(refresh_token);
+    response.cookie('access_token', access_token, {
       httpOnly: true,
       signed: true,
     });

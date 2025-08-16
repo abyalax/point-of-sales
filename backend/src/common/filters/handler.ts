@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from '@nestjs/jwt';
-import { QueryFailedError, EntityNotFoundError } from 'typeorm';
+import { QueryFailedError, EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
 import { EMessage } from '../types/response';
 
 type ErrorConstructor<T extends Error = Error> = new (...args: unknown[]) => T;
@@ -62,6 +62,17 @@ export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
       return {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: EMessage.ENTITY_NOT_FOUND,
+        error: e.message,
+      };
+    },
+  ],
+  [
+    EntityPropertyNotFoundError,
+    (e: EntityPropertyNotFoundError) => {
+      console.log('EntityPropertyNotFoundError: ', e.message);
+      return {
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: EMessage.ENTITY_PROPERTY_NOT_FOUND,
         error: e.message,
       };
     },

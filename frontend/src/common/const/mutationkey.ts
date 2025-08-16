@@ -1,3 +1,5 @@
+import type { ExtractString } from '~/utils';
+
 export const MUTATION_KEY = {
   AUTH: {
     LOGIN: 'login',
@@ -13,7 +15,9 @@ export const MUTATION_KEY = {
     UPDATE_CATEGORY: 'update_product_category',
     DELETE_CATEGORY: 'delete_product_category',
   },
-};
+  TRANSACTION: {
+    CREATE: 'create_transaction',
+  },
+} as const;
 
-type ObjectKey = typeof MUTATION_KEY;
-export type MutationKey = ObjectKey[keyof ObjectKey][keyof ObjectKey[keyof ObjectKey]];
+export type MutationKey = ExtractString<typeof MUTATION_KEY>;

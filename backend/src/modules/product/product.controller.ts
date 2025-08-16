@@ -15,7 +15,7 @@ import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
 @Roles('Admin')
 @Controller('products')
 export class ProductController {
-  constructor(private productService: ProductService) {}
+  constructor(private readonly productService: ProductService) {}
 
   @Get()
   async get(): Promise<TResponse<ProductDto[]>> {
@@ -28,7 +28,6 @@ export class ProductController {
 
   @Get('/search')
   async search(@Query() query: QueryProductDto): Promise<TResponse<{ data: ProductDto[]; meta: MetaResponse }>> {
-    console.log(query);
     const products = await this.productService.find(query);
     return {
       statusCode: HttpStatus.OK,

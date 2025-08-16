@@ -7,9 +7,9 @@ import { MUTATION_KEY } from '~/common/const/mutationkey';
 import { deleteProduct } from '~/api/product/api';
 import { QUERY_KEY } from '~/common/const/querykey';
 
-import type { TAxiosResponse } from '~/common/types/response';
+import type { TAxiosResponse, TResponse } from '~/common/types/response';
 
-export const useDeleteProduct = (): UseMutationResult<TAxiosResponse<boolean>, unknown, { id: string }, unknown> => {
+export const useDeleteProduct = (): UseMutationResult<TAxiosResponse<boolean>, TResponse, { id: string }, unknown> => {
   return useMutation({
     mutationKey: [MUTATION_KEY.PRODUCT.DELETE],
     mutationFn: async (payload) => await deleteProduct(payload),
@@ -24,7 +24,7 @@ export const useDeleteProduct = (): UseMutationResult<TAxiosResponse<boolean>, u
       notifications.show({
         color: 'red',
         title: 'Failed to delete product',
-        message: (error as Error).message,
+        message: error.message,
       });
     },
   });

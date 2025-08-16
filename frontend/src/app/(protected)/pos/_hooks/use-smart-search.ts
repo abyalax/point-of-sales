@@ -34,7 +34,7 @@ export const useSmartSearch = (query: { search: string }, cachedProducts: IProdu
 
   // 3. Combine results
   const combinedResults = useMemo(() => {
-    const serverResults = serverSearchQuery.data?.data?.data || [];
+    const serverResults = serverSearchQuery.data || [];
 
     if (fuzzyResults.length >= 5) return fuzzyResults;
 
@@ -50,7 +50,7 @@ export const useSmartSearch = (query: { search: string }, cachedProducts: IProdu
     isFetching: serverSearchQuery.isFetching,
     error: serverSearchQuery.error,
     fuzzyCount: fuzzyResults.length,
-    serverCount: serverSearchQuery.data?.data?.data?.length || 0,
+    serverCount: serverSearchQuery.data?.length || 0,
     source: fuzzyResults.length > 0 ? 'hybrid' : 'server',
   };
 };

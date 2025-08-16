@@ -12,18 +12,19 @@ export const axiosRequest: AxiosRequestConfig = {
 export const api = axios.create(axiosRequest);
 
 api.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config;
+    const response = error.response.data;
 
     const isRefreshing = originalRequest.url.includes('/auth/refresh');
-    if (isRefreshing) return Promise.reject(error);
+    if (isRefreshing) return Promise.reject(response);
 
-    if (error?.response?.data?.message === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
+    if (response?.message === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
       originalRequest._retry = true;
       api
         .post('/auth/refresh')
-        .then(res => {
+        .then((res) => {
           if (res.data.statusCode === 200) {
             return api(originalRequest);
           } else {
@@ -33,7 +34,7 @@ api.interceptors.response.use(
         .catch(() => {
           window.location.href = '/auth/login';
         });
-    } else if (error?.response?.data?.message === EMessage.TOKEN_NOT_FOUND) {
+    } else if (response?.message === EMessage.TOKEN_NOT_FOUND) {
       window.location.href = '/auth/login';
     }
 
@@ -43,7 +44,8 @@ api.interceptors.response.use(
         title: 'Network Error',
         message: 'Please check your internet connection and try again.',
       });
-      return Promise.reject(error);
+      return Promise.reject(response);
     }
-  }
+    return Promise.reject(response);
+  },
 );

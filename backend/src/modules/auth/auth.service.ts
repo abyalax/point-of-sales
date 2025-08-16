@@ -28,10 +28,10 @@ export class AuthService {
 
   async signIn(email: string, password: string): Promise<{ access_token: string; refresh_token: string; user: UserDto }> {
     const isUserExist = await this.userService.findByEmail(email);
-    if (isUserExist === null) throw new NotFoundException();
+    if (isUserExist === null) throw new NotFoundException('Email Not Found');
 
     const comparePassword = await bcrypt.compare(password, isUserExist.password);
-    if (!comparePassword) throw new UnauthorizedException();
+    if (!comparePassword) throw new UnauthorizedException('Invalid Password');
 
     const permissions = await this.userService.getFlattenPermissions(isUserExist.id);
     const userDTO = plainToInstance(UserDto, isUserExist, {

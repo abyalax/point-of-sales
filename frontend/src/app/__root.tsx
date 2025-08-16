@@ -32,6 +32,7 @@ import '@mantine/core/styles/Burger.css';
 import '@mantine/core/styles/Avatar.css';
 import '@mantine/core/styles/NavLink.css';
 import '@mantine/core/styles/Affix.css';
+import { Notifications } from '@mantine/notifications';
 
 interface RouterContext {
   session: ISession;
@@ -46,6 +47,7 @@ function RootRouteComponent() {
   const [scroll, scrollTo] = useWindowScroll();
   return (
     <SessionProvider>
+      <Notifications position="top-center" />
       <Outlet />
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>

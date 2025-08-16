@@ -4,7 +4,6 @@ import { User } from '~/modules/user/entity/user.entity';
 export const mockUser = async (): Promise<User[]> => {
   const plaintextPassword = 'password';
   const passwordHashed = await bcrypt.hash(plaintextPassword, 10);
-  const now = new Date();
 
   const admin: User = {
     id: 1,
@@ -13,8 +12,6 @@ export const mockUser = async (): Promise<User[]> => {
     password: passwordHashed,
     roles: [],
     transactions: [],
-    created_at: now,
-    updated_at: now,
   };
   const editor: User = {
     id: 2,
@@ -23,8 +20,6 @@ export const mockUser = async (): Promise<User[]> => {
     password: passwordHashed,
     roles: [],
     transactions: [],
-    created_at: now,
-    updated_at: now,
   };
   const viewer1: User = {
     id: 3,
@@ -33,8 +28,6 @@ export const mockUser = async (): Promise<User[]> => {
     password: passwordHashed,
     roles: [],
     transactions: [],
-    created_at: now,
-    updated_at: now,
   };
   const viewer2: User = {
     id: 4,
@@ -43,8 +36,6 @@ export const mockUser = async (): Promise<User[]> => {
     password: passwordHashed,
     roles: [],
     transactions: [],
-    created_at: now,
-    updated_at: now,
   };
 
   return [admin, editor, viewer1, viewer2];

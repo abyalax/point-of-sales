@@ -6,11 +6,11 @@ import { FaFilter } from 'react-icons/fa';
 import { EProductStatus, queryProductsSchema } from '~/api/product/type';
 import { Table } from '~/components/fragments/table/index';
 import { DEFAULT } from '~/common/const/default';
-import { useDebouncedCallback } from '@mantine/hooks';
 
 import { useGetProductCategories } from './_hooks/use-get-categories';
 import { useFilterProducts } from './_hooks/use-filter-products';
 import { useColumn, type TProductColumn } from './_hooks/use-column';
+import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
 
 export const Route = createFileRoute('/(protected)/products/')({
   component: RouteComponent,
@@ -18,14 +18,14 @@ export const Route = createFileRoute('/(protected)/products/')({
 });
 
 function RouteComponent() {
-  const defaultVisible: TProductColumn[] = ['name', 'price', 'status', 'category', 'select', 'stock'];
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const defaultVisible: TProductColumn[] = ['name', 'price', 'status', 'category', 'select', 'stock'];
+  const { columns, columnIds, initialColumnVisibility } = useColumn({ defaultVisible });
   const { data: dataProducts, isLoading: isLoadingProducts } = useFilterProducts(search);
   const { data: dataCategories, isLoading } = useGetProductCategories();
-  const { columns, columnIds, initialColumnVisibility } = useColumn({ defaultVisible });
 
-  const categories = dataCategories?.data?.data?.map((e) => {
+  const categories = dataCategories?.map((e) => {
     return {
       label: e.name,
       value: e.id.toString(),

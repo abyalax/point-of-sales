@@ -96,14 +96,14 @@ export const useColumn = ({ defaultVisible }: Params) => {
         cell: (info) => {
           return (
             <Flex gap="xs" w={'fit-content'}>
-              <Link to="/products/$id/update" params={{ id: info.row.original.id }} onClick={(e) => e.stopPropagation()}>
+              <Link to="/products/$id/update" params={{ id: info.row.original.id.toString() }} onClick={(e) => e.stopPropagation()}>
                 <FaPencilAlt color={colors.black} />
               </Link>
               <FaTrash
                 color={'red'}
                 onClick={(e) => {
                   e.stopPropagation();
-                  mutateDeleteProduct({ id: info.row.original.id });
+                  mutateDeleteProduct({ id: info.row.original.id.toString() });
                 }}
               />
             </Flex>
@@ -111,7 +111,7 @@ export const useColumn = ({ defaultVisible }: Params) => {
         },
       }),
     ],
-    [mutateDeleteProduct]
+    [mutateDeleteProduct],
   );
 
   const columnIds = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -122,7 +122,7 @@ export const useColumn = ({ defaultVisible }: Params) => {
         acc[val as TProductColumn] = defaultVisible.includes(val as TProductColumn);
         return acc;
       },
-      {} as Record<TProductColumn, boolean>
+      {} as Record<TProductColumn, boolean>,
     );
   }, [columnIds, defaultVisible]);
 

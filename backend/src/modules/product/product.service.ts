@@ -16,10 +16,10 @@ import { mapProductRows, RowProducts } from '~/modules/product/product.map';
 export class ProductService {
   constructor(
     @Inject(REPOSITORY.PRODUCT)
-    private productRepository: Repository<Product>,
+    private readonly productRepository: Repository<Product>,
 
     @Inject(REPOSITORY.CATEGORY)
-    private categoryRepository: Repository<Category>,
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async getAll(): Promise<ProductDto[]> {

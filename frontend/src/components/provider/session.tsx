@@ -20,9 +20,10 @@ const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        const response = error.response.data;
         console.log('error: ', error);
 
-        if (error?.response?.data?.error === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
+        if (response.error === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
             setStatus('authenticating');
@@ -30,21 +31,20 @@ const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             await api.post('/auth/refresh');
             // After refreshing token, retry the original request
             return api(originalRequest);
-          } catch (refreshErr) {
+          } catch (error) {
             // Refresh failed → force logout
-            console.log('Refresh token failed...');
+            console.log('Refresh token failed...', error);
             navigate({ to: '/auth/login' });
-            return Promise.reject(refreshErr);
+            return Promise.reject(response);
           }
-        } else if (error?.response?.data?.statusCode === 403) {
+        } else if (response.statusCode === 403) {
           console.log('Access denied...', error.response.data);
-
           setStatus('unauthenticated');
           navigate({ to: '/auth/login' });
         }
 
-        return Promise.reject(error);
-      }
+        return Promise.reject(response);
+      },
     );
 
     return () => api.interceptors.response.eject(interceptor);

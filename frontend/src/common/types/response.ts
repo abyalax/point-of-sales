@@ -17,7 +17,7 @@ export enum EMessage {
   INTERNAL_SERVER_ERROR = 'Internal Server Error',
 }
 
-export type TResponse<T> = {
+export type TResponse<T = unknown> = {
   statusCode: number;
   message?: string;
   error?: string;

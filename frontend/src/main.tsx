@@ -4,7 +4,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { MantineProvider, DEFAULT_THEME, mergeMantineTheme } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
 
 import '@mantine/core/styles.layer.css';
 import '@mantine/core/styles/baseline.css';
@@ -23,8 +22,9 @@ import { NotFoundPage } from './components/ui/fallback/notfound';
 import { useSessionStore } from './stores/use-session';
 import { queryClient } from './lib/reactquery';
 
-import type { QueryKey } from './common/const/querykey';
 import { theme as themeOveride } from './components/themes';
+import type { QueryKey } from './common/const/querykey';
+import type { MutationKey } from './common/const/mutationkey';
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -35,7 +35,7 @@ declare module '@tanstack/react-router' {
 declare module '@tanstack/react-query' {
   interface Register {
     mutationMeta: {
-      invalidateQueries: QueryKey[];
+      invalidateQueries: (QueryKey | MutationKey)[];
     };
   }
 }
@@ -64,11 +64,10 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <MantineProvider theme={theme}>
-          <Notifications />
           <RouterProvider router={router} />
         </MantineProvider>
         <ReactQueryDevtools position="bottom" />
       </QueryClientProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 }

@@ -26,7 +26,6 @@ export const useColumn = () => {
         header: 'Actions',
         cell: ({ row }) => {
           const product = row.original;
-          console.log('row product: ', product);
           return (
             <Button
               size="xs"

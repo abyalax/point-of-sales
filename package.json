@@ -1,5 +1,4 @@
 {
-  "name": "boilerplate",
   "version": "0.0.1",
   "description": "",
   "author": "abya",
@@ -12,11 +11,15 @@
     "prettier": "^3.6.2"
   },
   "scripts": {
+    "dev": "concurrently --kill-others pnpm:dev:frontend pnpm:dev:backend",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
     "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }

@@ -1,7 +1,9 @@
 import { Container, Title, Text, Button, Group } from '@mantine/core';
+import { useNavigate } from '@tanstack/react-router';
 import { FaArrowLeft } from 'react-icons/fa';
 
 export const ForbiddenPage = () => {
+  const navigate = useNavigate();
   return (
     <Container size="md" py={80} style={{ textAlign: 'center' }}>
       <Title order={1} size="h1" fw={900} mb="md">
@@ -11,6 +13,10 @@ export const ForbiddenPage = () => {
         You do not have permission to access this page.
       </Text>
       <Group justify="center" gap="md">
+        <Button onClick={() => navigate({ to: '/auth/login' })} size="md" variant="default" leftSection={<FaArrowLeft size={16} />}>
+          Login
+        </Button>
+
         <Button onClick={() => window.history.back()} size="md" variant="light" leftSection={<FaArrowLeft size={16} />}>
           Go Back
         </Button>

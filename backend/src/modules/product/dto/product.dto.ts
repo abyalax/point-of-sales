@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { EProductStatus } from '../product.interface';
 import { CategoryDto } from './category-product.dto';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 
 export class ProductDto {
   @Expose()
@@ -45,8 +45,10 @@ export class ProductDto {
   stock: number;
 
   @Expose()
+  @IsDate()
   created_at?: Date;
 
   @Expose()
+  @IsDate()
   updated_at?: Date;
 }

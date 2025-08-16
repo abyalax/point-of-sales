@@ -1,12 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import { searchProducts } from '~/api/product/api';
-import { QUERY_KEY } from '~/common/const/querykey';
+import type { UseQueryOptions, QueryKey } from '@tanstack/react-query';
+import type { TAxiosResponse, TResponse } from '~/common/types/response';
+import type { IProduct } from '~/api/product/type';
 
-export const querySearchProducts = (query: { search: string }) => ({
-  queryKey: [QUERY_KEY.PRODUCT.GET_SEARCH, query],
+import { QUERY_KEY } from '~/common/const/querykey';
+import { searchProducts } from '~/api/product/api';
+import { useQuery } from '@tanstack/react-query';
+
+export const querySearchProducts = (query: {
+  search: string;
+}): UseQueryOptions<TAxiosResponse<IProduct[]>, TResponse, IProduct[] | undefined, QueryKey> => ({
+  queryKey: [QUERY_KEY.PRODUCT.GET_SEARCH, query.search],
   queryFn: () => searchProducts(query),
-  staleTime: 30 * 1000,
-  cacheTime: 5 * 60 * 1000,
+  select: (res) => res.data.data,
+  staleTime: 5 * 1000,
 });
 
 export const useSearchProducts = (query: { search: string }) => {

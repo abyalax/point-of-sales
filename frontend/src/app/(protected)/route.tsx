@@ -28,7 +28,7 @@ const data = [
     icon: IconCashPlus,
     initiallyOpened: true,
     links: [
-      { label: 'Dashboard', link: '/' },
+      { label: 'Dashboard', link: '/dashboard' },
       { label: 'Point of Sales', link: '/pos' },
       { label: 'Histories', link: '/' },
     ],
@@ -202,9 +202,7 @@ function RouteComponent() {
                   </Menu.Target>
                   <Menu.Dropdown>
                     <Menu.Label>Application</Menu.Label>
-                    <Menu.Item onClick={() => console.log('Clicked')} leftSection={<AiFillSetting size={14} />}>
-                      Settings
-                    </Menu.Item>
+                    <Menu.Item leftSection={<AiFillSetting size={14} />}>Settings</Menu.Item>
                     <Menu.Item leftSection={<FaFacebookMessenger size={14} />}>Messages</Menu.Item>
                     <Menu.Item leftSection={<FaPhotoVideo size={14} />}>Gallery</Menu.Item>
 

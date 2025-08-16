@@ -1,15 +1,15 @@
 import z from 'zod';
-import type { MetaRequest } from '~/common/types/meta';
+import type { MetaRequest, MetaResponse } from '~/common/types/meta';
 
 export enum EProductStatus {
   AVAILABLE = 'AVAILABLE',
   UNAVAILABLE = 'UNAVAILABLE',
 }
 
-export type TPayloadProduct = Omit<IProduct, 'id' | 'category'> & { category: string; id?: string };
+export type TPayloadProduct = Omit<IProduct, 'id' | 'category'> & { category: string; id?: number };
 
 export interface IProduct {
-  id: string;
+  id: number;
   name: string;
   barcode: string;
   price: string;
@@ -31,7 +31,7 @@ export interface QueryProducts extends MetaRequest<IProduct> {
 }
 
 export interface ICategory {
-  id: string;
+  id: number;
   name: string;
   products?: IProduct[];
   created_at?: Date;
@@ -61,3 +61,8 @@ export const queryProductsSchema = z
   .catchall(z.any());
 
 export type QueryProductSchema = z.infer<typeof queryProductsSchema>;
+
+export type ProductPaginated = {
+  data: IProduct[];
+  meta: MetaResponse;
+};

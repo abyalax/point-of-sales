@@ -1,42 +1,31 @@
 import { Product } from '~/modules/product/entity/product.entity';
 import { EProductStatus } from '~/modules/product/product.interface';
 
-const now = new Date();
 export const mockCategories = [
   {
     id: 1,
     name: 'Clothing',
     products: [],
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 2,
     name: 'Food',
     products: [],
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 3,
     name: 'Drink',
     products: [],
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 4,
     name: 'Jewelery',
     products: [],
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 5,
     name: 'Hair Care',
     products: [],
-    created_at: now,
-    updated_at: now,
   },
 ];
 
@@ -55,8 +44,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 20,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 2,
@@ -70,8 +57,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 0,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 3,
@@ -85,8 +70,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 60,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 4,
@@ -100,8 +83,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 89,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 5,
@@ -115,8 +96,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 3,
     category: { id: 3 },
     stock: 120,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 6,
@@ -130,8 +109,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 35,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 7,
@@ -145,8 +122,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 90,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 8,
@@ -160,8 +135,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 50,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 9,
@@ -175,8 +148,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 3,
     category: { id: 3 },
     stock: 75,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 10,
@@ -190,8 +161,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 0,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 11,
@@ -205,8 +174,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 40,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 12,
@@ -220,8 +187,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 15,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 13,
@@ -235,8 +200,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 3,
     category: { id: 3 },
     stock: 100,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 14,
@@ -250,8 +213,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 4,
     category: { id: 4 },
     stock: 25,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 15,
@@ -265,8 +226,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 65,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 16,
@@ -280,8 +239,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 30,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 17,
@@ -295,8 +252,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 150,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 18,
@@ -310,8 +265,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 45,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 19,
@@ -325,8 +278,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 0,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 20,
@@ -340,8 +291,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 10,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 21,
@@ -355,8 +304,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 200,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 22,
@@ -370,8 +317,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 8,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 23,
@@ -385,8 +330,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 110,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 24,
@@ -400,8 +343,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 4,
     category: { id: 4 },
     stock: 5,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 25,
@@ -415,8 +356,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 3,
     category: { id: 3 },
     stock: 70,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 26,
@@ -430,8 +369,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 22,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 27,
@@ -445,8 +382,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 300,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 28,
@@ -460,8 +395,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 1,
     category: { id: 1 },
     stock: 40,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 29,
@@ -475,8 +408,6 @@ export const mockProducts: SeedProducts[] = [
     category_id: 2,
     category: { id: 2 },
     stock: 0,
-    created_at: now,
-    updated_at: now,
   },
   {
     id: 30,
@@ -490,7 +421,5 @@ export const mockProducts: SeedProducts[] = [
     category_id: 4,
     category: { id: 4 },
     stock: 18,
-    created_at: now,
-    updated_at: now,
   },
 ];

@@ -1,8 +1,7 @@
 import { api } from '~/lib/axios/api';
 
-import type { QueryProducts, IProduct, ICategory, TPayloadProduct } from './type';
+import type { QueryProducts, IProduct, ICategory, TPayloadProduct, ProductPaginated } from './type';
 import type { TAxiosResponse } from '~/common/types/response';
-import type { MetaResponse } from '~/common/types/meta';
 
 export const getProducts = async (): Promise<TAxiosResponse<IProduct[]>> => {
   return api.get('/products');
@@ -12,7 +11,7 @@ export const searchProducts = async (params: { search: string }): Promise<TAxios
   return api.get('/products/search/name', { params });
 };
 
-export const filterProducts = async (params: QueryProducts): Promise<TAxiosResponse<{ data: IProduct[]; meta: MetaResponse }>> => {
+export const filterProducts = async (params: QueryProducts): Promise<TAxiosResponse<ProductPaginated>> => {
   return api.get('/products/search', { params });
 };
 

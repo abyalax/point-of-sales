@@ -1,5 +1,4 @@
-//* It Does Not Support Path Alias Shorthand */
-import { Permission } from '../../../modules/auth/entity/permission.entity';
+import { Permission } from '~/modules/auth/entity/permission.entity';
 
 export const mockPermissions: Permission[] = [
   { id: 1, key: 'product:create', name: 'Create Product', roles: [] },

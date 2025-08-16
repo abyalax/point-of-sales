@@ -6,7 +6,7 @@ export enum EPaymentMethod {
 }
 
 export interface ICartItem {
-  id: string;
+  id: number;
   barcode: string;
   name: string;
   category: string;
@@ -19,7 +19,7 @@ export interface ICartItem {
 
 export interface ICartState {
   items: ICartItem[];
-  subtotal: string;
+  sub_total: string;
   total: string;
   total_item: number;
   total_discount: string;

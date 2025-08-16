@@ -1,5 +1,5 @@
 {
-  "name": "boilerplate-v1",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -56,5 +56,6 @@
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^5.1.4"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }

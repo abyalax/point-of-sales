@@ -2,7 +2,6 @@ import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel
 import { Transition, Text, Select, UnstyledButton, Tooltip, SegmentedControl, HoverCard, Menu, Fieldset, Container } from '@mantine/core';
 import { Autocomplete, Button, Flex, Group, Pagination, Pill, Table as TableMantine } from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useDebouncedCallback } from '@mantine/hooks';
 
 import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@tanstack/react-table';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -16,14 +15,14 @@ import { ColumnVisibilitySelector } from '~/components/fragments/table/_ui/colum
 import { createFuzzyFilter } from '~/utils/table';
 import { useTableState } from '../_hooks/use-table-state';
 
-import type { MetaResponse } from '~/common/types/meta';
-import type { TAxiosResponse } from '~/common/types/response';
 import type { FileRouteTypes } from '~/routeTree.gen';
 import type { EngineSide } from '../_hooks/use-table-state';
+import type { MetaResponse } from '~/common/types/meta';
 
 import '@mantine/core/styles/Pagination.css';
 import '@mantine/core/styles/Table.css';
 import { getColors } from '~/components/themes';
+import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
 
 export type TableProps<T> = {
   route: AnyRoute;
@@ -34,10 +33,7 @@ export type TableProps<T> = {
   columnIds: (string | undefined)[];
   virtualizeAt?: number;
   initialColumnVisibility: Record<string, boolean>;
-  data?: TAxiosResponse<{
-    data: T[];
-    meta: MetaResponse;
-  }>;
+  data?: { data: T[]; meta: MetaResponse };
   path: {
     detail: FileRouteTypes['to'];
     create: FileRouteTypes['to'];
@@ -56,7 +52,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
   const isClientControl = engine === 'client_side';
   const isServerControl = engine === 'server_side';
 
-  const options: T[] | { name: string }[] = props.data?.data?.data?.data || [{ name: 'No Data' }];
+  const options: T[] | { name: string }[] = props.data?.data || [{ name: 'No Data' }];
 
   const pageIndex = isServerControl ? (search.page ?? 1) - 1 : pagination.pageIndex;
   const pageSize = isServerControl ? (search.per_page ?? 10) : pagination.pageSize;
@@ -120,7 +116,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
 
   const table = useReactTable<T>({
     /**Common */
-    data: props.data?.data.data?.data || [],
+    data: props.data?.data || [],
     columns: props.columns,
     debugTable: true,
     enableRowSelection: true,
@@ -146,7 +142,7 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
     manualPagination: isServerControl,
     manualSorting: isServerControl,
     manualFiltering: isServerControl,
-    pageCount: isServerControl ? props.data?.data.data?.meta.total_pages : undefined,
+    pageCount: isServerControl ? props.data?.meta.total_pages : undefined,
     onPaginationChange: isServerControl ? onPaginationChange : setPagination,
 
     /**State */
@@ -334,8 +330,6 @@ export const TableComponent = <T,>({ debounceSearch = 500, virtualizeAt = 1000, 
                 ? virtualizer.getVirtualItems().map((virtualRow, index) => {
                     const rows = table.getRowModel().rows;
                     const row = rows[virtualRow.index];
-                    console.log('virtualizer active');
-
                     return (
                       <TableMantine.Tr
                         onClick={() => navigate({ to: props.path.detail, params: { id: row.id } })}

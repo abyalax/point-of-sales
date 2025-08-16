@@ -24,32 +24,15 @@ export const Route = createFileRoute('/(protected)/pos/')({
 });
 
 function RouteComponent() {
+  const search = Route.useSearch();
+  const { data: dataProducts, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({ ...search });
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = Route.useNavigate();
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const search = Route.useSearch();
-
-  const { data: dataProducts, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts({ ...search });
 
   const { data } = usePOSSearch(searchQuery);
   const addItem = useCartStore((s) => s.addItem);
   const items = useCartState((s) => s.items);
-  const pay_received = useCartState((s) => s.pay_received);
-  const pay_return = useCartState((s) => s.pay_return);
-  const subtotal = useCartState((s) => s.subtotal);
-  const tax = useCartState((s) => s.tax);
-  const total = useCartState((s) => s.total);
-  const total_discount = useCartState((s) => s.total_discount);
-
-  console.log({
-    items,
-    subtotal,
-    pay_received,
-    pay_return,
-    tax,
-    total,
-    total_discount,
-  });
 
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -57,12 +40,8 @@ function RouteComponent() {
     }
   };
 
-  const products: IProduct[] = useMemo(() => {
-    const result =
-      (dataProducts?.pages?.flatMap((page) => {
-        return page?.data?.filter((e) => e !== undefined);
-      }) as IProduct[]) ?? [];
-    return result;
+  const products = useMemo<IProduct[]>(() => {
+    return dataProducts?.pages?.flatMap((page) => (page?.data ?? []).filter((e): e is IProduct => e !== undefined)) ?? [];
   }, [dataProducts?.pages]);
 
   return (

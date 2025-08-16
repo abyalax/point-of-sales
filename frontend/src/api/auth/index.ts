@@ -13,8 +13,8 @@ export const postLogin = async (payload: TLoginParams): Promise<TAxiosResponse<I
 export const refreshTokens = async (refreshToken: string): Promise<TResponse<{ access_token: string }>> => {
   return await api
     .post('/auth/refresh', { refreshToken })
-    .then(res => res.data)
-    .catch(err => err);
+    .then((res) => res.data)
+    .catch((err) => err);
 };
 
 export const getPermission = async (): Promise<IUser> => {
