@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { EProductStatus } from '../product.interface';
-import { Category } from './category.entity';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import type { Inventory } from '~/modules/inventories/entities/inventory.entity';
+import { EProductStatus } from '../product.schema';
+import type { Category } from './category.entity';
 
 @Entity({ name: 'products' })
 @Index(['name'], { fulltext: true })
@@ -35,13 +36,16 @@ export class Product {
   @Column({ nullable: true })
   category_id: number;
 
-  @ManyToOne(() => Category, (category) => category.products, { onDelete: 'RESTRICT', onUpdate: 'CASCADE', eager: true })
+  @ManyToOne('Category', 'products', { onDelete: 'RESTRICT', onUpdate: 'CASCADE', eager: true })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
+  @OneToMany('Inventory', 'product')
+  inventories?: Inventory[];
+
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  created_at?: Date;
+  created_at?: string;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  updated_at?: Date;
+  updated_at?: string;
 }

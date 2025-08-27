@@ -6,14 +6,13 @@ import { FaPencilAlt, FaTrash } from 'react-icons/fa';
 import { useMemo } from 'react';
 
 import { formatCurrency } from '~/utils/format';
-import { EProductStatus } from '~/api/product/type';
 import { colors } from '~/components/themes';
 
-import type { IProduct } from '~/api/product/type';
+import type { Product } from '~/modules/product/product.schema';
 import { useDeleteProduct } from './use-delete-products';
 
-const columnHelper = createColumnHelper<IProduct>();
-export type TProductColumn = keyof IProduct | 'select';
+const columnHelper = createColumnHelper<Product>();
+export type TProductColumn = keyof Product | 'select';
 
 type Params = {
   defaultVisible: TProductColumn[];
@@ -88,7 +87,6 @@ export const useColumn = ({ defaultVisible }: Params) => {
         id: 'status',
         header: 'Status',
         sortingFn: 'basic',
-        cell: (info) => (info.getValue() === EProductStatus.AVAILABLE ? 'Available' : 'Unavailable'),
       }),
       columnHelper.accessor('status', {
         id: 'action',

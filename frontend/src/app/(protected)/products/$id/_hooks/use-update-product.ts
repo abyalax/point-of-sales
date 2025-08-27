@@ -3,11 +3,11 @@ import { notifications } from '@mantine/notifications';
 
 import { MUTATION_KEY } from '~/common/const/mutationkey';
 import type { TAxiosResponse, TResponse } from '~/common/types/response';
-import type { IProduct, TPayloadProduct } from '~/api/product/type';
-import { updateProduct } from '~/api/product/api';
+import type { Product, TPayloadProduct } from '~/modules/product/product.schema';
+import { updateProduct } from '~/modules/product/product.api';
 import { QUERY_KEY } from '~/common/const/querykey';
 
-export const useUpdateProduct = (): UseMutationResult<TAxiosResponse<IProduct>, TResponse, TPayloadProduct, unknown> => {
+export const useUpdateProduct = (): UseMutationResult<TAxiosResponse<Product>, TResponse, TPayloadProduct, unknown> => {
   return useMutation({
     mutationKey: [MUTATION_KEY.PRODUCT.UPDATE],
     mutationFn: async (payload) => await updateProduct(payload),

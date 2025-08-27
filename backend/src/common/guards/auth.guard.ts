@@ -22,6 +22,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException(EMessage.TOKEN_INVALID);
       }
     } catch (_e) {
+      console.log('AuthGuard: ', _e);
       throw new UnauthorizedException(EMessage.TOKEN_EXPIRED);
     }
   }

@@ -1,16 +1,23 @@
+import { Chart, CategoryScale, ArcElement, LinearScale, PointElement, Filler, Tooltip, Legend } from 'chart.js';
+import { LineController, LineElement, PieController, BarController, BarElement } from 'chart.js';
+import { MantineProvider, DEFAULT_THEME, mergeMantineTheme } from '@mantine/core';
+import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
 import { StrictMode } from 'react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { MantineProvider, DEFAULT_THEME, mergeMantineTheme } from '@mantine/core';
 
+import '@mantine/core/styles.css';
 import '@mantine/core/styles.layer.css';
-import '@mantine/core/styles/baseline.css';
+
 import '@mantine/core/styles/global.css';
+import '@mantine/core/styles/global.layer.css';
+
+import '@mantine/dates/styles.css';
+
 import '@mantine/notifications/styles.layer.css';
 import '@mantine/notifications/styles.css';
-import '@mantine/core/styles/Notification.css';
 
 import '~/lib/axios/api';
 import './index.css';
@@ -25,6 +32,7 @@ import { queryClient } from './lib/reactquery';
 import { theme as themeOveride } from './components/themes';
 import type { QueryKey } from './common/const/querykey';
 import type { MutationKey } from './common/const/mutationkey';
+import SessionProvider from './components/provider/session';
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -40,9 +48,26 @@ declare module '@tanstack/react-query' {
   }
 }
 
+Chart.register([
+  CategoryScale,
+  LinearScale,
+  PieController,
+  LineController,
+  BarController,
+  MatrixController,
+  MatrixElement,
+  ArcElement,
+  LineElement,
+  PointElement,
+  BarElement,
+  Filler,
+  Tooltip,
+  Legend,
+]);
+
 const session = useSessionStore.getState().session;
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   defaultPendingComponent: LoadingPage,
   defaultNotFoundComponent: NotFoundPage,
@@ -62,12 +87,14 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <MantineProvider theme={theme}>
-          <RouterProvider router={router} />
-        </MantineProvider>
-        <ReactQueryDevtools position="bottom" />
-      </QueryClientProvider>
+      <SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          <MantineProvider theme={theme}>
+            <RouterProvider router={router} />
+          </MantineProvider>
+          <ReactQueryDevtools position="bottom" />
+        </QueryClientProvider>
+      </SessionProvider>
     </StrictMode>,
   );
 }

@@ -1,10 +1,8 @@
-import { TransactionItem } from './entities/transaction-item.entity';
-import { Transaction } from './entities/transaction.entity';
-import type { ICartState, ItemSummary, ITransactionState } from './transaction.interface';
-import { EStatusTransactions } from './transaction.interface';
+import { CartState, CartStateSchema, EStatusTransactions, ItemSummary, OmitTransaction, OmitTransactionItem } from './transaction.schema';
 import Big from 'big.js';
 
-export function calculateTransaction(cartState: ICartState): ITransactionState & Partial<Transaction> {
+export function calculateTransaction(cartState: CartState): OmitTransaction {
+  CartStateSchema.parse(cartState);
   const items = cartState.items;
 
   let sub_total_transaction = new Big('0');
@@ -53,7 +51,7 @@ export function calculateTransaction(cartState: ICartState): ITransactionState &
     });
   }
 
-  const item_transaction: TransactionItem[] = items.map((item, i) => {
+  const item_transaction: OmitTransactionItem[] = items.map((item, i) => {
     const price = new Big(item.price);
     const discount = new Big(item.discount);
     const tax_rate = new Big(item.tax_rate);
@@ -62,7 +60,6 @@ export function calculateTransaction(cartState: ICartState): ITransactionState &
     const final_price = sell_price.plus(sell_price.times(tax_rate)); // harga akhir + pajak
 
     return {
-      id: item.id,
       name: item.name,
       category: item.category,
       barcode: item.barcode,
@@ -78,7 +75,7 @@ export function calculateTransaction(cartState: ICartState): ITransactionState &
   });
 
   return {
-    status: EStatusTransactions.Pending,
+    status: EStatusTransactions.Completed,
     items: item_transaction,
     sub_total: sub_total_transaction.toString(),
     total_discount: total_discount_transaction.toString(),

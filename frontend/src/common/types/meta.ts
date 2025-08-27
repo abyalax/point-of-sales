@@ -1,4 +1,6 @@
-import type { EngineSide } from '~/components/fragments/table/_hooks/use-table-state';
+import type { EngineSide } from '~/components/fragments/table';
+
+export type SortOrder = 'ASC' | 'DESC';
 
 interface Pagination {
   page?: number;
@@ -6,7 +8,7 @@ interface Pagination {
 }
 interface Sorting<E> {
   sort_by?: keyof E | undefined;
-  sort_order?: 'ASC' | 'DESC';
+  sort_order?: SortOrder;
 }
 interface GlobalFilter {
   search?: string;

@@ -13,6 +13,14 @@ export default tseslint.config([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        tsconfigRootDir: './',
+        ecmaVersion: 2020,
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
+    basePath: './src',
   },
 ]);

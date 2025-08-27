@@ -1,7 +1,7 @@
-import { Expose, Type } from 'class-transformer';
-import { EProductStatus } from '../product.interface';
+import { IsDateString, IsEnum, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { CategoryDto } from './category-product.dto';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { EProductStatus } from '../product.schema';
+import { Expose, Type } from 'class-transformer';
 
 export class ProductDto {
   @Expose()
@@ -17,19 +17,19 @@ export class ProductDto {
   barcode: string;
 
   @Expose()
-  @IsNumber()
+  @IsNumberString()
   price: string;
 
   @Expose()
-  @IsNumber()
+  @IsNumberString()
   cost_price: string;
 
   @Expose()
-  @IsNumber()
+  @IsNumberString()
   tax_rate: string;
 
   @Expose()
-  @IsNumber()
+  @IsNumberString()
   discount: string;
 
   @Expose()
@@ -45,10 +45,10 @@ export class ProductDto {
   stock: number;
 
   @Expose()
-  @IsDate()
-  created_at?: Date;
+  @IsDateString()
+  created_at?: string;
 
   @Expose()
-  @IsDate()
-  updated_at?: Date;
+  @IsDateString()
+  updated_at?: string;
 }

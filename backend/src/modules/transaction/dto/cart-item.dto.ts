@@ -1,12 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, IsNumberString, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 @Exclude()
 export class CartItemDto {
-  @Expose()
-  @IsNumber()
-  id: number;
-
   @Expose()
   @IsString()
   barcode: string;
@@ -20,19 +16,19 @@ export class CartItemDto {
   category: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   price: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   cost_price: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   tax_rate: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   discount: string;
 
   @Expose()

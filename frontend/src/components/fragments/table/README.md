@@ -68,7 +68,7 @@ Lihat contoh `queryProductsSchema` dan type query search disini
 import useGetProducts from './_hooks/use-get-products';
 import { useColumn } from './_hooks/use-column';
 import { Table } from '~/components/fragments/table';
-import type { IProduct } from '~/api/product/type';
+import type { Product } from '~/api/product/type';
 
 function RouteComponent() {
   const search = Route.useSearch();
@@ -76,7 +76,7 @@ function RouteComponent() {
   const { columns, columnIds, initialColumnVisibility } = useColumn();
 
   return (
-    <Table<IProduct>
+    <Table<Product>
       data={data}
       columns={columns}
       columnIds={columnIds}
@@ -101,9 +101,9 @@ function RouteComponent() {
 import { createColumnHelper } from "@tanstack/react-table";
 import { Checkbox } from "@mantine/core";
 import { formatCurrency } from "~/utils/format";
-import { EProductStatus, type IProduct } from "~/api/product/type";
+import { EProductStatus, type Product } from "~/api/product/type";
 
-const columnHelper = createColumnHelper<IProduct>();
+const columnHelper = createColumnHelper<Product>();
 
 export const useColumn = () => {
   const columns = useMemo(() => [
@@ -148,7 +148,7 @@ export const useColumn = () => {
 
   const initialColumnVisibility = useMemo(() => {
     return columnIds.reduce((acc, val) => {
-      acc[val as keyof IProduct | "select"] = defaultVisible.includes(val);
+      acc[val as keyof Product | "select"] = defaultVisible.includes(val);
       return acc;
     }, {} as Record<string, boolean>);
   }, [columnIds]);
@@ -157,7 +157,7 @@ export const useColumn = () => {
 };
 ```
 
-- Note `defaultVisible` adalah properti entity yang di pakai misalkan disini `IProduct`
+- Note `defaultVisible` adalah properti entity yang di pakai misalkan disini `Product`
 
 ---
 

@@ -13,3 +13,14 @@ export function toTitleCase(str: string) {
 }
 
 export type ExtractString<T> = T extends object ? { [K in keyof T]: ExtractString<T[K]> }[keyof T] : T;
+
+export function generateYearRange(range: number = 5): string[] {
+  const currentYear = new Date().getFullYear();
+  const startYear = currentYear - range;
+
+  const years: string[] = [];
+  for (let y = startYear; y <= currentYear; y++) {
+    years.push(y.toString());
+  }
+  return years;
+}

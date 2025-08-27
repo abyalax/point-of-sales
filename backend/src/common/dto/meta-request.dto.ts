@@ -1,19 +1,19 @@
 import { IsOptional, IsNumber, IsString, IsEnum } from 'class-validator';
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { EngineSide } from '../types/meta';
 
 @Exclude()
 export class MetaRequestDto {
   @Expose()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => parseInt(value))
   @IsNumber()
+  @Type(() => Number)
   page?: number;
 
   @Expose()
   @IsOptional()
-  @Transform(({ value }: { value: string }) => parseInt(value))
   @IsNumber()
+  @Type(() => Number)
   per_page?: number;
 
   @Expose()

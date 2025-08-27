@@ -6,43 +6,70 @@
   --color-snow-light: #f5f7fb;
   --color-snow-dark: #d3e2f7;
 
-  --mantine-color-darkblue-0: #f0f4f8;
-  --mantine-color-darkblue-1: #d9e6f2;
-  --mantine-color-darkblue-2: #b3d1e8;
-  --mantine-color-darkblue-3: #8bb8db;
-  --mantine-color-darkblue-4: #4a5a6c;
-  --mantine-color-darkblue-5: #3e4d5e;
-  --mantine-color-darkblue-6: #222e3c;
-  --mantine-color-darkblue-7: #263340;
-  --mantine-color-darkblue-8: #1a2630;
-  --mantine-color-darkblue-9: #0d1a20;
-
-  --mantine-color-dark-0: #f0f4f8;
-  --mantine-color-dark-1: #d9e6f2;
-  --mantine-color-dark-2: #b3d1e8;
-  --mantine-color-dark-3: #8bb8db;
-  --mantine-color-dark-4: #4a5a6c;
-  --mantine-color-dark-5: #3e4d5e;
-  --mantine-color-dark-6: #222e3c;
-  --mantine-color-dark-7: #263340;
+  --mantine-color-dark-0: #d4d4d4;
+  --mantine-color-dark-1: #485059;
+  --mantine-color-dark-2: #404040;
+  --mantine-color-dark-3: #21252b;
+  --mantine-color-dark-4: #212121;
+  --mantine-color-dark-5: #1b1b1b;
+  --mantine-color-dark-6: #111111;
+  --mantine-color-dark-7: #171717;
   --mantine-color-dark-8: #1a2630;
-  --mantine-color-dark-9: #0d1a20;
+  --mantine-color-dark-9: #0a0a0a;
 
   --mantine-color-gray-0: #f8f9fb;
   --mantine-color-gray-1: #f1f3f7;
   --mantine-color-gray-2: #e8ecf1;
   --mantine-color-gray-3: #dde2e8;
-  --mantine-color-gray-4: #cdd4dc;
+  --mantine-color-gray-4: #e5e5e5;
   --mantine-color-gray-5: #acb5c0;
   --mantine-color-gray-6: #5b636c;
   --mantine-color-gray-7: #485059;
   --mantine-color-gray-8: #343a42;
   --mantine-color-gray-9: #21252b;
+
+  --mantine-color-red-0: #fff5f5;
+  --mantine-color-red-1: #ffe3e3;
+  --mantine-color-red-2: #ffc9c9;
+  --mantine-color-red-3: #ffa8a8;
+  --mantine-color-red-4: #ff8787;
+  --mantine-color-red-5: #ff6b6b;
+  --mantine-color-red-6: #fa5252;
+  --mantine-color-red-7: #f03e3e;
+  --mantine-color-red-8: #e03131;
+  --mantine-color-red-9: #c92a2a;
+
+  --mantine-color-blue-0: #e7f5ff;
+  --mantine-color-blue-1: #d0ebff;
+  --mantine-color-blue-2: #a5d8ff;
+  --mantine-color-blue-3: #74c0fc;
+  --mantine-color-blue-4: #2b7fff;
+  --mantine-color-blue-5: #339af0;
+  --mantine-color-blue-6: #228be6;
+  --mantine-color-blue-7: #154aa3;
+  --mantine-color-blue-8: #0f3880;
+  --mantine-color-blue-9: #0a265c;
+
+  /* Overiding */
+  --mantine-primary-color-0: var(--mantine-color-blue-0);
+  --mantine-primary-color-1: var(--mantine-color-blue-1);
+  --mantine-primary-color-2: var(--mantine-color-blue-2);
+  --mantine-primary-color-3: var(--mantine-color-blue-3);
+  --mantine-primary-color-4: var(--mantine-color-blue-4);
+  --mantine-primary-color-5: var(--mantine-color-blue-5);
+  --mantine-primary-color-6: var(--mantine-color-blue-6);
+  --mantine-primary-color-7: var(--mantine-color-blue-7);
+  --mantine-primary-color-8: var(--mantine-color-blue-8);
+  --mantine-primary-color-9: var(--mantine-color-blue-9);
 }
 
 :root[data-mantine-color-scheme='dark'] {
   --mantine-color-scheme: dark;
-  --color-primary: var(--mantine-color-dark-6);
+
+  --mantine-color-white: #e5e5e5;
+  --mantine-color-black: #0a0a0a;
+
+  --color-primary: var(--mantine-color-dark-7);
   --color-secondary: var(--mantine-color-dark-9);
   --color-surface: var(--mantine-color-dark-4);
   --color-black: var(--mantine-color-white);
@@ -54,8 +81,8 @@
   --mantine-color-text: var(--mantine-color-dark-0);
   --mantine-color-body: var(--mantine-color-dark-7);
   --mantine-color-error: var(--mantine-color-red-8);
-  --mantine-color-placeholder: var(--mantine-color-dark-3);
-  --mantine-color-anchor: var(--mantine-color-blue-4);
+  --mantine-color-placeholder: var(--mantine-color-dark-1);
+  --mantine-color-anchor: var(--mantine-color-dark-4);
   --mantine-color-default: var(--mantine-color-dark-6);
   --mantine-color-default-hover: var(--mantine-color-dark-5);
   --mantine-color-default-color: var(--mantine-color-white);
@@ -172,26 +199,4 @@
   --mantine-radius-md: calc(0.5rem * var(--mantine-scale));
   --mantine-radius-lg: calc(1rem * var(--mantine-scale));
   --mantine-radius-xl: calc(2rem * var(--mantine-scale));
-
-  --mantine-color-red-0: #fff5f5;
-  --mantine-color-red-1: #ffe3e3;
-  --mantine-color-red-2: #ffc9c9;
-  --mantine-color-red-3: #ffa8a8;
-  --mantine-color-red-4: #ff8787;
-  --mantine-color-red-5: #ff6b6b;
-  --mantine-color-red-6: #fa5252;
-  --mantine-color-red-7: #f03e3e;
-  --mantine-color-red-8: #e03131;
-  --mantine-color-red-9: #c92a2a;
-
-  --mantine-color-blue-0: #e7f5ff;
-  --mantine-color-blue-1: #d0ebff;
-  --mantine-color-blue-2: #a5d8ff;
-  --mantine-color-blue-3: #74c0fc;
-  --mantine-color-blue-4: #4dabf7;
-  --mantine-color-blue-5: #339af0;
-  --mantine-color-blue-6: #228be6;
-  --mantine-color-blue-7: #1c7ed6;
-  --mantine-color-blue-8: #1971c2;
-  --mantine-color-blue-9: #1864ab;
 }

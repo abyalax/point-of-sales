@@ -3,8 +3,6 @@ import { Affix, Button, Transition } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { FaArrowUp } from 'react-icons/fa';
 
-import SessionProvider from '~/components/provider/session';
-
 import type { ISession } from '~/stores/use-session';
 import type { QueryClient } from '@tanstack/react-query';
 
@@ -33,6 +31,7 @@ import '@mantine/core/styles/Avatar.css';
 import '@mantine/core/styles/NavLink.css';
 import '@mantine/core/styles/Affix.css';
 import { Notifications } from '@mantine/notifications';
+import { Fragment } from 'react/jsx-runtime';
 
 interface RouterContext {
   session: ISession;
@@ -46,7 +45,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootRouteComponent() {
   const [scroll, scrollTo] = useWindowScroll();
   return (
-    <SessionProvider>
+    <Fragment>
       <Notifications position="top-center" />
       <Outlet />
       <Affix position={{ bottom: 20, right: 20 }}>
@@ -58,6 +57,6 @@ function RootRouteComponent() {
           )}
         </Transition>
       </Affix>
-    </SessionProvider>
+    </Fragment>
   );
 }

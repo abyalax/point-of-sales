@@ -29,9 +29,9 @@ export class UserDto {
 
   @Exclude()
   @IsDate()
-  created_at?: Date;
+  created_at?: string;
 
   @Exclude()
   @IsDate()
-  updated_at?: Date;
+  updated_at?: string;
 }

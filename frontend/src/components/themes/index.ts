@@ -14,4 +14,7 @@ export const colors = {
   white: 'var(--color-white)',
 };
 
-export const theme = createTheme({});
+export const theme = createTheme({
+  fontFamily: 'Inter, sans-serif',
+  headings: { fontFamily: 'Inter, sans-serif' },
+});

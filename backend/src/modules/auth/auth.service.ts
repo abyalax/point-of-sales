@@ -30,7 +30,7 @@ export class AuthService {
     const isUserExist = await this.userService.findByEmail(email);
     if (isUserExist === null) throw new NotFoundException('Email Not Found');
 
-    const comparePassword = await bcrypt.compare(password, isUserExist.password);
+    const comparePassword = await bcrypt.compare(password, isUserExist.password!);
     if (!comparePassword) throw new UnauthorizedException('Invalid Password');
 
     const permissions = await this.userService.getFlattenPermissions(isUserExist.id);
@@ -47,11 +47,11 @@ export class AuthService {
     };
     const payload = { email: isUserExist.email, sub: isUserExist.id };
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: 60 * 30, // 30 minutes
+      expiresIn: 60 * 60 * 24, // 24 hour
       secret: CREDENTIALS.JWT_SECRET,
     });
     const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: 60 * 60 * 24, // 24 hour
+      expiresIn: 60 * 60 * 24 * 30, // 24 hour * 30 days
       secret: CREDENTIALS.JWT_REFRESH_SECRET,
     });
     return {
@@ -68,11 +68,11 @@ export class AuthService {
     });
     if (!verifyToken) throw new UnauthorizedException();
     const payload = { email: verifyToken.email, sub: verifyToken.sub };
-    const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '2h',
-    });
     return {
-      access_token,
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: 60 * 60 * 24, // 24 hour,
+        secret: CREDENTIALS.JWT_SECRET,
+      }),
     };
   }
 

@@ -11,12 +11,12 @@ type TProps = PropsWithChildren<{
 }>;
 
 export const PermissionGate: FC<TProps> = (props): ReactNode => {
-  const status = useSessionStore(s => s.session.status);
-  const session = useSessionStore(s => s.session);
+  const status = useSessionStore((s) => s.session.status);
+  const session = useSessionStore((s) => s.session);
   const permissions = useMemo(() => session?.user?.permissions, [session?.user?.permissions]);
 
   const allowed = useMemo(() => {
-    return props.permissions.every(permission => permissions?.includes(permission));
+    return props.permissions.every((permission) => permissions?.includes(permission));
   }, [permissions, props.permissions]);
 
   if (status === 'authenticating') return <LoadingPage />;

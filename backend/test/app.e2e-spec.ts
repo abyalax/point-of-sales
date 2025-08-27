@@ -14,8 +14,8 @@ describe('AppController (e2e)', () => {
     [app, moduleFixture] = await setupApplication();
   });
 
-  it('GET: /', () => {
-    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
+  it('GET: /health', () => {
+    return request(app.getHttpServer()).get('/health').expect(200).expect('Hello World! Nest ready to serve!!');
   });
 
   afterAll(async () => {

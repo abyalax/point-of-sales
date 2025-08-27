@@ -1,10 +1,10 @@
+import { IconActivity, IconCashPlus, IconLock, IconNotes, IconPackage, IconSettingsAutomation, IconUser, type IconProps } from '@tabler/icons-react';
 import { Group, Menu, Text, useMantineColorScheme, Grid, SegmentedControl } from '@mantine/core';
-import { AppShell, Tabs, Burger, Button, Flex } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { IconActivity, IconCashPlus, IconLock, IconNotes, IconPackage, IconSettingsAutomation, IconUser } from '@tabler/icons-react';
-import { IconPresentationAnalytics } from '@tabler/icons-react';
-
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
+import { AppShell, Tabs, Burger, Button, Flex } from '@mantine/core';
+import { IconPresentationAnalytics } from '@tabler/icons-react';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+
 import { FaBox, FaFacebookMessenger, FaGalacticRepublic, FaSun, FaSync, FaUser } from 'react-icons/fa';
 import { FaHome, FaMoon, FaPhotoVideo, FaMoneyBill, FaSignOutAlt } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
@@ -16,35 +16,49 @@ import styles from './layout.module.css';
 
 import { PermissionGate } from '~/components/middlewares/permission-gate';
 import { CartProvider } from '~/components/provider/cart';
+import { useSessionStore } from '~/stores/use-session';
+import type { FileRouteTypes } from '~/routeTree.gen';
 import { getColors } from '~/components/themes';
+import { api } from '~/lib/axios/api';
 
 export const Route = createFileRoute('/(protected)')({
   component: RouteComponent,
 });
 
-const data = [
+type DataSidebar = {
+  label: string;
+  links: {
+    label: string;
+    link: FileRouteTypes['to'];
+  }[];
+  icon: React.FC<IconProps>;
+  initiallyOpened?: boolean;
+};
+
+const data: DataSidebar[] = [
   {
     label: 'Sales',
     icon: IconCashPlus,
     initiallyOpened: true,
     links: [
-      { label: 'Dashboard', link: '/dashboard' },
-      { label: 'Point of Sales', link: '/pos' },
-      { label: 'Histories', link: '/' },
+      { label: 'Overview', link: '/sales/overview' },
+      { label: 'Point of Sales', link: '/sales/pos' },
     ],
   },
   {
     label: 'Product',
     icon: IconPackage,
     links: [
-      { label: 'Overview', link: '/' },
-      { label: 'Products', link: '/' },
+      { label: 'Overview', link: '/products/overview' },
+      { label: 'Products', link: '/products' },
+      { label: 'Create Products', link: '/products/create' },
     ],
   },
   {
     label: 'Inventories',
     icon: IconNotes,
     links: [
+      { label: 'Transactions', link: '/transactions' },
       { label: 'Inventory', link: '/' },
       { label: 'Supplier', link: '/' },
       { label: 'Stock', link: '/' },
@@ -98,10 +112,18 @@ const data = [
 function RouteComponent() {
   const [section, setSection] = useState<string>('cashier');
   const [navbarOpened, { toggle }] = useDisclosure();
+  const setStatus = useSessionStore((s) => s.setStatus);
 
   const { setColorScheme } = useMantineColorScheme();
   const isDesktop = useMediaQuery('(min-width: 56.25em)', true);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    api.get('/auth/logout').then(() => {
+      setStatus('unauthenticated');
+      navigate({ to: '/auth/login' });
+    });
+  };
 
   const links = data.map((item) => <LinksGroup {...item} key={item.label} />);
 
@@ -167,7 +189,7 @@ function RouteComponent() {
                       value="home"
                       size={'lg'}
                       fz={'h5'}
-                      onClick={() => navigate({ to: '/dashboard' })}
+                      onClick={() => navigate({ to: '/' })}
                       leftSection={<FaHome size={16} />}
                     >
                       Home
@@ -187,7 +209,7 @@ function RouteComponent() {
                       value="pos"
                       size={'lg'}
                       fz={'h5'}
-                      onClick={() => navigate({ to: '/pos' })}
+                      onClick={() => navigate({ to: '/sales/pos' })}
                       leftSection={<FaMoneyBill size={16} />}
                     >
                       Point Of Sales
@@ -221,7 +243,7 @@ function RouteComponent() {
 
                     <Menu.Label>User</Menu.Label>
                     <Menu.Item leftSection={<FaUser size={14} />}>Profile</Menu.Item>
-                    <Menu.Item color="red" leftSection={<FaSignOutAlt size={14} />}>
+                    <Menu.Item color="red" onClick={handleLogout} leftSection={<FaSignOutAlt size={14} />}>
                       Sign Out
                     </Menu.Item>
                   </Menu.Dropdown>
@@ -231,7 +253,7 @@ function RouteComponent() {
 
             <Outlet />
 
-            <Grid bg={getColors('primary')} mt={'lg'} p={'lg'} style={{ width: '100%' }}>
+            <Grid bg={getColors('primary')} mt={'lg'} p={'lg'} style={{ width: '100%', position: 'fixed', bottom: 5 }}>
               <Grid.Col span={12}>
                 <Text fz={'sm'} fw={600}>
                   Copyright &copy; 2025 Abya's POS

@@ -1,7 +1,7 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { EPaymentMethod } from '../transaction.interface';
 import { CartItemDto } from './cart-item.dto';
-import { IsEnum, IsNumber, IsNumberString, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { EPaymentMethod } from '../transaction.schema';
 
 @Exclude()
 export class CartDto {
@@ -11,11 +11,11 @@ export class CartDto {
   items: CartItemDto[];
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   sub_total: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   total: string;
 
   @Expose()
@@ -23,7 +23,7 @@ export class CartDto {
   total_item: number;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   total_discount: string;
 
   @Expose()
@@ -31,15 +31,15 @@ export class CartDto {
   payment_method: EPaymentMethod;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   pay_received: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   pay_return: string;
 
   @Expose()
-  @IsNumberString()
+  @IsString()
   tax: string;
 
   @Expose()

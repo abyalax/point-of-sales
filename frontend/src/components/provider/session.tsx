@@ -1,54 +1,68 @@
-import { useNavigate } from '@tanstack/react-router';
-
-import { useEffect } from 'react';
-
+// import { EMessage, type TResponse } from '~/common/types/response';
 import { useSessionStore } from '~/stores/use-session';
-import { EMessage } from '~/common/types/response';
-import { api } from '~/lib/axios/api';
+// import { api } from '~/lib/axios/api';
+import { useEffect } from 'react';
+// import { router } from '~/main';
 
 const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const session = useSessionStore((s) => s.session);
-  const setStatus = useSessionStore((s) => s.setStatus);
-  const navigate = useNavigate();
+  // const setStatus = useSessionStore((s) => s.setStatus);
 
   useEffect(() => {
-    if (session.status === 'unauthenticated') {
-      navigate({ to: '/auth/login' });
-      return;
-    }
-    const interceptor = api.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        const response = error.response.data;
-        console.log('error: ', error);
+    console.log('status session: ', session.status);
+  }, [session.status, session]);
 
-        if (response.error === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
-          originalRequest._retry = true;
-          try {
-            setStatus('authenticating');
-            console.log('Refreshing token...');
-            await api.post('/auth/refresh');
-            // After refreshing token, retry the original request
-            return api(originalRequest);
-          } catch (error) {
-            // Refresh failed → force logout
-            console.log('Refresh token failed...', error);
-            navigate({ to: '/auth/login' });
-            return Promise.reject(response);
-          }
-        } else if (response.statusCode === 403) {
-          console.log('Access denied...', error.response.data);
-          setStatus('unauthenticated');
-          navigate({ to: '/auth/login' });
-        }
+  // useEffect(() => {
+  //   const interceptor = api.interceptors.response.use(
+  //     (response) => response,
+  //     async (error) => {
+  //       console.log('interceptor error: ', error);
+  //       const originalRequest = error.config;
+  //       const response = error.response?.data as TResponse;
+  //       console.log({ originalRequest });
+  //       console.log({ response });
+  //       console.log('reject error', error);
+  //       if (!response) return Promise.reject(error);
+  //       if (response.error === EMessage.TOKEN_EXPIRED && !originalRequest._retry) {
+  //         console.log('token expired, refreshing...', { response });
+  //         originalRequest._retry = true;
+  //         try {
+  //           setStatus('authenticating');
+  //           await api.post('/auth/refresh').then(() => {
+  //             setStatus('authenticated');
+  //             console.log('Refresh token success');
+  //             api(originalRequest);
+  //           });
+  //         } catch (err) {
+  //           setStatus('unauthenticated');
+  //           console.log('Refresh token failed', err);
+  //           router.navigate({ to: '/auth/login' });
+  //         }
+  //       } else if (
+  //         response.message === EMessage.TOKEN_NOT_FOUND ||
+  //         response.message === EMessage.TOKEN_INVALID ||
+  //         response.message === EMessage.TOKEN_MALFORMED ||
+  //         response.message === EMessage.TOKEN_NOT_BEFORE ||
+  //         response.message === EMessage.REFRESH_TOKEN_EXPIRED
+  //       ) {
+  //         console.log('refresh token expired');
+  //         setStatus('unauthenticated');
+  //         router.navigate({ to: '/auth/login' });
+  //         return;
+  //       } else if (response.statusCode === 403 || response.statusCode === 401) {
+  //         setStatus('unauthenticated');
+  //         router.navigate({ to: '/auth/login' });
+  //         return;
+  //       }
+  //       console.log('undhandle error');
+  //       console.log('refresh token expired');
+  //       setStatus('unauthenticated');
+  //       return Promise.reject(error);
+  //     },
+  //   );
 
-        return Promise.reject(response);
-      },
-    );
-
-    return () => api.interceptors.response.eject(interceptor);
-  }, [navigate, session.status, setStatus]);
+  //   return () => api.interceptors.response.eject(interceptor);
+  // }, [setStatus]);
 
   return children;
 };

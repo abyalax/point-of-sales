@@ -1,9 +1,14 @@
-import { EStatusTransactions } from '../transaction.interface';
-import { IsDate, IsNumberString, IsString } from 'class-validator';
+import { IsDateString, IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { User } from '~/modules/user/entity/user.entity';
 import { Expose, Type } from 'class-transformer';
+import { TransactionItemDto } from './transaction-item.dto';
+import { EPaymentMethod, EStatusTransactions } from '../transaction.schema';
 
 export class TransactionDto {
+  @Expose()
+  @IsNumber()
+  id: number;
+
   @Expose()
   @Type(() => User)
   user: User;
@@ -13,6 +18,7 @@ export class TransactionDto {
   cashier: string;
 
   @Expose()
+  @IsEnum(EStatusTransactions)
   status: EStatusTransactions;
 
   @Expose()
@@ -44,17 +50,27 @@ export class TransactionDto {
   pay_received: string;
 
   @Expose()
+  @IsEnum(EPaymentMethod)
+  payment_method: EPaymentMethod;
+
+  @Expose()
   @IsNumberString()
   pay_return: string;
 
   @Expose()
-  items: [];
+  @Type(() => TransactionItemDto)
+  items: TransactionItemDto[];
 
   @Expose()
-  @IsDate()
-  created_at?: Date;
+  @IsOptional()
+  @IsString()
+  note?: string;
 
   @Expose()
-  @IsDate()
-  updated_at?: Date;
+  @IsDateString()
+  created_at?: string;
+
+  @Expose()
+  @IsDateString()
+  updated_at?: string;
 }

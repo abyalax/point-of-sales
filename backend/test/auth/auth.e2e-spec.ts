@@ -5,10 +5,16 @@ import { faker } from '@faker-js/faker';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { setupApplication } from '~/test/setup_e2e';
-import { USER } from '../common/constant';
 import { RoleDto } from '~/modules/auth/dto/role/get-role.dto';
+import { validateDto } from '../common/helper';
+import { SignUpDto } from '~/modules/auth/dto/sign-up.dto';
 
-describe('Authentication', () => {
+const USER = {
+  email: 'abyaadmin@gmail.com',
+  password: 'password',
+};
+
+describe('Module Authentication', () => {
   let app: INestApplication<App>;
   let moduleFixture: TestingModule;
 
@@ -18,8 +24,8 @@ describe('Authentication', () => {
 
   test('POST /auth/login', async () => {
     const credentials = {
-      email: USER.LOGIN.email,
-      password: USER.LOGIN.password,
+      email: USER.email,
+      password: USER.password,
     };
 
     const res = await request(app.getHttpServer())
@@ -57,10 +63,11 @@ describe('Authentication', () => {
     const credentials = {
       name,
       email,
-      password: USER.LOGIN.password,
+      password: USER.password,
     };
 
-    const res = await request(app.getHttpServer()).post('/auth/register').send(credentials).expect(HttpStatus.CREATED);
+    const validated = await validateDto(SignUpDto, credentials);
+    const res = await request(app.getHttpServer()).post('/auth/register').send(validated).expect(HttpStatus.CREATED);
 
     expect(res.body).toEqual(
       expect.objectContaining({

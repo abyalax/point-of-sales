@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { IUser } from '~/api/user/user';
+import type { IUser } from '~/modules/user/user.schema';
 
 export type TStatusSession = 'authenticated' | 'authenticating' | 'unauthenticated' | 'loading';
 

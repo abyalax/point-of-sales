@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import { MUTATION_KEY } from '~/common/const/mutationkey';
-import { deleteProduct } from '~/api/product/api';
+import { deleteProduct } from '~/modules/product/product.api';
 import { QUERY_KEY } from '~/common/const/querykey';
 
 import type { TAxiosResponse, TResponse } from '~/common/types/response';

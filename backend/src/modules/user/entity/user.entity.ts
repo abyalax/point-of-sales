@@ -1,7 +1,6 @@
-//* It Does Not Support Path Alias Shorthand */
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Role } from '../../auth/entity/role.entity';
-import { Transaction } from '~/modules/transaction/entities/transaction.entity';
+import type { Transaction } from '~/modules/transaction/entities/transaction.entity';
+import type { Role } from '~/modules/auth/entity/role.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -15,22 +14,22 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
-  password: string;
+  password?: string;
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany('Role', 'users')
   @JoinTable({
     name: 'user_roles',
     joinColumn: { name: 'id_user', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'id_role', referencedColumnName: 'id' },
   })
-  roles: Role[];
+  roles?: Role[];
 
-  @OneToMany(() => Transaction, (transaction) => transaction.user)
-  transactions: Transaction[];
+  @OneToMany('Transaction', 'user')
+  transactions?: Transaction[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  created_at?: Date;
+  created_at?: string;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  updated_at?: Date;
+  updated_at?: string;
 }

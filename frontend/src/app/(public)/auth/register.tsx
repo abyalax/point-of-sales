@@ -15,7 +15,7 @@ function RouteComponent() {
     name: z.string().min(3, 'Must be at least 3 characters'),
     email: z.string().email('Invalid email'),
     password: z.string().min(6, 'Must be at least 6 characters'),
-    termsOfService: z.boolean().refine(value => value, {
+    termsOfService: z.boolean().refine((value) => value, {
       message: 'You must agree to sell your privacy',
     }),
   });
@@ -33,7 +33,7 @@ function RouteComponent() {
   });
 
   const handleSubmit = () =>
-    form.onSubmit(values => {
+    form.onSubmit((values) => {
       notifications.show({
         title: 'Success',
         message: 'You have successfully registered',

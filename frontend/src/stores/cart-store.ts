@@ -1,12 +1,12 @@
-import type { ICartState, ICartItem } from '~/app/(protected)/pos/_types';
-import { EPaymentMethod } from '~/app/(protected)/pos/_types';
+import type { CartState, CartItem } from '~/app/(protected)/sales/pos/_types';
+import { EPaymentMethod } from '~/app/(protected)/sales/pos/_types';
 import { notifications } from '@mantine/notifications';
 import { formatCurrency } from '~/utils/format';
 import { produce } from '~/utils';
 import Big from 'big.js';
 
 export class CartStore {
-  public _stateCart: ICartState;
+  public _stateCart: CartState;
   private _listeners: Set<VoidFunction>;
 
   constructor() {
@@ -35,7 +35,7 @@ export class CartStore {
     this._listeners.forEach((listener) => listener());
   };
 
-  public addItem = (product: ICartItem): void => {
+  public addItem = (product: CartItem): void => {
     this._stateCart = produce(this._stateCart, (draft) => {
       const existingItem = draft.items.find((item) => item.id === product.id);
       if (existingItem) {
@@ -97,8 +97,8 @@ export class CartStore {
       let tax = new Big(0);
       let total_quantity = 0;
 
-      for (let i = 0; i < draft.items.length; i++) {
-        const item = draft.items[i];
+      for (const item of draft.items) {
+        const i = draft.items.indexOf(item);
 
         const price = new Big(item.price);
         const quantity = new Big(item.quantity);
@@ -131,7 +131,7 @@ export class CartStore {
     });
   };
 
-  public printStruct = async (carts: ICartState, cashier?: string): Promise<void> => {
+  public printStruct = async (carts: CartState, cashier?: string): Promise<void> => {
     console.log('Print Struct : ', { carts });
     if (cashier === undefined) return;
 
@@ -298,7 +298,7 @@ export class CartStore {
     this.notify();
   };
 
-  public getCart = (): ICartState => this._stateCart;
+  public getCart = (): CartState => this._stateCart;
 
   public setPaymentMethod = (paymentMethod: EPaymentMethod) => {
     this._stateCart = produce(this._stateCart, (draft) => {

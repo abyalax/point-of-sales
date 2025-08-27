@@ -2,12 +2,11 @@ import { Body, Request, Controller, HttpCode, HttpStatus, Post, Get, UseGuards, 
 import { Request as RequestExpress, Response as ResponseExpress } from 'express';
 import { PermissionsDto } from './dto/permission/get-permission.dto';
 import { AuthGuard } from '../../common/guards/auth.guard';
+import { TResponse } from '~/common/types/response';
 import { UserDto } from '../user/dto/user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
-
-import { TResponse } from '~/common/types/response';
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +41,7 @@ export class AuthController {
     return res;
   }
 
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.ACCEPTED)
   @Post('refresh')
   async refreshToken(@Request() req: RequestExpress, @Res() response: ResponseExpress): Promise<void> {
     const refresh_token: string = req.signedCookies.refresh_token;
@@ -51,12 +50,30 @@ export class AuthController {
       httpOnly: true,
       signed: true,
     });
-
+    console.log('refreshing token');
     response.status(200).json({
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.ACCEPTED,
     });
   }
 
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Get('logout')
+  signOut(@Res({ passthrough: true }) response: ResponseExpress): TResponse {
+    response.cookie('refresh_token', '', {
+      httpOnly: true,
+      signed: true,
+    });
+    response.cookie('access_token', '', {
+      httpOnly: true,
+      signed: true,
+    });
+    return {
+      statusCode: HttpStatus.ACCEPTED,
+      message: 'Successfully logout',
+    };
+  }
+
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('permissions')
   async getFullPermissions(@Request() req: RequestExpress): Promise<TResponse<PermissionsDto[] | undefined>> {

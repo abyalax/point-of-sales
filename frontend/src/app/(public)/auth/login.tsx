@@ -33,7 +33,7 @@ function RouteComponent() {
   const handleSubmit = () =>
     form.onSubmit((values) => {
       mutateLogin(values, {
-        onSuccess: () => navigate({ to: '/dashboard' }),
+        onSuccess: () => navigate({ to: '/sales/pos' }),
       });
     })();
 

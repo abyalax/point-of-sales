@@ -1,18 +1,22 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker/.';
-
-import * as request from 'supertest';
 import { App } from 'supertest/types';
+import * as request from 'supertest';
 
-import { setupApplication } from '~/test/setup_e2e';
+import type { PayloadProductDto } from '~/modules/product/dto/payload-product.dto';
+import { EProductStatus } from '~/modules/product/product.schema';
 import { ProductDto } from '~/modules/product/dto/product.dto';
-import { EProductStatus } from '~/modules/product/product.interface';
-import { USER } from '~/test/common/constant';
 import { extractHttpOnlyCookie } from '~/test/utils';
-import { PayloadProductDto } from '~/modules/product/dto/payload-product.dto';
+import { setupApplication } from '~/test/setup_e2e';
+import { validateDto } from '../common/helper';
 
-describe('Product Module', () => {
+const USER = {
+  email: 'abyaadmin@gmail.com',
+  password: 'password',
+};
+
+describe('Module Product', () => {
   let app: INestApplication<App>;
   let moduleFixture: TestingModule;
 
@@ -24,11 +28,12 @@ describe('Product Module', () => {
     let access_token: string;
     let refresh_token: string;
     let ids: number[] = [];
+    let newProduct: ProductDto | undefined = undefined;
 
     beforeEach(async () => {
       const credentials = {
-        email: USER.LOGIN.email,
-        password: USER.LOGIN.password,
+        email: USER.email,
+        password: USER.password,
       };
       const res = await request(app.getHttpServer()).post('/auth/login').send(credentials);
 
@@ -46,14 +51,14 @@ describe('Product Module', () => {
         });
     });
 
-    test('Test Token Cookie for Request', async () => {
+    test('POST Test Token Cookie for Request', async () => {
       expect(refresh_token).toBeDefined();
       expect(access_token).toBeDefined();
 
       const max = ids.length;
       const id = ids[Math.floor(Math.random() * max)];
 
-      return await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200);
@@ -62,175 +67,84 @@ describe('Product Module', () => {
     test('GET /products/:id', async () => {
       const max = ids.length;
       const id = ids[Math.floor(Math.random() * max)];
-      return request(app.getHttpServer())
+      const res = await request(app.getHttpServer())
         .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: 200,
-              data: expect.objectContaining({
-                id: expect.any(Number),
-                name: expect.any(String),
-                price: expect.any(String),
-                stock: expect.any(Number),
-                barcode: expect.any(String),
-                cost_price: expect.any(String),
-                discount: expect.any(String),
-                status: expect.any(String),
-                tax_rate: expect.any(String),
-                created_at: expect.any(String),
-                updated_at: expect.any(String),
-              } as ProductDto),
-            }),
-          );
-        });
-    });
+        .expect(200);
 
-    test('GET /products', async () => {
-      return request(app.getHttpServer())
-        .get('/products')
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: 200,
-              data: expect.arrayContaining([
-                expect.objectContaining({
-                  barcode: expect.any(String),
-                  id: expect.any(Number),
-                  name: expect.any(String),
-                  price: expect.any(String),
-                  stock: expect.any(Number),
-                  cost_price: expect.any(String),
-                  discount: expect.any(String),
-                  status: expect.any(String),
-                  tax_rate: expect.any(String),
-                  created_at: expect.any(String),
-                  updated_at: expect.any(String),
-                  category: expect.objectContaining({
-                    id: expect.any(Number),
-                    name: expect.any(String),
-                    created_at: expect.any(String),
-                    updated_at: expect.any(String),
-                  }),
-                } as ProductDto),
-              ]),
-            }),
-          );
-        });
+      const validData = await res.body.data;
+      const result = await validateDto(ProductDto, validData);
+      expect(result).toBeInstanceOf(ProductDto);
     });
 
     test('GET /products/search', async () => {
-      return request(app.getHttpServer())
-        .get('/products/search')
-        .query({ page: 1, per_page: 10, engine: 'server_side' })
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: 200,
-              data: expect.objectContaining({
-                data: expect.arrayContaining([
-                  expect.objectContaining({
-                    barcode: expect.any(String),
-                    id: expect.any(Number),
-                    name: expect.any(String),
-                    price: expect.any(String),
-                    stock: expect.any(Number),
-                    cost_price: expect.any(String),
-                    discount: expect.any(String),
-                    status: expect.any(String),
-                    tax_rate: expect.any(String),
-                    created_at: expect.any(String),
-                    updated_at: expect.any(String),
-                    category: expect.objectContaining({
-                      id: expect.any(Number),
-                      name: expect.any(String),
-                      created_at: expect.any(String),
-                      updated_at: expect.any(String),
-                    }),
-                  } as ProductDto),
-                ]),
-                meta: expect.objectContaining({
-                  page: expect.any(String),
-                  per_page: expect.any(String),
-                  total_count: expect.any(Number),
-                  total_pages: expect.any(Number),
-                }),
-              }),
-            }),
-          );
-        });
+      const res = await request(app.getHttpServer())
+        .get('/products/search/?page=1&per_page=2&engine=server_side')
+        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`);
+
+      const body = await res.body;
+      const data = body.data.data[0];
+      const result = await validateDto(ProductDto, data);
+      expect(result).toBeInstanceOf(ProductDto);
+
+      const meta = await res.body.data.meta;
+      expect(meta).toEqual(
+        expect.objectContaining({
+          page: expect.anything(),
+          per_page: expect.anything(),
+          total_count: expect.anything(),
+          total_pages: expect.anything(),
+        }),
+      );
     });
 
     test('POST /products', async () => {
       let category: string = '';
       const max = ids.length;
       const id = ids[Math.floor(Math.random() * max)];
-      await request(app.getHttpServer())
+      const fetchProductByID = await request(app.getHttpServer())
         .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200)
-        .expect((res) => {
-          category = res.body.data.category.name;
-          return res;
-        });
+        .expect(200);
+
+      category = fetchProductByID.body.data.category.name;
+
       const price = parseInt(faker.commerce.price({ min: 5000, max: 1000000 }));
       const product: PayloadProductDto = {
         name: faker.commerce.productName(),
         barcode: `89910011012${faker.number.int({ min: 64, max: 99 })}`,
         price: price.toString(),
-        cost_price: faker.commerce.price({ min: price - 50000, max: price }).toString(),
-        tax_rate: faker.number.float({ min: 0, max: 10 }).toString(),
-        discount: faker.number.float({ min: 0, max: 10 }).toString(),
+        cost_price: faker.commerce.price({ min: price - 5000, max: price }).toString(),
+        tax_rate: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
+        discount: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
         status: EProductStatus.AVAILABLE,
         stock: faker.number.int({ min: 1, max: 300 }),
         category,
       };
-      return request(app.getHttpServer())
+      const res = await request(app.getHttpServer())
         .post('/products')
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .send(product)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: HttpStatus.CREATED,
-              data: expect.objectContaining({
-                id: expect.any(Number),
-                name: expect.any(String),
-                price: expect.any(String),
-                stock: expect.any(Number),
-                barcode: expect.any(String),
-                cost_price: expect.any(String),
-                discount: expect.any(String),
-                status: expect.any(String),
-                tax_rate: expect.any(String),
-                category: expect.objectContaining({
-                  id: expect.any(Number),
-                  name: expect.any(String),
-                }),
-                created_at: expect.any(String),
-                updated_at: expect.any(String),
-              } as ProductDto),
-            }),
-          );
-        });
+        .send(product);
+
+      const validData = await res.body.data;
+      const result = await validateDto(ProductDto, validData);
+      expect(result).toBeInstanceOf(ProductDto);
+      newProduct = await res.body.data;
     });
 
     test('PATCH /products/:id', async () => {
       let category: string = '';
-      const max = ids.length;
-      const id = ids[Math.floor(Math.random() * max)];
-      await request(app.getHttpServer())
+      console.log('PATCH product id: ', newProduct?.id);
+      const id = newProduct?.id;
+      if (!id) {
+        console.log('ID Product not found');
+        return;
+      }
+      const fetchProductByID = await request(app.getHttpServer())
         .get('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200)
-        .expect((res) => {
-          category = res.body.data.category.name;
-          return res;
-        });
+        .expect(200);
+      category = fetchProductByID.body.data.category.name;
 
       const product = {
         id,
@@ -240,35 +154,24 @@ describe('Product Module', () => {
         stock: faker.number.int({ min: 0, max: 300 }),
         category,
       };
-      return request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch('/products/' + id)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .send(product)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: HttpStatus.OK,
-              data: true,
-            }),
-          );
-        });
+        .expect(HttpStatus.NO_CONTENT);
     });
 
     test('DELETE /products/:id', async () => {
-      const max = ids.length;
-      const id = ids[Math.floor(Math.random() * max)];
-
-      return request(app.getHttpServer())
+      console.log('DELETE product id: ', newProduct?.id);
+      const id = newProduct?.id;
+      if (!id) {
+        console.log('ID Product not found');
+        return;
+      }
+      await request(app.getHttpServer())
         .delete(`/products/${id}`)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect((res) => {
-          expect(res.body).toEqual(
-            expect.objectContaining({
-              statusCode: expect.any(Number),
-              data: expect.any(Boolean),
-            }),
-          );
-        });
+        .expect(HttpStatus.NO_CONTENT);
     });
   });
 

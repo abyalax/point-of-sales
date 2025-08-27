@@ -26,10 +26,10 @@ export class CategoryDto {
   @Expose()
   @IsOptional()
   @IsString()
-  created_at?: Date;
+  created_at?: string;
 
   @Expose()
   @IsOptional()
   @IsString()
-  updated_at?: Date;
+  updated_at?: string;
 }

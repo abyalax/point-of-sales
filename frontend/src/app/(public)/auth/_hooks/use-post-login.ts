@@ -1,11 +1,11 @@
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 
-import { postLogin, type TLoginParams } from '~/api/auth';
+import { postLogin, type TLoginParams } from '~/modules/auth/auth.api';
 import { MUTATION_KEY } from '~/common/const/mutationkey';
 import { useSessionStore } from '~/stores/use-session';
 import type { TAxiosResponse, TResponse } from '~/common/types/response';
-import type { IUser } from '~/api/user/user';
+import type { IUser } from '~/modules/user/user.schema';
 
 export const usePostLogin = (): UseMutationResult<TAxiosResponse<IUser>, TResponse, TLoginParams, unknown> => {
   const setSession = useSessionStore((s) => s.setSession);
@@ -14,6 +14,7 @@ export const usePostLogin = (): UseMutationResult<TAxiosResponse<IUser>, TRespon
     mutationFn: async (payload) => await postLogin(payload),
     meta: { invalidateQueries: [] },
     onSuccess: (res) => {
+      console.log('response login: ', res);
       setSession({
         status: 'authenticated',
         user: res.data.data,

@@ -11,15 +11,31 @@
     "prettier": "^3.6.2"
   },
   "scripts": {
-    "dev": "concurrently --kill-others pnpm:dev:frontend pnpm:dev:backend",
+    "dev": "concurrently --kill-others pnpm:dev:backend pnpm:dev:frontend",
+    "build": "concurrently --kill-others pnpm:build:backend pnpm:build:frontend",
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter backend dev",
+    "migrate:generate": "pnpm --filter backend migrate:generate",
+    "migrate:run": "pnpm --filter backend migrate:run",
+    "migrate:show": "pnpm --filter backend migrate:show",
+    "migrate:revert": "pnpm --filter backend migrate:revert",
+    "schema:drop": "pnpm --filter backend schema:drop",
+    "seed": "pnpm --filter backend seed",
+    "seed:create": "pnpm --filter backend seed:create",
+    "test": "pnpm --filter backend test",
+    "lint": "pnpm lint:frontend && pnpm lint:backend",
+    "lint:frontend": "pnpm --filter frontend lint",
+    "lint:backend": "pnpm --filter backend lint",
+    "format": "prettier --write \"{frontend,backend}/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [
       "prettier --write"
     ]
+  },
+  "engines": {
+    "node": ">=22.0.0"
   },
   "packageManager": "pnpm@10.14.0"
 }

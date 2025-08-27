@@ -3,9 +3,9 @@ import { notifications } from '@mantine/notifications';
 
 import { MUTATION_KEY } from '~/common/const/mutationkey';
 import type { TAxiosResponse, TResponse } from '~/common/types/response';
-import { createCategory } from '~/api/product/api';
+import { createCategory } from '~/modules/product/product.api';
 import { QUERY_KEY } from '~/common/const/querykey';
-import type { ICategory } from '~/api/product/type';
+import type { ICategory } from '~/modules/product/product.schema';
 
 export const useCreateCategory = (): UseMutationResult<TAxiosResponse<{ category: ICategory }>, TResponse, { name: string }, unknown> => {
   return useMutation({

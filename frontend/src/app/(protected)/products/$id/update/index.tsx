@@ -12,7 +12,7 @@ import { useGetProductCategories } from '~/app/(protected)/products/_hooks/use-g
 import { useUpdateProduct } from '~/app/(protected)/products/$id/_hooks/use-update-product';
 import { useCreateCategory } from '~/app/(protected)/products/create/_hooks/use-create-category';
 import { queryProductByID, useGetProduct } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
-import { EProductStatus } from '~/api/product/type';
+import { EProductStatus } from '~/modules/product/product.schema';
 import { formatCurrency } from '~/utils/format';
 import Big from 'big.js';
 
@@ -31,8 +31,7 @@ function RouteComponent() {
   const { data: dataCategories } = useGetProductCategories();
   const { mutate: mutateUpdateProduct } = useUpdateProduct();
   const { mutate: mutateCreateCategory } = useCreateCategory();
-  const { data: dataProduct } = useGetProduct(params);
-  const product = dataProduct?.data.data;
+  const { data: product } = useGetProduct(params);
   const categories = dataCategories?.map((e) => {
     return {
       label: e.name,

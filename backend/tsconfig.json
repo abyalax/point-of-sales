@@ -17,9 +17,13 @@
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "useDefineForClassFields": false,
     "paths": {
       "~/test/*": ["test/*"],
+      "~/shared/*": ["../shared/*"],
       "~/*": ["src/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "../shared/**/*", "eslint.config.mjs", "typeorm.seed.ts", "jest.config.js", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

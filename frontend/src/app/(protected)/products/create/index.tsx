@@ -11,7 +11,7 @@ import z from 'zod';
 
 import { useGetProductCategories } from '../_hooks/use-get-categories';
 import { useCreateProduct } from './_hooks/use-create-products';
-import { EProductStatus } from '~/api/product/type';
+import { EProductStatus } from '~/modules/product/product.schema';
 import { useCreateCategory } from './_hooks/use-create-category';
 import { formatCurrency } from '~/utils/format';
 

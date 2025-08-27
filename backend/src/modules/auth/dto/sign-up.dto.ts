@@ -11,6 +11,7 @@ export class SignUpDto {
   @IsEmail()
   email: string;
 
+  @Expose()
   @IsString()
   password: string;
 }

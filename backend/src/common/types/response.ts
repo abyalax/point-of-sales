@@ -1,9 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 
-export type TResponse<T> = {
+export type TResponse<T = unknown> = {
   statusCode: HttpStatus;
-  message?: string;
-  error?: string;
+  message?: string | string[];
+  error?: unknown;
   data?: T;
 };
 
@@ -15,6 +15,7 @@ export enum EMessage {
   TOKEN_SIGNATURE_INVALID = 'Token Signature Invalid',
   TOKEN_NOT_BEFORE = 'Token Not Before',
   TOKEN_ERROR = 'Token Error',
+  REFRESH_TOKEN_EXPIRED = 'Refresh Token Expired',
 
   DATABASE_ERROR = 'Database Error',
   DATABASE_QUERY_FAILED = 'Database Query Failed',

@@ -1,14 +1,14 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { EStatusTransactions } from '../transaction.interface';
-import { TransactionItem } from './transaction-item.entity';
-import { User } from '~/modules/user/entity/user.entity';
+import type { TransactionItem } from './transaction-item.entity';
+import type { User } from '~/modules/user/entity/user.entity';
+import { EPaymentMethod, EStatusTransactions } from '../transaction.schema';
 
 @Entity({ name: 'transactions' })
 export class Transaction {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
-  @ManyToOne(() => User, (user) => user.transactions, { onDelete: 'NO ACTION' })
+  @ManyToOne('User', 'transactions', { onDelete: 'NO ACTION' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -42,15 +42,18 @@ export class Transaction {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   pay_return: string;
 
-  @OneToMany(() => TransactionItem, (item) => item.transaction, { eager: true })
+  @Column({ type: 'enum', enum: EPaymentMethod })
+  payment_method: string;
+
+  @OneToMany('TransactionItem', 'transaction', { cascade: ['insert'], eager: true })
   items: TransactionItem[];
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   notes?: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  created_at?: Date;
+  created_at?: string;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  updated_at?: Date;
+  updated_at?: string;
 }

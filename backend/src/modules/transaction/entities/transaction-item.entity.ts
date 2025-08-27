@@ -1,10 +1,10 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Transaction } from './transaction.entity';
+import type { Transaction } from './transaction.entity';
 
 @Entity({ name: 'transaction_items' })
 export class TransactionItem {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @Column({ type: 'varchar', length: 100 })
   barcode: string;
@@ -36,13 +36,13 @@ export class TransactionItem {
   @Column({ type: 'decimal', precision: 5, scale: 4 })
   discount: string;
 
-  @ManyToOne(() => Transaction, (transaction) => transaction.items, { onDelete: 'CASCADE' })
+  @ManyToOne('Transaction', 'items', { cascade: ['insert'], onDelete: 'CASCADE' })
   @JoinColumn({ name: 'transaction_id' })
   transaction?: Transaction;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  created_at?: Date;
+  created_at?: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'updated_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  updated_at?: Date;
+  updated_at?: string;
 }

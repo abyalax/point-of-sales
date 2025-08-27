@@ -1,6 +1,7 @@
 import { Loader, Overlay } from '@mantine/core';
 
 export const LoadingPage = () => {
+  console.log('LoadingPage render...');
   return (
     <Overlay
       opacity={0.7}
