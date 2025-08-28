@@ -1,13 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { ProductDiscountImpactDto } from './dto/product-discount-impact.dto';
 import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
 import { mapProductRows, RowProducts } from '~/modules/product/product.map';
-import { ProductTrending, ProductTrendPeriode } from './product.schema';
+import { ProductDiscountImpact, ProductFrequencySold, ProductTrending, ProductTrendPeriode } from './product.schema';
 import { QueryProductReportDto } from './dto/query-product-report.dto';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
-import { ProductFrequencySoldDto } from './dto/product-sold.dto';
 import { OmitProduct } from '../transaction/transaction.schema';
 import { PayloadProductDto } from './dto/payload-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
@@ -87,9 +85,9 @@ export class ProductService {
   /**
    * @title for Bar Charts Product Move Performance
    * @description Mengambil data penjualan produk dalam waktu tertentu
-   * @returns ProductFrequencySoldDto[]
+   * @returns ProductFrequencySoldSchema[]
    */
-  async productSold(query: QueryProductReportDto): Promise<ProductFrequencySoldDto[]> {
+  async productSold(query: QueryProductReportDto): Promise<ProductFrequencySold[]> {
     const params: (string | number)[] = [];
     const whereClauses: string[] = [];
     const sort_order = query.sort_order === 'ASC' ? 'ASC' : 'DESC';
@@ -115,7 +113,7 @@ export class ProductService {
     }
 
     const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
-    const data = await this.productRepository.query<ProductFrequencySoldDto[]>(
+    const data = await this.productRepository.query<ProductFrequencySold[]>(
       `
       SELECT DISTINCT
           SUM(quantity) AS total_product,
@@ -136,16 +134,16 @@ export class ProductService {
     `,
       params,
     );
-    return plainToInstance(ProductFrequencySoldDto, data, { excludeExtraneousValues: true });
+    return data;
   }
 
   /**
    * @title for Clustered Bar Charts Product Discount Impact
    * @description Mengambil data penjualan produk dalam waktu tertentu
    * ketika diberi discount dan ketika tidak di beri discount
-   * @returns ProductDiscountImpactDto[]
+   * @returns ProductDiscountImpact[]
    */
-  async productDiscountImpact(query: FilterPeriodeDto): Promise<ProductDiscountImpactDto[]> {
+  async productDiscountImpact(query: FilterPeriodeDto): Promise<ProductDiscountImpact[]> {
     const params: (string | number)[] = [];
     const whereClauses: string[] = [];
 
@@ -171,7 +169,7 @@ export class ProductService {
 
     const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
-    const data = await this.productRepository.query<ProductDiscountImpactDto[]>(
+    const data = await this.productRepository.query<ProductDiscountImpact[]>(
       `
       SELECT
           p.name AS name,
@@ -206,7 +204,7 @@ export class ProductService {
     `,
       params,
     );
-    return plainToInstance(ProductDiscountImpactDto, data, { excludeExtraneousValues: true });
+    return data;
   }
 
   async searchByName(query: { search: string }): Promise<ProductDto[]> {

@@ -1,4 +1,4 @@
-import { Chart, CategoryScale, ArcElement, LinearScale, PointElement, Filler, Tooltip, Legend } from 'chart.js';
+import { Chart, CategoryScale, ArcElement, LinearScale, PointElement, Filler, Tooltip, Legend, BubbleController } from 'chart.js';
 import { LineController, LineElement, PieController, BarController, BarElement } from 'chart.js';
 import { MantineProvider, DEFAULT_THEME, mergeMantineTheme } from '@mantine/core';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
@@ -55,6 +55,7 @@ Chart.register([
   LineController,
   BarController,
   MatrixController,
+  BubbleController,
   MatrixElement,
   ArcElement,
   LineElement,

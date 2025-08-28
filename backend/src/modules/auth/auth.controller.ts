@@ -7,6 +7,7 @@ import { UserDto } from '../user/dto/user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -36,7 +37,7 @@ export class AuthController {
     });
     const res: TResponse<UserDto> = {
       statusCode: HttpStatus.ACCEPTED,
-      data: data.user,
+      data: plainToInstance(UserDto, data.user, { excludeExtraneousValues: true }),
     };
     return res;
   }

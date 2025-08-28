@@ -106,3 +106,11 @@ export interface ProductDiscountImpact {
   with_discount: string;
   without_discount: string;
 }
+
+export interface ProductProfitable {
+  category: string;
+  name: string;
+  quantity: number;
+  margin_percentage: string;
+  revenue: string;
+}

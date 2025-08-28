@@ -1,4 +1,4 @@
-import { ReportSales, SalesByCategory, CartDtoSchema } from './transaction.schema';
+import { ReportSales, SalesByCategory, CartDtoSchema, ProductProfitable } from './transaction.schema';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { TransactionItem } from './entities/transaction-item.entity';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
@@ -15,6 +15,7 @@ import { MetaResponse } from '~/common/types/meta';
 import { User } from '../user/entity/user.entity';
 import { CartDto } from './dto/carts.dto';
 import { Repository } from 'typeorm';
+import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 
 @Injectable()
 export class TransactionService {
@@ -30,8 +31,8 @@ export class TransactionService {
   ) {}
 
   async getIds(): Promise<number[]> {
-    const data = await this.transactionRepository.find({ select: ['id'] });
-    return data.map((e) => e.id);
+    const data = await this.transactionRepository.query<{ id: string }[]>('SELECT id FROM transactions');
+    return data.map((e) => Number(e.id));
   }
 
   async create(createTransactionDto: CartDto, userId: number): Promise<TransactionDto> {
@@ -168,6 +169,58 @@ export class TransactionService {
     };
 
     return { data: plainToInstance(TransactionDto, mappedData, { excludeExtraneousValues: true }), meta };
+  }
+
+  async productProfitable(query: FilterPeriodeDto): Promise<ProductProfitable[]> {
+    console.log(query);
+    const params: (string | number)[] = [];
+    const whereClauses: string[] = [];
+
+    if (query.year) {
+      whereClauses.push(`YEAR(created_at) = ?`);
+      params.push(query.year);
+    }
+
+    if (query.month) {
+      whereClauses.push(`MONTH(created_at) = ?`);
+      params.push(query.month);
+    }
+
+    if (query.week) {
+      whereClauses.push(`CEIL(DAYOFMONTH(created_at) / 7) = ?`);
+      params.push(query.week);
+    }
+
+    if (query.start && query.end) {
+      whereClauses.push(`created_at BETWEEN ? AND ?`);
+      params.push(query.start, query.end);
+    }
+
+    const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
+    const data = await this.transactionItemRepository.query<ProductProfitable[]>(
+      `
+      SELECT
+          category,
+          name,
+          SUM(quantity) AS quantity,
+          CASE
+              WHEN SUM(final_price * quantity) > 0 THEN ROUND(((SUM(final_price * quantity) - SUM(cost_price * quantity)) / SUM(final_price * quantity)), 4)
+              ELSE 0
+          END AS margin_percentage,
+          SUM(final_price * quantity) AS revenue
+      FROM
+          transaction_items
+      ${whereSQL}
+      GROUP BY
+          category,
+          name
+      ORDER BY
+          category,
+          revenue DESC;
+    `,
+      params,
+    );
+    return data;
   }
 
   async reportSales(query: QueryReportSales): Promise<ReportSales> {

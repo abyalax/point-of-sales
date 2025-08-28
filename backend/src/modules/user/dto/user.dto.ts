@@ -1,5 +1,6 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { IsArray, IsDate, IsEmail, IsString } from 'class-validator';
+import { IsDateString, IsEmail, IsOptional, IsString } from 'class-validator';
+import { PermissionsDto } from '~/modules/auth/dto/permission/get-permission.dto';
 import { RoleDto } from '~/modules/auth/dto/role/get-role.dto';
 
 @Exclude()
@@ -17,6 +18,7 @@ export class UserDto {
 
   @Exclude()
   @IsString()
+  @IsOptional()
   password?: string;
 
   @Expose()
@@ -24,14 +26,16 @@ export class UserDto {
   roles: RoleDto[];
 
   @Expose()
-  @IsArray()
+  @Type(() => PermissionsDto)
   permissions: string[];
 
   @Exclude()
-  @IsDate()
+  @IsDateString()
+  @IsOptional()
   created_at?: string;
 
   @Exclude()
-  @IsDate()
+  @IsDateString()
+  @IsOptional()
   updated_at?: string;
 }

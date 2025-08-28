@@ -1,15 +1,16 @@
-import { useState } from 'react';
-import { IconChevronRight } from '@tabler/icons-react';
 import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
-import classes from './NavbarLinksGroup.module.css';
+import { IconChevronRight } from '@tabler/icons-react';
+import type { FileRouteTypes } from '~/routeTree.gen';
 import { useNavigate } from '@tanstack/react-router';
+import classes from './NavbarLinksGroup.module.css';
+import { useState } from 'react';
 
 interface LinksGroupProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  links?: { label: string; link: FileRouteTypes['to'] }[] | FileRouteTypes['to'];
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksGroupProps) {

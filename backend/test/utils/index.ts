@@ -24,3 +24,9 @@ export const extractHttpOnlyCookie = (name: 'access_token' | 'refresh_token', co
     return access_token;
   }
 };
+
+export function extractSignedCookieToken(cookieValue: string): string {
+  // Format: s:<jwt-token>.<express-hmac-signature>
+  const lastDot = cookieValue.lastIndexOf('.');
+  return cookieValue.substring(0, lastDot);
+}

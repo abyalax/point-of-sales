@@ -1,22 +1,25 @@
-import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { EStatusTransactions } from '../transaction.schema';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 
 @Exclude()
 export class QueryReportSales {
   @Expose()
   @IsOptional()
-  @IsNumberString()
+  @IsNumber()
+  @Type(() => Number)
   year?: number;
 
   @Expose()
   @IsOptional()
-  @IsNumberString()
+  @IsNumber()
+  @Type(() => Number)
   month?: number;
 
   @Expose()
   @IsOptional()
-  @IsNumberString()
+  @IsNumber()
+  @Type(() => Number)
   week?: number;
 
   @Expose()

@@ -1,3 +1,5 @@
+import z from 'zod';
+import { stringNumber } from '~/common/schema';
 import type { MetaRequest } from '~/common/types/meta';
 
 export enum EProductStatus {
@@ -53,3 +55,19 @@ export interface ProductTrending {
 }
 
 export type ProductTrendPeriode = 'week' | 'month';
+
+export const productFrequencySoldSchema = z.object({
+  name: z.string(),
+  category: z.string(),
+  total_product: stringNumber('Total product must be a valid number'),
+});
+
+export type ProductFrequencySold = z.infer<typeof productFrequencySoldSchema>;
+
+export const productDiscountImpactSchema = z.object({
+  name: z.string(),
+  with_discount: stringNumber('With discount must be a valid number'),
+  without_discount: stringNumber('With discount must be a valid number'),
+});
+
+export type ProductDiscountImpact = z.infer<typeof productDiscountImpactSchema>;

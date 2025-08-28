@@ -27,10 +27,12 @@ export const Route = createFileRoute('/(protected)')({
 
 type DataSidebar = {
   label: string;
-  links: {
-    label: string;
-    link: FileRouteTypes['to'];
-  }[];
+  links:
+    | {
+        label: string;
+        link: FileRouteTypes['to'];
+      }[]
+    | FileRouteTypes['to'];
   icon: React.FC<IconProps>;
   initiallyOpened?: boolean;
 };

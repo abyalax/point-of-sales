@@ -10,7 +10,6 @@ export const queryFilterProducts = (query: QueryProducts = { engine: 'server_sid
   queryKey: [QUERY_KEY.PRODUCT.GET_ALL, query],
   queryFn: () => filterProducts(query),
   select: (res) => res.data.data,
-  staleTime: 1000 * 60 * 5, // menit
 });
 
 export const useFilterProducts = (query: QueryProducts = {}) => {

@@ -1,5 +1,3 @@
-/** disable-eslint @typescript-eslint/no-unsafe-assignment */
-
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../modules/user/user.service';
@@ -27,15 +25,15 @@ export class JwtGuard implements CanActivate {
       });
       if (verifyToken) {
         const user = await this.userService.findOneBy({ id: verifyToken.sub });
-        const userPlain = plainToInstance(UserDto, user, {
+        const userDto = plainToInstance(UserDto, user, {
           excludeExtraneousValues: true,
         });
         request['user'] = {
-          email: userPlain.email,
-          id: userPlain.id,
-          sub: userPlain.id,
-          roles: userPlain.roles,
-          permissions: userPlain.permissions,
+          email: userDto.email,
+          id: userDto.id,
+          sub: userDto.id,
+          roles: userDto.roles,
+          permissions: userDto.permissions,
         };
         return true;
       }

@@ -1,5 +1,5 @@
 import { Param, HttpCode, UseGuards, HttpStatus, Controller, UnauthorizedException, NotFoundException } from '@nestjs/common';
-import { ReportSales, SalesByCategory } from './transaction.schema';
+import { ProductProfitable, ReportSales, SalesByCategory } from './transaction.schema';
 import { Get, Req, Post, Body, Query } from '@nestjs/common';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
 import { QueryReportSales } from './dto/query-report-sales.dto';
@@ -13,24 +13,13 @@ import { JwtGuard } from '~/common/guards/jwt.guard';
 import { MetaResponse } from '~/common/types/meta';
 import { CartDto } from './dto/carts.dto';
 import { Request } from 'express';
+import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 
 @UseGuards(AuthGuard, JwtGuard, RolesGuard)
 @Roles('Cashier', 'Admin')
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
-
-  @HttpCode(HttpStatus.CREATED)
-  @Post()
-  async create(@Req() req: Request, @Body() createTransactionDto: CartDto): Promise<TResponse<TransactionDto>> {
-    const id: number | undefined = req.user?.id;
-    if (!id) throw new UnauthorizedException(`Cashier Does'nt Authorized`);
-    const data = await this.transactionService.create(createTransactionDto, id);
-    return {
-      statusCode: HttpStatus.CREATED,
-      data,
-    };
-  }
 
   @HttpCode(HttpStatus.OK)
   @Get()
@@ -47,6 +36,17 @@ export class TransactionController {
   async getReportSales(@Query() query: QueryReportSales): Promise<TResponse<ReportSales>> {
     const data = await this.transactionService.reportSales(query);
     if (data === undefined) throw new NotFoundException(`Data Sales Not Found`);
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/sales/products/profitable')
+  async getReportProductProfitable(@Query() query: FilterPeriodeDto): Promise<TResponse<ProductProfitable[]>> {
+    const data = await this.transactionService.productProfitable(query);
+    if (data === undefined) throw new NotFoundException(`Data Products Sales Not Found`);
     return {
       statusCode: HttpStatus.OK,
       data,
@@ -92,6 +92,18 @@ export class TransactionController {
       statusCode: HttpStatus.OK,
       message: 'Transaction Found',
       data: transaction,
+    };
+  }
+
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
+  async create(@Req() req: Request, @Body() createTransactionDto: CartDto): Promise<TResponse<TransactionDto>> {
+    const id: number | undefined = req.user?.id;
+    if (!id) throw new UnauthorizedException(`Cashier Does'nt Authorized`);
+    const data = await this.transactionService.create(createTransactionDto, id);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data,
     };
   }
 }

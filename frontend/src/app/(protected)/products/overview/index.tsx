@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useGetProductDiscountImpact } from './_hooks/use-get-product-discount-impact';
 import { type ProductTrendPeriode } from '~/modules/product/product.schema';
 import { ProductHeatmapTrend } from './_components/heatmap-trend-products';
-import { ProductStackedBarCharts } from './_components/stacked-bar-chart';
+import { ProductClusteredBarCharts } from './_components/clustered-bar-chart';
 import { useGetProductTrend } from './_hooks/use-get-product-trend';
 import { ProductBarCharts } from './_components/bar-chart-products';
 import { useGetProductSold } from './_hooks/use-get-product-sold';
@@ -38,7 +38,7 @@ function RouteComponent() {
   const { data: dataProductSold, isLoading: loadingProductSold } = useGetProductSold(periodeProductSold);
 
   return (
-    <Flex direction={'column'} gap={'md'} pb={'xl'}>
+    <Flex direction={'column'} gap={'md'} pb={600}>
       <Container unstyled style={{ minHeight: '60vh' }}>
         <Text size={'lg'} mb={'sm'}>
           Product Move Performance
@@ -171,7 +171,7 @@ function RouteComponent() {
             />
           </Group>
         </Group>
-        <ProductStackedBarCharts loading={loadingProductDiscountImpact} data={dataProductDiscountImpact} />
+        <ProductClusteredBarCharts loading={loadingProductDiscountImpact} data={dataProductDiscountImpact} />
       </Container>
     </Flex>
   );

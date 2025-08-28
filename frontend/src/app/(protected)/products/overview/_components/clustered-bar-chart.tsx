@@ -3,10 +3,10 @@ import { Container } from '~/components/ui/container/container';
 import { useMantineColorScheme } from '@mantine/core';
 import { LoadingV1, NotDataFoundV2 } from '~/assets';
 import { useEffect, useMemo, useRef } from 'react';
-import { Chart } from 'chart.js';
 import Lottie from 'lottie-react';
+import { Chart } from 'chart.js';
 
-export function ProductStackedBarCharts({ data, loading }: { data?: ProductDiscountImpact[]; loading: boolean }) {
+export function ProductClusteredBarCharts({ data, loading }: { data?: ProductDiscountImpact[]; loading: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
   const { colorScheme } = useMantineColorScheme();
@@ -63,6 +63,23 @@ export function ProductStackedBarCharts({ data, loading }: { data?: ProductDisco
           legend: {
             display: true,
             align: 'center',
+          },
+        },
+        scales: {
+          y: {
+            ticks: {
+              color: isLightMode ? '#202020ff' : '#d4d0d0ff',
+              align: 'center',
+              font: {
+                size: 14,
+              },
+            },
+          },
+          x: {
+            ticks: {
+              color: isLightMode ? '#202020ff' : '#d4d0d0ff',
+              align: 'center',
+            },
           },
         },
       },

@@ -1,3 +1,6 @@
+import z from 'zod';
+import { stringNumber } from '../schema';
+
 export type EngineSide = 'client_side' | 'server_side';
 
 export type SortOrder = 'ASC' | 'DESC';
@@ -19,9 +22,11 @@ interface Config {
 
 export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter, Config {}
 
-export interface MetaResponse {
-  page: number;
-  per_page: number;
-  total_count: number;
-  total_pages: number;
-}
+export const MetaResponseSchema = z.object({
+  page: stringNumber('page must be a valid number'),
+  per_page: stringNumber('per_page must be a valid number'),
+  total_count: stringNumber('total_count must be a valid number'),
+  total_pages: stringNumber('total_pages must be a valid number'),
+});
+
+export type MetaResponse = z.infer<typeof MetaResponseSchema>;

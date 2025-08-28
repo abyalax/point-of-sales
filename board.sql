@@ -1,32 +1,17 @@
 SELECT
-    p.name AS product_name,
-    COALESCE(
-        AVG(
-            CASE
-                WHEN ti.discount > 0 THEN ti.quantity
-            END
-        ),
-        0
-    ) AS avg_qty_with_discount,
-    COALESCE(
-        AVG(
-            CASE
-                WHEN ti.discount = 0 THEN ti.quantity
-            END
-        ),
-        0
-    ) AS avg_qty_without_discount
+    category,
+    name,
+    SUM(quantity) AS quantity,
+    CASE
+        WHEN SUM(final_price * quantity) > 0 THEN ROUND(((SUM(final_price * quantity) - SUM(cost_price * quantity)) / SUM(final_price * quantity)), 4)
+        ELSE 0
+    END AS margin_percentage,
+    SUM(final_price * quantity) AS revenue
 FROM
-    transaction_items ti
-    JOIN products p ON p.barcode = ti.barcode
-    JOIN transactions t ON t.id = ti.transaction_id
-WHERE
-    t.created_at BETWEEN '2024-01-01' AND '2024-12-30' -- periode
+    transaction_items
 GROUP BY
-    p.name
+    category,
+    name
 ORDER BY
-    (COALESCE(SUM(ti.quantity), 0)) DESC -- ranking produk paling berpengaruh
-LIMIT
-    20;
-
--- top 10 produk
+    category,
+    revenue DESC;

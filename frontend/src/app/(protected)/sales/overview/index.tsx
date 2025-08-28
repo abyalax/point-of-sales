@@ -14,6 +14,9 @@ import { FaCalendarWeek } from 'react-icons/fa';
 import { formatCurrency } from '~/utils/format';
 import { CURRENT } from '~/common/const/date';
 import { generateYearRange } from '~/utils';
+import { ProductBubbleChart } from './_components/bubble-chart-products';
+import type { FilterPeriode } from '~/common/types/filter';
+import { useGetProductProfitable } from './_hooks/use-get-product-profitable';
 
 export const Route = createFileRoute('/(protected)/sales/overview/')({
   component: RouteComponent,
@@ -28,10 +31,13 @@ function RouteComponent() {
   const [dateRange, setDateRange] = useState<[string | null, string | null] | undefined>();
   const [yearLineCharts, setYearLineCharts] = useState<string>(CURRENT.year.toString());
   const [yearPieCharts, setYearPieCharts] = useState<string>(CURRENT.year.toString());
+  const [periodeProductProfitable, setPeriodeProductProfitable] = useState<FilterPeriode>({});
 
   const { data: salesByCategory, isLoading: isLoadingSalesByCategory } = useGetSalesByCategory(yearPieCharts);
   const { data: salesPerMonth, isLoading: isLoadingSalesPerMonth } = useGetSalesPerMonth(yearLineCharts);
   const { data: salesByYear, isLoading: isLoadingSalesSummary } = useGetSalesSummary(search);
+
+  const { data: productProfitable, isLoading: isLoadingProductProfitable } = useGetProductProfitable(periodeProductProfitable);
 
   useEffect(() => {
     if (dateRange === undefined) return;
@@ -56,7 +62,7 @@ function RouteComponent() {
   }, [search.end, search.start]);
 
   return (
-    <Flex direction={'column'} gap={'md'}>
+    <Flex direction={'column'} gap={'md'} pb={600}>
       <Grid>
         <GridCol span={{ lg: 12, sm: 12 }}>
           <Flex justify={'space-between'}>
@@ -198,6 +204,39 @@ function RouteComponent() {
               <Select w={140} placeholder="Select year" value={yearPieCharts} onChange={(e) => setYearPieCharts(e!)} data={years} />
             </Flex>
             <SalesPieChart data={salesByCategory} loading={isLoadingSalesByCategory} />
+          </Container>
+        </GridCol>
+      </Grid>
+
+      <Grid w={'100%'}>
+        <GridCol span={{ lg: 9, sm: 12 }}>
+          <Container unstyled>
+            <Flex justify={'space-between'} align={'center'}>
+              <Text size={'xl'} m={'md'}>
+                Product Profitable
+              </Text>
+              <Select
+                w={140}
+                placeholder="Select month"
+                value={periodeProductProfitable.month?.toString()}
+                onChange={(e) => {
+                  const validated = e === null ? undefined : Number(e);
+                  setPeriodeProductProfitable({ month: validated });
+                }}
+                data={Array.from({ length: 12 }, (_, i) => (i + 1).toString())}
+              />
+              <Select
+                w={140}
+                placeholder="Select year"
+                value={periodeProductProfitable.year?.toString()}
+                onChange={(e) => {
+                  const validated = e === null ? undefined : Number(e);
+                  setPeriodeProductProfitable({ year: validated });
+                }}
+                data={years}
+              />
+            </Flex>
+            <ProductBubbleChart isLoading={isLoadingProductProfitable} data={productProfitable} />
           </Container>
         </GridCol>
       </Grid>

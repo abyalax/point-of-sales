@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
 import { QueryProductReportDto } from './dto/query-product-report.dto';
+import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { QueryProductTrendDto } from './dto/query-product-trending';
-import { ProductFrequencySoldDto } from './dto/product-sold.dto';
 import { OmitProduct } from '../transaction/transaction.schema';
 import { PayloadProductDto } from './dto/payload-product.dto';
 import { Roles } from '~/common/decorators/roles.decorator';
@@ -15,8 +15,7 @@ import { TResponse } from '~/common/types/response';
 import { MetaResponse } from '~/common/types/meta';
 import { ProductService } from './product.service';
 import { ProductDto } from './dto/product.dto';
-import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
-import { ProductDiscountImpactDto } from './dto/product-discount-impact.dto';
+import { ProductDiscountImpact, ProductFrequencySold } from './product.schema';
 
 @UseGuards(AuthGuard, JwtGuard, RolesGuard)
 @Roles('Cashier', 'Admin')
@@ -36,7 +35,7 @@ export class ProductController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/sold')
-  async sold(@Query() query: QueryProductReportDto): Promise<TResponse<ProductFrequencySoldDto[]>> {
+  async sold(@Query() query: QueryProductReportDto): Promise<TResponse<ProductFrequencySold[]>> {
     const products = await this.productService.productSold(query);
     if (products.length === 0) throw new NotFoundException('Data Sales Not Found');
     return {
@@ -58,7 +57,7 @@ export class ProductController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/discount/impact')
-  async getProductDiscountImpact(@Query() query: FilterPeriodeDto): Promise<TResponse<ProductDiscountImpactDto[]>> {
+  async getProductDiscountImpact(@Query() query: FilterPeriodeDto): Promise<TResponse<ProductDiscountImpact[]>> {
     console.log('FilterPeriodeDto: ', query);
     const data = await this.productService.productDiscountImpact(query);
     if (data.length === 0) throw new NotFoundException('Data Products Not Found');
@@ -77,6 +76,7 @@ export class ProductController {
       data: products,
     };
   }
+
   @HttpCode(HttpStatus.OK)
   @Get('/search/name')
   async searchByName(@Query() query: { search: string }): Promise<TResponse<ProductDto[]>> {

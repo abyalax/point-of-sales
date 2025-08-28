@@ -3,6 +3,8 @@ import { Transaction } from './entities/transaction.entity';
 import { Product } from '../product/entity/product.entity';
 import Big from 'big.js';
 import z from 'zod';
+import { stringNumber } from '~/common/schema';
+import { EProductStatus } from '../product/product.schema';
 
 export const isValidStringPrice = () =>
   z.string().superRefine((val, ctx) => {
@@ -210,6 +212,16 @@ export const ReportSalesSchema = z.object({
 
 export type ReportSales = z.infer<typeof ReportSalesSchema>;
 
+export const ProductProfitableSchema = z.object({
+  category: z.string(),
+  name: z.string(),
+  quantity: stringNumber('Quantity must be a valid number'),
+  margin_percentage: isValidPercentString(),
+  revenue: isValidStringPrice(),
+});
+
+export type ProductProfitable = z.infer<typeof ProductProfitableSchema>;
+
 export const SalesByCategorySchema = z.object({
   category: z.string(),
   total_revenue: isValidStringPrice(),
@@ -219,6 +231,17 @@ export const SalesByCategorySchema = z.object({
 });
 
 export type SalesByCategory = z.infer<typeof SalesByCategorySchema>;
+
+export const OmitProductSchema = z.object({
+  category: z.string(),
+  name: z.string(),
+  barcode: z.string(),
+  price: z.string(),
+  cost_price: z.string(),
+  tax_rate: z.string(),
+  discount: z.string(),
+  status: z.enum([EProductStatus.AVAILABLE, EProductStatus.UNAVAILABLE]),
+});
 
 export type OmitProduct = Omit<Product, 'id' | 'category' | 'category_id' | 'stock' | 'created_at' | 'updated_at'> & {
   category: string;
