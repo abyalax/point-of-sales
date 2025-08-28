@@ -1,15 +1,29 @@
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { InventoriesModule } from './modules/inventories/inventories.module';
+import { TransactionModule } from './modules/transaction/transaction.module';
+import { SupplierModule } from './modules/supplier/supplier.module';
 import { ProductModule } from './modules/product/product.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
-import { TransactionModule } from './modules/transaction/transaction.module';
-import { SupplierModule } from './modules/supplier/supplier.module';
-import { InventoriesModule } from './modules/inventories/inventories.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+import databaseConfig from './config/database.config';
+import cookieConfig from './config/cookie.config';
+import jwtConfig from './config/jwt.config';
 
 @Module({
-  imports: [ProductModule, AuthModule, UserModule, TransactionModule, SupplierModule, InventoriesModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig, jwtConfig, cookieConfig] }),
+    ProductModule,
+    AuthModule,
+    UserModule,
+    TransactionModule,
+    SupplierModule,
+    InventoriesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

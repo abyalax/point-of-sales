@@ -7,7 +7,7 @@ import { ProductProfitableSchema, ReportSalesSchema, SalesByCategorySchema } fro
 import { generateMockCart } from '~/infrastructure/database/mock/transactions/carts.mock';
 import { TransactionDto } from '~/modules/transaction/dto/transaction.dto';
 import { ProductService } from '~/modules/product/product.service';
-import { validateDto, validateSchema } from '../common/helper';
+import { validateDto, validateSchema } from '../../src/common/helpers/validation';
 import { extractHttpOnlyCookie } from '~/test/utils';
 import { setupApplication } from '~/test/setup_e2e';
 import { QueryReportSales } from '~/modules/transaction/dto/query-report-sales.dto';

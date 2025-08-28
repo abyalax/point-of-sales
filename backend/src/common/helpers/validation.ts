@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { ClassValidatorFail, ZodValidationFail } from './exception';
+import { ClassValidatorFail, ZodValidationFail } from '../filters/exception';
 import { ZodError, ZodSchema } from 'zod';
 
 export async function validateDto<T extends object>(dtoClass: new () => T, data: T): Promise<T> {

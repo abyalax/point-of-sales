@@ -1,10 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { Connection, createDatabaseProviders } from './database.provider';
+import { MySQLConnection, createDatabaseProviders } from './database.provider';
 import { DataSourceOptions } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  providers: [Connection],
-  exports: [Connection],
+  providers: [MySQLConnection, ConfigService],
+  exports: [MySQLConnection, ConfigService],
 })
 export class DatabaseModule {
   static forRoot(provide: string, options: DataSourceOptions): DynamicModule {

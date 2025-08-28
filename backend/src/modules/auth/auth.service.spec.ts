@@ -1,12 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+
+import { REPOSITORY } from '~/common/constants/database';
+import { mockRepository } from '~/test/common/mock';
+import { UserService } from '../user/user.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
-import { UserService } from '../user/user.service';
-import { REPOSITORY } from '~/common/constants/database';
-import { JwtModule } from '@nestjs/jwt';
-import { CREDENTIALS } from '~/common/constants/credential';
-import { mockRepository } from '~/test/common/mock';
+import { AuthService } from './auth.service';
+
+import jwtConfig, { JwtConfig } from '~/config/jwt.config';
+import databaseConfig from '~/config/database.config';
+import cookieConfig from '~/config/cookie.config';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -15,13 +20,19 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         UserModule,
-        JwtModule.register({
-          secret: CREDENTIALS.JWT_SECRET,
-          privateKey: CREDENTIALS.JWT_PRIVATE_KEY,
-          publicKey: CREDENTIALS.JWT_PUBLIC_KEY,
-          secretOrPrivateKey: CREDENTIALS.JWT_SECRET_OR_PRIVATE_KEY,
-          signOptions: {
-            expiresIn: '10h',
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [databaseConfig, jwtConfig, cookieConfig],
+        }),
+        JwtModule.registerAsync({
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => {
+            const jwt = configService.get<JwtConfig>('jwt')!;
+            return {
+              secret: jwt.secret,
+              privateKey: jwt.private_key,
+              publicKey: jwt.public_key,
+            };
           },
         }),
       ],

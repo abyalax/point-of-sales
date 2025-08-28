@@ -1,18 +1,19 @@
 import { DataSource } from 'typeorm';
 
-import { DATABASE, REPOSITORY } from '~/common/constants/database';
+import { REPOSITORY } from '~/common/constants/database';
 import { Product } from './entity/product.entity';
 import { Category } from './entity/category.entity';
+import { MySQLConnection } from '~/infrastructure/database/database.provider';
 
 export const productProvider = [
   {
     provide: REPOSITORY.PRODUCT,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Product),
-    inject: [DATABASE.MYSQL.PROVIDE],
+    inject: [MySQLConnection.provide],
   },
   {
     provide: REPOSITORY.CATEGORY,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Category),
-    inject: [DATABASE.MYSQL.PROVIDE],
+    inject: [MySQLConnection.provide],
   },
 ];

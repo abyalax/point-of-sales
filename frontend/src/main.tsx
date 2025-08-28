@@ -32,7 +32,6 @@ import { queryClient } from './lib/reactquery';
 import { theme as themeOveride } from './components/themes';
 import type { QueryKey } from './common/const/querykey';
 import type { MutationKey } from './common/const/mutationkey';
-import SessionProvider from './components/provider/session';
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -88,14 +87,12 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          <MantineProvider theme={theme}>
-            <RouterProvider router={router} />
-          </MantineProvider>
-          <ReactQueryDevtools position="bottom" />
-        </QueryClientProvider>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider theme={theme}>
+          <RouterProvider router={router} />
+        </MantineProvider>
+        <ReactQueryDevtools position="bottom" />
+      </QueryClientProvider>
     </StrictMode>,
   );
 }

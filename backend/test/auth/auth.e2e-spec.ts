@@ -1,17 +1,18 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
-import { faker } from '@faker-js/faker';
-
-import * as request from 'supertest';
-import { App } from 'supertest/types';
-import { setupApplication } from '~/test/setup_e2e';
-import { RoleDto } from '~/modules/auth/dto/role/get-role.dto';
-import { validateDto } from '../common/helper';
-import { SignUpDto } from '~/modules/auth/dto/sign-up.dto';
-import { UserDto } from '~/modules/user/dto/user.dto';
-import { extractHttpOnlyCookie, extractSignedCookieToken } from '../utils';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { CREDENTIALS } from '~/common/constants/credential';
+import { faker } from '@faker-js/faker';
+import { App } from 'supertest/types';
+import * as request from 'supertest';
+
+import { extractHttpOnlyCookie, extractSignedCookieToken } from '../utils';
+import { RoleDto } from '~/modules/auth/dto/role/get-role.dto';
+import { SignUpDto } from '~/modules/auth/dto/sign-up.dto';
+import { validateDto } from '~/common/helpers/validation';
+import { UserDto } from '~/modules/user/dto/user.dto';
+import { setupApplication } from '~/test/setup_e2e';
+import { JwtConfig } from '~/config/jwt.config';
 
 const USER = {
   email: 'abyaadmin@gmail.com',
@@ -22,13 +23,16 @@ describe('Module Authentication', () => {
   let app: INestApplication<App>;
   let moduleFixture: TestingModule;
   let jwtService: JwtService;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     [app, moduleFixture] = await setupApplication();
+    configService = app.get(ConfigService);
+    const jwt = configService.get<JwtConfig>('jwt')!;
     jwtService = new JwtService({
-      secret: CREDENTIALS.JWT_SECRET,
-      publicKey: CREDENTIALS.JWT_PUBLIC_KEY,
-      privateKey: CREDENTIALS.JWT_PRIVATE_KEY,
+      secret: jwt.secret,
+      publicKey: jwt.public_key,
+      privateKey: jwt.private_key,
     });
   });
 
@@ -49,9 +53,9 @@ describe('Module Authentication', () => {
 
     const access_token_raw = extractSignedCookieToken(access_token);
     const refresh_token_raw = extractSignedCookieToken(refresh_token);
-
-    expect(() => jwtService.verify(access_token_raw, { secret: CREDENTIALS.JWT_SECRET })).not.toThrow();
-    expect(() => jwtService.verify(refresh_token_raw, { secret: CREDENTIALS.JWT_REFRESH_SECRET })).not.toThrow();
+    const jwt = configService.get<JwtConfig>('jwt')!;
+    expect(() => jwtService.verify(access_token_raw, { secret: jwt.secret })).not.toThrow();
+    expect(() => jwtService.verify(refresh_token_raw, { secret: jwt.refresh_secret })).not.toThrow();
 
     const payload = jwtService.verify(access_token_raw);
     expect(payload).toHaveProperty('sub');

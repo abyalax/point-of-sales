@@ -5,14 +5,16 @@ import { UserDto } from '../user/dto/user.dto';
 import { plainToInstance } from 'class-transformer';
 import { SignUpDto } from './dto/sign-up.dto';
 import { PermissionsDto } from './dto/permission/get-permission.dto';
-import { CREDENTIALS } from '~/common/constants/credential';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+import { JwtConfig } from '~/config/jwt.config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<UserDto> {
@@ -46,13 +48,14 @@ export class AuthService {
       roles: userDTO.roles,
     };
     const payload = { email: isUserExist.email, sub: isUserExist.id };
+    const jwt = this.configService.get<JwtConfig>('jwt')!;
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: 60 * 60 * 24, // 24 hour
-      secret: CREDENTIALS.JWT_SECRET,
+      secret: jwt.secret,
     });
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: 60 * 60 * 24 * 30, // 24 hour * 30 days
-      secret: CREDENTIALS.JWT_REFRESH_SECRET,
+      secret: jwt.refresh_secret,
     });
     return {
       access_token,
@@ -63,15 +66,16 @@ export class AuthService {
 
   async refreshToken(refresh_token?: string): Promise<{ access_token: string }> {
     if (refresh_token === undefined) throw new UnauthorizedException();
+    const jwt = this.configService.get<JwtConfig>('jwt')!;
     const verifyToken = this.jwtService.verify(refresh_token, {
-      secret: CREDENTIALS.JWT_REFRESH_SECRET,
+      secret: jwt.refresh_secret,
     });
     if (!verifyToken) throw new UnauthorizedException();
     const payload = { email: verifyToken.email, sub: verifyToken.sub };
     return {
       access_token: await this.jwtService.signAsync(payload, {
         expiresIn: 60 * 60 * 24, // 24 hour,
-        secret: CREDENTIALS.JWT_SECRET,
+        secret: jwt.secret,
       }),
     };
   }

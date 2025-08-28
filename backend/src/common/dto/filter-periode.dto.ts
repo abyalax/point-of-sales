@@ -5,20 +5,20 @@ import { IsOptional, IsNumber, IsDateString } from 'class-validator';
 export class FilterPeriodeDto {
   @Expose()
   @IsOptional()
-  @Type(() => Number)
   @IsNumber()
+  @Type(() => Number)
   year?: number;
 
   @Expose()
   @IsOptional()
-  @Type(() => Number)
   @IsNumber()
+  @Type(() => Number)
   month?: number;
 
   @Expose()
   @IsOptional()
-  @Type(() => Number)
   @IsNumber()
+  @Type(() => Number)
   week?: number;
 
   @Expose()

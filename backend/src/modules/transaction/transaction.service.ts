@@ -1,6 +1,7 @@
 import { ReportSales, SalesByCategory, CartDtoSchema, ProductProfitable } from './transaction.schema';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { TransactionItem } from './entities/transaction-item.entity';
+import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
 import { QueryReportSales } from './dto/query-report-sales.dto';
 import { calculateTransaction } from './transaction.calculate';
@@ -8,14 +9,12 @@ import { Transaction } from './entities/transaction.entity';
 import { REPOSITORY } from '~/common/constants/database';
 import { TransactionDto } from './dto/transaction.dto';
 import { mapTransactionRows } from './transaction.map';
-import { DEFAULT } from '~/common/constants/default';
 import { rangeFilter } from '~/common/helpers/query';
 import { plainToInstance } from 'class-transformer';
 import { MetaResponse } from '~/common/types/meta';
 import { User } from '../user/entity/user.entity';
 import { CartDto } from './dto/carts.dto';
 import { Repository } from 'typeorm';
-import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 
 @Injectable()
 export class TransactionService {
@@ -61,8 +60,8 @@ export class TransactionService {
   }
 
   async find(query: QueryTransactionDto): Promise<{ data: TransactionDto[]; meta: MetaResponse }> {
-    const page = query?.page ?? DEFAULT.PAGINATION.page;
-    const per_page = query?.per_page ?? DEFAULT.PAGINATION.per_page;
+    const page = Number(query?.page);
+    const per_page = Number(query?.per_page);
     const offset = (page - 1) * per_page;
     const params: (string | number)[] = [];
     const whereClauses: string[] = [];
@@ -172,7 +171,6 @@ export class TransactionService {
   }
 
   async productProfitable(query: FilterPeriodeDto): Promise<ProductProfitable[]> {
-    console.log(query);
     const params: (string | number)[] = [];
     const whereClauses: string[] = [];
 

@@ -9,7 +9,7 @@ import { EProductStatus, productDiscountImpactSchema, productFrequencySoldSchema
 import { ProductDto } from '~/modules/product/dto/product.dto';
 import { extractHttpOnlyCookie } from '~/test/utils';
 import { setupApplication } from '~/test/setup_e2e';
-import { validateDto, validateSchema } from '../common/helper';
+import { validateDto, validateSchema } from '../../src/common/helpers/validation';
 import { OmitProductSchema } from '~/modules/transaction/transaction.schema';
 import { QueryProductReportDto } from '~/modules/product/dto/query-product-report.dto';
 import { ProductTrendDto } from '~/modules/product/dto/product-trend.dto';
@@ -235,7 +235,6 @@ describe('Module Product', () => {
 
     test('PATCH /products/:id', async () => {
       let category: string = '';
-      console.log('PATCH product id: ', newProduct?.id);
       const id = newProduct?.id;
       if (!id) {
         console.log('ID Product not found');
@@ -263,7 +262,6 @@ describe('Module Product', () => {
     });
 
     test('DELETE /products/:id', async () => {
-      console.log('DELETE product id: ', newProduct?.id);
       const id = newProduct?.id;
       if (!id) {
         console.log('ID Product not found');

@@ -8,31 +8,31 @@ export class MetaRequestDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  page?: number;
+  public page?: number;
 
   @Expose()
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  per_page?: number;
+  public per_page?: number;
 
   @Expose()
   @IsOptional()
   @IsString()
-  sort_by?: string;
+  public sort_by?: string;
 
   @Expose()
   @IsOptional()
   @IsEnum(['ASC', 'DESC'])
-  sort_order?: 'ASC' | 'DESC';
+  public sort_order?: 'ASC' | 'DESC';
 
   @Expose()
   @IsOptional()
   @IsString()
-  search?: string;
+  public search?: string;
 
   @Expose()
   @IsOptional()
   @IsEnum(['client_side', 'server_side'])
-  engine?: EngineSide;
+  public engine?: EngineSide;
 }

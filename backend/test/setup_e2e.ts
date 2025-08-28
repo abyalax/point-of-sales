@@ -1,10 +1,11 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { CREDENTIALS } from '~/common/constants/credential';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '~/app.module';
 import { Server } from 'http';
 import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { CookieConfig } from '~/config/cookie.config';
 
 let cachedApp: NestExpressApplication | null = null;
 let cachedModule: TestingModule | null = null;
@@ -17,7 +18,9 @@ export const setupApplication = async (): Promise<[NestExpressApplication, Testi
   }).compile();
 
   const app: NestExpressApplication = moduleFixture.createNestApplication();
-  app.use(cookieParser(CREDENTIALS.COOKIE_SECRET));
+  const configService = app.get(ConfigService);
+  const cookie = configService.get<CookieConfig>('cookie')!;
+  app.use(cookieParser(cookie.secret));
   await app.init();
 
   const originalGetHttpServer = app.getHttpServer.bind(app) as () => Server;

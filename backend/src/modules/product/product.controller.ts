@@ -58,7 +58,6 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   @Get('/discount/impact')
   async getProductDiscountImpact(@Query() query: FilterPeriodeDto): Promise<TResponse<ProductDiscountImpact[]>> {
-    console.log('FilterPeriodeDto: ', query);
     const data = await this.productService.productDiscountImpact(query);
     if (data.length === 0) throw new NotFoundException('Data Products Not Found');
     return {
