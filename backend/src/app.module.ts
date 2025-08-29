@@ -1,4 +1,6 @@
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 
 import { InventoriesModule } from './modules/inventories/inventories.module';
@@ -23,8 +25,22 @@ import jwtConfig from './config/jwt.config';
     TransactionModule,
     SupplierModule,
     InventoriesModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerModule,
+    },
+  ],
 })
 export class AppModule {}
