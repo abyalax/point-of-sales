@@ -6,6 +6,6 @@ coverage
 **/.hg
 **/node_modules
 
-**/migrations/*-generated.ts
+./src/infrastructure/database/migrations/*-generated.ts
 
 **/*.mock.ts

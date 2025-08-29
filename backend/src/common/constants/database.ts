@@ -6,4 +6,10 @@ export const REPOSITORY = {
   CATEGORY: 'category_repository',
   TRANSACTION: 'transaction_repository',
   TRANSACTION_ITEM: 'transaction_item_repository',
+  INVENTORY: 'inventory_repository',
+  INVENTORY_LOG: 'inventory_log_repository',
+  PURCHASE_ORDER: 'purchase_order_repository',
+  PURCHASE_ORDER_ITEM: 'purchase_order_item_repository',
+  PURCHASE_PAYMENT: 'purchase_payment_repository',
+  SUPPLIER: 'supplier_repository',
 };

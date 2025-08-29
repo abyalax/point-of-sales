@@ -2,16 +2,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
-import { SupplierController } from './supplier.controller';
+import { PurchaseController } from './purchase.controller';
 import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import { REPOSITORY } from '~/common/constants/database';
 import databaseConfig from '~/config/database.config';
-import { SupplierService } from './supplier.service';
-import { mockRepository } from '~/test/common/mock';
+import { PurchaseService } from './purchase.service';
 import cookieConfig from '~/config/cookie.config';
+import { REPOSITORY } from '~/common/constants/database';
+import { mockRepository } from '~/test/common/mock';
 
-describe('SupplierController', () => {
-  let controller: SupplierController;
+describe('PurchaseController', () => {
+  let controller: PurchaseController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,17 +32,21 @@ describe('SupplierController', () => {
           },
         }),
       ],
-      controllers: [SupplierController],
+      controllers: [PurchaseController],
       providers: [
-        SupplierService,
+        PurchaseService,
         {
-          provide: REPOSITORY.SUPPLIER,
+          provide: REPOSITORY.PURCHASE_ORDER,
+          useValue: mockRepository,
+        },
+        {
+          provide: REPOSITORY.PURCHASE_ORDER_ITEM,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
-    controller = module.get<SupplierController>(SupplierController);
+    controller = module.get<PurchaseController>(PurchaseController);
   });
 
   it('should be defined', () => {

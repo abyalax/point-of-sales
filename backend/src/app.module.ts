@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PurchaseModule } from './modules/purchase/purchase.module';
 
 import databaseConfig from './config/database.config';
 import cookieConfig from './config/cookie.config';
@@ -33,6 +34,7 @@ import jwtConfig from './config/jwt.config';
         },
       ],
     }),
+    PurchaseModule,
   ],
   controllers: [AppController],
   providers: [

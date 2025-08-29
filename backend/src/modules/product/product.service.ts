@@ -1,9 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
+import { ProductDiscountImpact, ProductFrequencySold, ProductTrending, ProductTrendPeriode } from './product.schema';
 import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
 import { mapProductRows, RowProducts } from '~/modules/product/product.map';
-import { ProductDiscountImpact, ProductFrequencySold, ProductTrending, ProductTrendPeriode } from './product.schema';
 import { QueryProductReportDto } from './dto/query-product-report.dto';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { OmitProduct } from '../transaction/transaction.schema';
@@ -260,7 +260,7 @@ export class ProductService {
     }
 
     const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
-    const allowedSortFields = ['name', 'price', 'status', 'stock', 'created_at', 'updated_at'];
+    const allowedSortFields = ['name', 'price', 'status', 'created_at', 'updated_at'];
     const sort_by = allowedSortFields.includes(query?.sort_by ?? '') ? query?.sort_by : 'created_at';
     const sort_order = ['ASC', 'DESC'].includes(query?.sort_order ?? '') ? query?.sort_order : 'DESC';
 

@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { TResponse } from '~/common/types/response';
+import { Supplier } from './entities/supplier.entity';
 
 @Controller('supplier')
 export class SupplierController {
@@ -12,9 +14,14 @@ export class SupplierController {
     return this.supplierService.create(createSupplierDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
-  findAll() {
-    return this.supplierService.findAll();
+  async findAll(): Promise<TResponse<Supplier[]>> {
+    const data = await this.supplierService.findAll();
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
   @Get(':id')

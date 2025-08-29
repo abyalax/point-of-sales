@@ -1,14 +1,13 @@
 type Params = {
-  year: number;
-  months: number[];
-  maxPerWeek: number;
+  year?: number;
+  months?: number[];
+  maxPerWeek?: number;
 };
 
-export function generateTransactionDates({
-  year = new Date().getFullYear() - 1,
-  months = Array.from({ length: 12 }, (_, i) => i + 1),
-  maxPerWeek = 3,
-}: Params): Date[] {
+const defaultMonth = Array.from({ length: 12 }, (_, i) => i + 1);
+const defaultYear = new Date().getFullYear() - 1;
+
+export function generateDates({ year = defaultYear, months = defaultMonth, maxPerWeek = 3 }: Params): Date[] {
   const dates: Date[] = [];
   for (const month of months) {
     const daysInMonth = new Date(year, month, 0).getDate();

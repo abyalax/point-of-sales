@@ -1,27 +1,37 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { REPOSITORY } from '~/common/constants/database';
+import { Supplier } from './entities/supplier.entity';
 
 @Injectable()
 export class SupplierService {
-  create(_createSupplierDto: CreateSupplierDto) {
-    return 'This action adds a new supplier';
+  constructor(
+    @Inject(REPOSITORY.SUPPLIER)
+    private readonly supplierRepository: Repository<Supplier>,
+  ) {}
+
+  async create(createSupplierDto: CreateSupplierDto) {
+    return await this.supplierRepository.save(createSupplierDto);
   }
 
-  findAll() {
-    return `This action returns all supplier`;
+  async findAll(): Promise<Supplier[]> {
+    return await this.supplierRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} supplier`;
+  async findOne(id: number): Promise<Supplier> {
+    const find = await this.supplierRepository.findOneBy({ id });
+    if (!find) throw new NotFoundException('Supplier not found');
+    return find;
   }
 
-  update(id: number, _updateSupplierDto: UpdateSupplierDto) {
-    return `This action updates a #${id} supplier`;
+  async update(id: number, updateSupplierDto: UpdateSupplierDto) {
+    return await this.supplierRepository.update(id, updateSupplierDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} supplier`;
+  async remove(id: number) {
+    return await this.supplierRepository.delete(id);
   }
 }

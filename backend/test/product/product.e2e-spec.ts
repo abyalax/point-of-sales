@@ -206,7 +206,6 @@ describe('Module Product', () => {
         tax_rate: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
         discount: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
         status: EProductStatus.AVAILABLE,
-        stock: faker.number.int({ min: 1, max: 300 }),
         category,
       };
       const res = await request(app.getHttpServer())
@@ -251,7 +250,6 @@ describe('Module Product', () => {
         name: faker.commerce.productName(),
         price: faker.commerce.price({ min: 5000, max: 1000000 }).toString(),
         status: EProductStatus.AVAILABLE,
-        stock: faker.number.int({ min: 0, max: 300 }),
         category,
       };
       await request(app.getHttpServer())

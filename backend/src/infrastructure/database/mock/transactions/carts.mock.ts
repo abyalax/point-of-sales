@@ -4,7 +4,6 @@ import Big from 'big.js';
 export function generateMockCart(products: OmitProduct[], minItems = 1, maxItems = 10): CartDto {
   const min = Math.max(1, minItems);
   const max = Math.min(maxItems, products.length);
-
   const weighted = products.flatMap((p) => {
     const weight = parseFloat(p.discount) > 0 ? 3 : 1; // products dengan diskon muncul 3x lebih banyak
     return Array(weight).fill(p);

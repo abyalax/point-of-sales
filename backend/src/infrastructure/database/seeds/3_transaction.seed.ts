@@ -1,7 +1,7 @@
 import { OmitProduct, OmitTransactionState } from '~/modules/transaction/transaction.schema';
 import { TransactionItem } from '~/modules/transaction/entities/transaction-item.entity';
 import { Transaction } from '~/modules/transaction/entities/transaction.entity';
-import { generateTransactionDates } from '../mock/transactions/transaction-dates.mock';
+import { generateDates } from '../mock/dates.mock';
 import { generateMockTransaction } from '../mock/transactions/transaction.mock';
 import { generateMockCart } from '../mock/transactions/carts.mock';
 import { Product } from '~/modules/product/entity/product.entity';
@@ -34,7 +34,7 @@ export default class TransactionSeeder implements Seeder {
         .getRawMany();
 
       console.log('2️⃣ Generate transaksi Januari - Juni');
-      dates = generateTransactionDates({ year: 2024, months: [1, 2, 3, 4, 5, 6], maxPerWeek: 9 });
+      dates = generateDates({ year: 2024, months: [1, 2, 3, 4, 5, 6], maxPerWeek: 9 });
       transactions = dates.map((d) => generateMockTransaction(generateMockCart(products, 1, 7), d));
 
       let transactionEntities = transactions.map((t) =>
@@ -79,7 +79,7 @@ export default class TransactionSeeder implements Seeder {
         .getRawMany();
 
       console.log('5️⃣ Generate transaksi Juli - Desember');
-      dates = generateTransactionDates({ year: 2024, months: [7, 8, 9, 10, 11, 12], maxPerWeek: 9 });
+      dates = generateDates({ year: 2024, months: [7, 8, 9, 10, 11, 12], maxPerWeek: 9 });
       transactions = dates.map((d) => generateMockTransaction(generateMockCart(products, 1, 7), d));
 
       transactionEntities = transactions.map((t) =>

@@ -66,10 +66,10 @@ pnpm run test:cov
 
 ## Nest Script
 
-Generate Full Module CRUD Entity
+Generate Full Domain Module
 
 ```bash
-nest g res entity
+nest g res <domain>
 ```
 
 This will generate full modul entity, example entity user

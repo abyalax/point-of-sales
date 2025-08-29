@@ -1,3 +1,4 @@
+import { Provider } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { MySQLConnection } from '~/infrastructure/database/database.provider';
@@ -6,7 +7,7 @@ import { Transaction } from './entities/transaction.entity';
 import { REPOSITORY } from '~/common/constants/database';
 import { User } from '../user/entity/user.entity';
 
-export const transactionProvider = [
+export const transactionProvider: Provider[] = [
   {
     provide: REPOSITORY.TRANSACTION,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Transaction),

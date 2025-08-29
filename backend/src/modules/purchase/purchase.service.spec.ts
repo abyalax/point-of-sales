@@ -2,16 +2,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
-import { SupplierController } from './supplier.controller';
 import jwtConfig, { JwtConfig } from '~/config/jwt.config';
 import { REPOSITORY } from '~/common/constants/database';
 import databaseConfig from '~/config/database.config';
-import { SupplierService } from './supplier.service';
+import { PurchaseService } from './purchase.service';
 import { mockRepository } from '~/test/common/mock';
 import cookieConfig from '~/config/cookie.config';
 
-describe('SupplierController', () => {
-  let controller: SupplierController;
+describe('PurchaseService', () => {
+  let service: PurchaseService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,20 +31,19 @@ describe('SupplierController', () => {
           },
         }),
       ],
-      controllers: [SupplierController],
       providers: [
-        SupplierService,
+        PurchaseService,
         {
-          provide: REPOSITORY.SUPPLIER,
+          provide: REPOSITORY.PURCHASE_ORDER,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
-    controller = module.get<SupplierController>(SupplierController);
+    service = module.get<PurchaseService>(PurchaseService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 });

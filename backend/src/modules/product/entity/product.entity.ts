@@ -30,9 +30,6 @@ export class Product {
   @Column({ type: 'enum', enum: EProductStatus })
   status: EProductStatus;
 
-  @Column({ type: 'int', nullable: false, default: 0 })
-  stock: number;
-
   @Column({ nullable: true })
   category_id: number;
 

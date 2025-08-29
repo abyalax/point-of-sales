@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InventoriesService } from './inventories.service';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { TResponse } from '~/common/types/response';
+import { Inventory } from './entities/inventory.entity';
 
 @Controller('inventories')
 export class InventoriesController {
@@ -12,9 +14,14 @@ export class InventoriesController {
     return this.inventoriesService.create(createInventoryDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
-  findAll() {
-    return this.inventoriesService.findAll();
+  async findAll(): Promise<TResponse<Inventory[]>> {
+    const data = await this.inventoriesService.findAll();
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
   @Get(':id')

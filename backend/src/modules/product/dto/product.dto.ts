@@ -41,10 +41,6 @@ export class ProductDto {
   category: CategoryDto;
 
   @Expose()
-  @IsNumber()
-  stock: number;
-
-  @Expose()
   @IsDateString()
   created_at?: string;
 

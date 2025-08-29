@@ -36,7 +36,6 @@ export function mapProductRows(rows: RowProducts[]): Product[] {
       category: category,
       price: row.price,
       status: row.status,
-      stock: row.stock,
       created_at: row.created_at,
       updated_at: row.updated_at,
     };

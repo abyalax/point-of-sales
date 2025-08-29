@@ -1,6 +1,6 @@
-import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { EProductStatus } from '../product.schema';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class PayloadProductDto {
   @Expose()
@@ -37,12 +37,6 @@ export class PayloadProductDto {
   @IsEnum(EProductStatus)
   @IsOptional()
   status: EProductStatus;
-
-  @Expose()
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  stock: number;
 
   @Expose()
   @IsString()
