@@ -8,148 +8,168 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './app/__root'
-import { Route as protectedRouteRouteImport } from './app/(protected)/route'
-import { Route as IndexRouteImport } from './app/index'
-import { Route as publicAuthRouteRouteImport } from './app/(public)/auth/route'
-import { Route as protectedTransactionsIndexRouteImport } from './app/(protected)/transactions/index'
-import { Route as protectedProductsIndexRouteImport } from './app/(protected)/products/index'
-import { Route as publicAuthRegisterRouteImport } from './app/(public)/auth/register'
-import { Route as publicAuthLoginRouteImport } from './app/(public)/auth/login'
-import { Route as protectedTransactionsIdIndexRouteImport } from './app/(protected)/transactions/$id/index'
-import { Route as protectedSalesPosIndexRouteImport } from './app/(protected)/sales/pos/index'
-import { Route as protectedSalesOverviewIndexRouteImport } from './app/(protected)/sales/overview/index'
-import { Route as protectedProductsOverviewIndexRouteImport } from './app/(protected)/products/overview/index'
-import { Route as protectedProductsCreateIndexRouteImport } from './app/(protected)/products/create/index'
-import { Route as protectedProductsIdIndexRouteImport } from './app/(protected)/products/$id/index'
-import { Route as protectedProductsIdUpdateIndexRouteImport } from './app/(protected)/products/$id/update/index'
+import { Route as rootRouteImport } from './app/__root';
+import { Route as protectedRouteRouteImport } from './app/(protected)/route';
+import { Route as IndexRouteImport } from './app/index';
+import { Route as publicAuthRouteRouteImport } from './app/(public)/auth/route';
+import { Route as protectedTransactionsIndexRouteImport } from './app/(protected)/transactions/index';
+import { Route as protectedProductsIndexRouteImport } from './app/(protected)/products/index';
+import { Route as publicAuthRegisterRouteImport } from './app/(public)/auth/register';
+import { Route as publicAuthLoginRouteImport } from './app/(public)/auth/login';
+import { Route as protectedTransactionsIdIndexRouteImport } from './app/(protected)/transactions/$id/index';
+import { Route as protectedSalesPosIndexRouteImport } from './app/(protected)/sales/pos/index';
+import { Route as protectedSalesOverviewIndexRouteImport } from './app/(protected)/sales/overview/index';
+import { Route as protectedProductsOverviewIndexRouteImport } from './app/(protected)/products/overview/index';
+import { Route as protectedProductsCreateIndexRouteImport } from './app/(protected)/products/create/index';
+import { Route as protectedProductsIdIndexRouteImport } from './app/(protected)/products/$id/index';
+import { Route as protectedInventoriesSupplierIndexRouteImport } from './app/(protected)/inventories/supplier/index';
+import { Route as protectedInventoriesPurchaseIndexRouteImport } from './app/(protected)/inventories/purchase/index';
+import { Route as protectedInventoriesInventoryIndexRouteImport } from './app/(protected)/inventories/inventory/index';
+import { Route as protectedProductsIdUpdateIndexRouteImport } from './app/(protected)/products/$id/update/index';
 
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const publicAuthRouteRoute = publicAuthRouteRouteImport.update({
   id: '/(public)/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
-} as any)
-const protectedTransactionsIndexRoute =
-  protectedTransactionsIndexRouteImport.update({
-    id: '/transactions/',
-    path: '/transactions/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
+} as any);
+const protectedTransactionsIndexRoute = protectedTransactionsIndexRouteImport.update({
+  id: '/transactions/',
+  path: '/transactions/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 const protectedProductsIndexRoute = protectedProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
   getParentRoute: () => protectedRouteRoute,
-} as any)
+} as any);
 const publicAuthRegisterRoute = publicAuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => publicAuthRouteRoute,
-} as any)
+} as any);
 const publicAuthLoginRoute = publicAuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => publicAuthRouteRoute,
-} as any)
-const protectedTransactionsIdIndexRoute =
-  protectedTransactionsIdIndexRouteImport.update({
-    id: '/transactions/$id/',
-    path: '/transactions/$id/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
+} as any);
+const protectedTransactionsIdIndexRoute = protectedTransactionsIdIndexRouteImport.update({
+  id: '/transactions/$id/',
+  path: '/transactions/$id/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 const protectedSalesPosIndexRoute = protectedSalesPosIndexRouteImport.update({
   id: '/sales/pos/',
   path: '/sales/pos/',
   getParentRoute: () => protectedRouteRoute,
-} as any)
-const protectedSalesOverviewIndexRoute =
-  protectedSalesOverviewIndexRouteImport.update({
-    id: '/sales/overview/',
-    path: '/sales/overview/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
-const protectedProductsOverviewIndexRoute =
-  protectedProductsOverviewIndexRouteImport.update({
-    id: '/products/overview/',
-    path: '/products/overview/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
-const protectedProductsCreateIndexRoute =
-  protectedProductsCreateIndexRouteImport.update({
-    id: '/products/create/',
-    path: '/products/create/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
-const protectedProductsIdIndexRoute =
-  protectedProductsIdIndexRouteImport.update({
-    id: '/products/$id/',
-    path: '/products/$id/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
-const protectedProductsIdUpdateIndexRoute =
-  protectedProductsIdUpdateIndexRouteImport.update({
-    id: '/products/$id/update/',
-    path: '/products/$id/update/',
-    getParentRoute: () => protectedRouteRoute,
-  } as any)
+} as any);
+const protectedSalesOverviewIndexRoute = protectedSalesOverviewIndexRouteImport.update({
+  id: '/sales/overview/',
+  path: '/sales/overview/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedProductsOverviewIndexRoute = protectedProductsOverviewIndexRouteImport.update({
+  id: '/products/overview/',
+  path: '/products/overview/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedProductsCreateIndexRoute = protectedProductsCreateIndexRouteImport.update({
+  id: '/products/create/',
+  path: '/products/create/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedProductsIdIndexRoute = protectedProductsIdIndexRouteImport.update({
+  id: '/products/$id/',
+  path: '/products/$id/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedInventoriesSupplierIndexRoute = protectedInventoriesSupplierIndexRouteImport.update({
+  id: '/inventories/supplier/',
+  path: '/inventories/supplier/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedInventoriesPurchaseIndexRoute = protectedInventoriesPurchaseIndexRouteImport.update({
+  id: '/inventories/purchase/',
+  path: '/inventories/purchase/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedInventoriesInventoryIndexRoute = protectedInventoriesInventoryIndexRouteImport.update({
+  id: '/inventories/inventory/',
+  path: '/inventories/inventory/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
+const protectedProductsIdUpdateIndexRoute = protectedProductsIdUpdateIndexRouteImport.update({
+  id: '/products/$id/update/',
+  path: '/products/$id/update/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof protectedRouteRouteWithChildren
-  '/auth': typeof publicAuthRouteRouteWithChildren
-  '/auth/login': typeof publicAuthLoginRoute
-  '/auth/register': typeof publicAuthRegisterRoute
-  '/products': typeof protectedProductsIndexRoute
-  '/transactions': typeof protectedTransactionsIndexRoute
-  '/products/$id': typeof protectedProductsIdIndexRoute
-  '/products/create': typeof protectedProductsCreateIndexRoute
-  '/products/overview': typeof protectedProductsOverviewIndexRoute
-  '/sales/overview': typeof protectedSalesOverviewIndexRoute
-  '/sales/pos': typeof protectedSalesPosIndexRoute
-  '/transactions/$id': typeof protectedTransactionsIdIndexRoute
-  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute
+  '/': typeof protectedRouteRouteWithChildren;
+  '/auth': typeof publicAuthRouteRouteWithChildren;
+  '/auth/login': typeof publicAuthLoginRoute;
+  '/auth/register': typeof publicAuthRegisterRoute;
+  '/products': typeof protectedProductsIndexRoute;
+  '/transactions': typeof protectedTransactionsIndexRoute;
+  '/inventories/inventory': typeof protectedInventoriesInventoryIndexRoute;
+  '/inventories/purchase': typeof protectedInventoriesPurchaseIndexRoute;
+  '/inventories/supplier': typeof protectedInventoriesSupplierIndexRoute;
+  '/products/$id': typeof protectedProductsIdIndexRoute;
+  '/products/create': typeof protectedProductsCreateIndexRoute;
+  '/products/overview': typeof protectedProductsOverviewIndexRoute;
+  '/sales/overview': typeof protectedSalesOverviewIndexRoute;
+  '/sales/pos': typeof protectedSalesPosIndexRoute;
+  '/transactions/$id': typeof protectedTransactionsIdIndexRoute;
+  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof protectedRouteRouteWithChildren
-  '/auth': typeof publicAuthRouteRouteWithChildren
-  '/auth/login': typeof publicAuthLoginRoute
-  '/auth/register': typeof publicAuthRegisterRoute
-  '/products': typeof protectedProductsIndexRoute
-  '/transactions': typeof protectedTransactionsIndexRoute
-  '/products/$id': typeof protectedProductsIdIndexRoute
-  '/products/create': typeof protectedProductsCreateIndexRoute
-  '/products/overview': typeof protectedProductsOverviewIndexRoute
-  '/sales/overview': typeof protectedSalesOverviewIndexRoute
-  '/sales/pos': typeof protectedSalesPosIndexRoute
-  '/transactions/$id': typeof protectedTransactionsIdIndexRoute
-  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute
+  '/': typeof protectedRouteRouteWithChildren;
+  '/auth': typeof publicAuthRouteRouteWithChildren;
+  '/auth/login': typeof publicAuthLoginRoute;
+  '/auth/register': typeof publicAuthRegisterRoute;
+  '/products': typeof protectedProductsIndexRoute;
+  '/transactions': typeof protectedTransactionsIndexRoute;
+  '/inventories/inventory': typeof protectedInventoriesInventoryIndexRoute;
+  '/inventories/purchase': typeof protectedInventoriesPurchaseIndexRoute;
+  '/inventories/supplier': typeof protectedInventoriesSupplierIndexRoute;
+  '/products/$id': typeof protectedProductsIdIndexRoute;
+  '/products/create': typeof protectedProductsCreateIndexRoute;
+  '/products/overview': typeof protectedProductsOverviewIndexRoute;
+  '/sales/overview': typeof protectedSalesOverviewIndexRoute;
+  '/sales/pos': typeof protectedSalesPosIndexRoute;
+  '/transactions/$id': typeof protectedTransactionsIdIndexRoute;
+  '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/(protected)': typeof protectedRouteRouteWithChildren
-  '/(public)/auth': typeof publicAuthRouteRouteWithChildren
-  '/(public)/auth/login': typeof publicAuthLoginRoute
-  '/(public)/auth/register': typeof publicAuthRegisterRoute
-  '/(protected)/products/': typeof protectedProductsIndexRoute
-  '/(protected)/transactions/': typeof protectedTransactionsIndexRoute
-  '/(protected)/products/$id/': typeof protectedProductsIdIndexRoute
-  '/(protected)/products/create/': typeof protectedProductsCreateIndexRoute
-  '/(protected)/products/overview/': typeof protectedProductsOverviewIndexRoute
-  '/(protected)/sales/overview/': typeof protectedSalesOverviewIndexRoute
-  '/(protected)/sales/pos/': typeof protectedSalesPosIndexRoute
-  '/(protected)/transactions/$id/': typeof protectedTransactionsIdIndexRoute
-  '/(protected)/products/$id/update/': typeof protectedProductsIdUpdateIndexRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/(protected)': typeof protectedRouteRouteWithChildren;
+  '/(public)/auth': typeof publicAuthRouteRouteWithChildren;
+  '/(public)/auth/login': typeof publicAuthLoginRoute;
+  '/(public)/auth/register': typeof publicAuthRegisterRoute;
+  '/(protected)/products/': typeof protectedProductsIndexRoute;
+  '/(protected)/transactions/': typeof protectedTransactionsIndexRoute;
+  '/(protected)/inventories/inventory/': typeof protectedInventoriesInventoryIndexRoute;
+  '/(protected)/inventories/purchase/': typeof protectedInventoriesPurchaseIndexRoute;
+  '/(protected)/inventories/supplier/': typeof protectedInventoriesSupplierIndexRoute;
+  '/(protected)/products/$id/': typeof protectedProductsIdIndexRoute;
+  '/(protected)/products/create/': typeof protectedProductsCreateIndexRoute;
+  '/(protected)/products/overview/': typeof protectedProductsOverviewIndexRoute;
+  '/(protected)/sales/overview/': typeof protectedSalesOverviewIndexRoute;
+  '/(protected)/sales/pos/': typeof protectedSalesPosIndexRoute;
+  '/(protected)/transactions/$id/': typeof protectedTransactionsIdIndexRoute;
+  '/(protected)/products/$id/update/': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/auth'
@@ -157,14 +177,17 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/products'
     | '/transactions'
+    | '/inventories/inventory'
+    | '/inventories/purchase'
+    | '/inventories/supplier'
     | '/products/$id'
     | '/products/create'
     | '/products/overview'
     | '/sales/overview'
     | '/sales/pos'
     | '/transactions/$id'
-    | '/products/$id/update'
-  fileRoutesByTo: FileRoutesByTo
+    | '/products/$id/update';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/auth'
@@ -172,13 +195,16 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/products'
     | '/transactions'
+    | '/inventories/inventory'
+    | '/inventories/purchase'
+    | '/inventories/supplier'
     | '/products/$id'
     | '/products/create'
     | '/products/overview'
     | '/sales/overview'
     | '/sales/pos'
     | '/transactions/$id'
-    | '/products/$id/update'
+    | '/products/$id/update';
   id:
     | '__root__'
     | '/'
@@ -188,139 +214,169 @@ export interface FileRouteTypes {
     | '/(public)/auth/register'
     | '/(protected)/products/'
     | '/(protected)/transactions/'
+    | '/(protected)/inventories/inventory/'
+    | '/(protected)/inventories/purchase/'
+    | '/(protected)/inventories/supplier/'
     | '/(protected)/products/$id/'
     | '/(protected)/products/create/'
     | '/(protected)/products/overview/'
     | '/(protected)/sales/overview/'
     | '/(protected)/sales/pos/'
     | '/(protected)/transactions/$id/'
-    | '/(protected)/products/$id/update/'
-  fileRoutesById: FileRoutesById
+    | '/(protected)/products/$id/update/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  protectedRouteRoute: typeof protectedRouteRouteWithChildren
-  publicAuthRouteRoute: typeof publicAuthRouteRouteWithChildren
+  IndexRoute: typeof IndexRoute;
+  protectedRouteRoute: typeof protectedRouteRouteWithChildren;
+  publicAuthRouteRoute: typeof publicAuthRouteRouteWithChildren;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/(protected)': {
-      id: '/(protected)'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof protectedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/(protected)';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof protectedRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/(public)/auth': {
-      id: '/(public)/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof publicAuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/(public)/auth';
+      path: '/auth';
+      fullPath: '/auth';
+      preLoaderRoute: typeof publicAuthRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/(protected)/transactions/': {
-      id: '/(protected)/transactions/'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof protectedTransactionsIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/transactions/';
+      path: '/transactions';
+      fullPath: '/transactions';
+      preLoaderRoute: typeof protectedTransactionsIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/products/': {
-      id: '/(protected)/products/'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof protectedProductsIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/products/';
+      path: '/products';
+      fullPath: '/products';
+      preLoaderRoute: typeof protectedProductsIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(public)/auth/register': {
-      id: '/(public)/auth/register'
-      path: '/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof publicAuthRegisterRouteImport
-      parentRoute: typeof publicAuthRouteRoute
-    }
+      id: '/(public)/auth/register';
+      path: '/register';
+      fullPath: '/auth/register';
+      preLoaderRoute: typeof publicAuthRegisterRouteImport;
+      parentRoute: typeof publicAuthRouteRoute;
+    };
     '/(public)/auth/login': {
-      id: '/(public)/auth/login'
-      path: '/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof publicAuthLoginRouteImport
-      parentRoute: typeof publicAuthRouteRoute
-    }
+      id: '/(public)/auth/login';
+      path: '/login';
+      fullPath: '/auth/login';
+      preLoaderRoute: typeof publicAuthLoginRouteImport;
+      parentRoute: typeof publicAuthRouteRoute;
+    };
     '/(protected)/transactions/$id/': {
-      id: '/(protected)/transactions/$id/'
-      path: '/transactions/$id'
-      fullPath: '/transactions/$id'
-      preLoaderRoute: typeof protectedTransactionsIdIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/transactions/$id/';
+      path: '/transactions/$id';
+      fullPath: '/transactions/$id';
+      preLoaderRoute: typeof protectedTransactionsIdIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/sales/pos/': {
-      id: '/(protected)/sales/pos/'
-      path: '/sales/pos'
-      fullPath: '/sales/pos'
-      preLoaderRoute: typeof protectedSalesPosIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/sales/pos/';
+      path: '/sales/pos';
+      fullPath: '/sales/pos';
+      preLoaderRoute: typeof protectedSalesPosIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/sales/overview/': {
-      id: '/(protected)/sales/overview/'
-      path: '/sales/overview'
-      fullPath: '/sales/overview'
-      preLoaderRoute: typeof protectedSalesOverviewIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/sales/overview/';
+      path: '/sales/overview';
+      fullPath: '/sales/overview';
+      preLoaderRoute: typeof protectedSalesOverviewIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/products/overview/': {
-      id: '/(protected)/products/overview/'
-      path: '/products/overview'
-      fullPath: '/products/overview'
-      preLoaderRoute: typeof protectedProductsOverviewIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/products/overview/';
+      path: '/products/overview';
+      fullPath: '/products/overview';
+      preLoaderRoute: typeof protectedProductsOverviewIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/products/create/': {
-      id: '/(protected)/products/create/'
-      path: '/products/create'
-      fullPath: '/products/create'
-      preLoaderRoute: typeof protectedProductsCreateIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/products/create/';
+      path: '/products/create';
+      fullPath: '/products/create';
+      preLoaderRoute: typeof protectedProductsCreateIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/products/$id/': {
-      id: '/(protected)/products/$id/'
-      path: '/products/$id'
-      fullPath: '/products/$id'
-      preLoaderRoute: typeof protectedProductsIdIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/products/$id/';
+      path: '/products/$id';
+      fullPath: '/products/$id';
+      preLoaderRoute: typeof protectedProductsIdIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
+    '/(protected)/inventories/supplier/': {
+      id: '/(protected)/inventories/supplier/';
+      path: '/inventories/supplier';
+      fullPath: '/inventories/supplier';
+      preLoaderRoute: typeof protectedInventoriesSupplierIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
+    '/(protected)/inventories/purchase/': {
+      id: '/(protected)/inventories/purchase/';
+      path: '/inventories/purchase';
+      fullPath: '/inventories/purchase';
+      preLoaderRoute: typeof protectedInventoriesPurchaseIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
+    '/(protected)/inventories/inventory/': {
+      id: '/(protected)/inventories/inventory/';
+      path: '/inventories/inventory';
+      fullPath: '/inventories/inventory';
+      preLoaderRoute: typeof protectedInventoriesInventoryIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/products/$id/update/': {
-      id: '/(protected)/products/$id/update/'
-      path: '/products/$id/update'
-      fullPath: '/products/$id/update'
-      preLoaderRoute: typeof protectedProductsIdUpdateIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
+      id: '/(protected)/products/$id/update/';
+      path: '/products/$id/update';
+      fullPath: '/products/$id/update';
+      preLoaderRoute: typeof protectedProductsIdUpdateIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
   }
 }
 
 interface protectedRouteRouteChildren {
-  protectedProductsIndexRoute: typeof protectedProductsIndexRoute
-  protectedTransactionsIndexRoute: typeof protectedTransactionsIndexRoute
-  protectedProductsIdIndexRoute: typeof protectedProductsIdIndexRoute
-  protectedProductsCreateIndexRoute: typeof protectedProductsCreateIndexRoute
-  protectedProductsOverviewIndexRoute: typeof protectedProductsOverviewIndexRoute
-  protectedSalesOverviewIndexRoute: typeof protectedSalesOverviewIndexRoute
-  protectedSalesPosIndexRoute: typeof protectedSalesPosIndexRoute
-  protectedTransactionsIdIndexRoute: typeof protectedTransactionsIdIndexRoute
-  protectedProductsIdUpdateIndexRoute: typeof protectedProductsIdUpdateIndexRoute
+  protectedProductsIndexRoute: typeof protectedProductsIndexRoute;
+  protectedTransactionsIndexRoute: typeof protectedTransactionsIndexRoute;
+  protectedInventoriesInventoryIndexRoute: typeof protectedInventoriesInventoryIndexRoute;
+  protectedInventoriesPurchaseIndexRoute: typeof protectedInventoriesPurchaseIndexRoute;
+  protectedInventoriesSupplierIndexRoute: typeof protectedInventoriesSupplierIndexRoute;
+  protectedProductsIdIndexRoute: typeof protectedProductsIdIndexRoute;
+  protectedProductsCreateIndexRoute: typeof protectedProductsCreateIndexRoute;
+  protectedProductsOverviewIndexRoute: typeof protectedProductsOverviewIndexRoute;
+  protectedSalesOverviewIndexRoute: typeof protectedSalesOverviewIndexRoute;
+  protectedSalesPosIndexRoute: typeof protectedSalesPosIndexRoute;
+  protectedTransactionsIdIndexRoute: typeof protectedTransactionsIdIndexRoute;
+  protectedProductsIdUpdateIndexRoute: typeof protectedProductsIdUpdateIndexRoute;
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedProductsIndexRoute: protectedProductsIndexRoute,
   protectedTransactionsIndexRoute: protectedTransactionsIndexRoute,
+  protectedInventoriesInventoryIndexRoute: protectedInventoriesInventoryIndexRoute,
+  protectedInventoriesPurchaseIndexRoute: protectedInventoriesPurchaseIndexRoute,
+  protectedInventoriesSupplierIndexRoute: protectedInventoriesSupplierIndexRoute,
   protectedProductsIdIndexRoute: protectedProductsIdIndexRoute,
   protectedProductsCreateIndexRoute: protectedProductsCreateIndexRoute,
   protectedProductsOverviewIndexRoute: protectedProductsOverviewIndexRoute,
@@ -328,31 +384,25 @@ const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedSalesPosIndexRoute: protectedSalesPosIndexRoute,
   protectedTransactionsIdIndexRoute: protectedTransactionsIdIndexRoute,
   protectedProductsIdUpdateIndexRoute: protectedProductsIdUpdateIndexRoute,
-}
+};
 
-const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
-  protectedRouteRouteChildren,
-)
+const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(protectedRouteRouteChildren);
 
 interface publicAuthRouteRouteChildren {
-  publicAuthLoginRoute: typeof publicAuthLoginRoute
-  publicAuthRegisterRoute: typeof publicAuthRegisterRoute
+  publicAuthLoginRoute: typeof publicAuthLoginRoute;
+  publicAuthRegisterRoute: typeof publicAuthRegisterRoute;
 }
 
 const publicAuthRouteRouteChildren: publicAuthRouteRouteChildren = {
   publicAuthLoginRoute: publicAuthLoginRoute,
   publicAuthRegisterRoute: publicAuthRegisterRoute,
-}
+};
 
-const publicAuthRouteRouteWithChildren = publicAuthRouteRoute._addFileChildren(
-  publicAuthRouteRouteChildren,
-)
+const publicAuthRouteRouteWithChildren = publicAuthRouteRoute._addFileChildren(publicAuthRouteRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   protectedRouteRoute: protectedRouteRouteWithChildren,
   publicAuthRouteRoute: publicAuthRouteRouteWithChildren,
-}
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+};
+export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();

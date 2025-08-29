@@ -1,20 +1,20 @@
-import { notifications } from '@mantine/notifications';
 import { Button, Flex, Input, Table } from '@mantine/core';
 import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import { notifications } from '@mantine/notifications';
+import type { ChangeEvent, FocusEvent } from 'react';
 import { useEffect, useState } from 'react';
-
-import { formatCurrency } from '~/utils/format';
-import { useCartStore } from '../_hooks/use-cart-store';
-import styles from '../styles.module.css';
 import Big from 'big.js';
 
-import type { ChangeEvent, FocusEvent } from 'react';
+import { useCartStore } from '../_hooks/use-cart-store';
+import { formatCurrency } from '~/utils/format';
 import type { CartItem } from '../_types';
+import styles from '../styles.module.css';
 
 export function RowCart({ cart }: { cart: CartItem }) {
   const [inputValue, setInputValue] = useState<number>(cart.quantity);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
+  const sub_total = new Big(cart.price).times(cart.quantity).toString();
 
   useEffect(() => {
     setInputValue(cart.quantity);
@@ -45,8 +45,6 @@ export function RowCart({ cart }: { cart: CartItem }) {
       updateQuantity(cart.id, newQty);
     }
   };
-
-  const subtotal = new Big(cart.price).times(cart.quantity).toString();
 
   return (
     <Table.Tr key={cart.id}>
@@ -85,7 +83,7 @@ export function RowCart({ cart }: { cart: CartItem }) {
       </Table.Td>
       <Table.Td>{formatCurrency(cart.price)}</Table.Td>
       <Table.Td>{parseFloat(cart.discount) * 100} %</Table.Td>
-      <Table.Td>{formatCurrency(subtotal)}</Table.Td>
+      <Table.Td>{formatCurrency(sub_total)}</Table.Td>
       <Table.Td>
         <Button size="xs" variant="default" onClick={() => removeItem(cart.id)}>
           <FaTrash />

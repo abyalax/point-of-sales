@@ -61,9 +61,9 @@ const data: DataSidebar[] = [
     icon: IconNotes,
     links: [
       { label: 'Transactions', link: '/transactions' },
-      { label: 'Inventory', link: '/' },
-      { label: 'Supplier', link: '/' },
-      { label: 'Stock', link: '/' },
+      { label: 'Inventory', link: '/inventories/inventory' },
+      { label: 'Purchase', link: '/inventories/purchase' },
+      { label: 'Supplier', link: '/inventories/supplier' },
     ],
   },
   {
