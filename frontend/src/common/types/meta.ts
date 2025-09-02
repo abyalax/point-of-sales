@@ -1,5 +1,3 @@
-import type { EngineSide } from '~/components/fragments/table';
-
 export type SortOrder = 'ASC' | 'DESC';
 
 interface Pagination {
@@ -13,15 +11,17 @@ interface Sorting<E> {
 interface GlobalFilter {
   search?: string;
 }
-interface Config {
-  engine?: EngineSide;
-}
 
-export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter, Config {}
+export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter {}
 
 export interface MetaResponse {
   page: number;
   per_page: number;
   total_count: number;
   total_pages: number;
+}
+
+export interface Paginated<T = unknown> {
+  data: T[];
+  meta: MetaResponse;
 }

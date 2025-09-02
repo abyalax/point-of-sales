@@ -2,21 +2,18 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { ProductDiscountImpact, ProductFrequencySold, ProductTrending, ProductTrendPeriode } from './product.schema';
-import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
-import { mapProductRows, RowProducts } from '~/modules/product/product.map';
+import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryProductReportDto } from './dto/query-product-report.dto';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { OmitProduct } from '../transaction/transaction.schema';
-import { PayloadProductDto } from './dto/payload-product.dto';
+import { MetaResponse, Paginated } from '~/common/types/meta';
+import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
 import { REPOSITORY } from '~/common/constants/database';
-import { ProductTrendDto } from './dto/product-trend.dto';
 import { DEFAULT } from '~/common/constants/default';
 import { Category } from './entity/category.entity';
-import { plainToInstance } from 'class-transformer';
-import { MetaResponse } from '~/common/types/meta';
 import { Product } from './entity/product.entity';
-import { ProductDto } from './dto/product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -52,7 +49,7 @@ export class ProductService {
    * @description Mengambil data trend penjualan produk dalam 12 minggu terakhir
    * @returns ProductTrendDto[]
    */
-  async getProductTrends(periode: ProductTrendPeriode = 'week'): Promise<ProductTrendDto[]> {
+  async getProductTrends(periode: ProductTrendPeriode = 'week'): Promise<ProductTrending[]> {
     const periodeSql = periode === 'week' ? 'YEARWEEK(ti.created_at, 1)' : "DATE_FORMAT(ti.created_at, '%m')";
     const interval = periode === 'week' ? '12 WEEK' : '6 MONTH';
 
@@ -79,7 +76,7 @@ export class ProductService {
           periode ASC,
           total_qty DESC;
     `);
-    return plainToInstance(ProductTrendDto, data, { excludeExtraneousValues: true });
+    return data;
   }
 
   /**
@@ -207,55 +204,69 @@ export class ProductService {
     return data;
   }
 
-  async searchByName(query: { search: string }): Promise<ProductDto[]> {
-    const data = await this.productRepository.query(
-      `SELECT product.*, category.id AS category_id, category.name AS category_name
-        FROM products product
-        LEFT JOIN categories category
-        ON category.id = product.category_id
-      WHERE MATCH(product.name) AGAINST (? IN NATURAL LANGUAGE MODE)
+  /**
+   * @title Search products at Page POS
+   * @returns
+   */
+  async searchByName(query: { search: string }): Promise<Product[]> {
+    const data = await this.productRepository.query<Product[]>(
+      `SELECT
+        p.id,
+        p.name,
+        p.barcode,
+        p.price,
+        p.cost_price,
+        p.tax_rate,
+        p.discount,
+        p.status,
+        p.created_at,
+        p.updated_at,
+        JSON_OBJECT(
+          'id', c.id,
+          'name', c.name,
+          'created_at', c.created_at,
+          'updated_at', c.updated_at
+        ) AS category
+      FROM products p
+      LEFT JOIN categories c ON c.id = p.category_id
+      WHERE MATCH(p.name) AGAINST (? IN NATURAL LANGUAGE MODE)
       ;`,
       [query.search],
     );
-
-    const mappedData = mapProductRows(data as unknown as RowProducts[]);
-    return plainToInstance(ProductDto, mappedData, { excludeExtraneousValues: true });
+    return data;
   }
 
-  async find(query: QueryProductDto): Promise<{ data: ProductDto[]; meta: MetaResponse }> {
-    const page = query?.page ?? DEFAULT.PAGINATION.page;
-    const per_page = query?.per_page ?? DEFAULT.PAGINATION.per_page;
+  /**
+   * @title For Table Management Products
+   * @param query QueryProduct (params untuk filtering dan pagination)
+   * @returns Data paginated products
+   */
+  async find(query: QueryProductDto): Promise<Paginated<Product>> {
+    const page = Number(query?.page ?? DEFAULT.PAGINATION.page);
+    const per_page = Number(query?.per_page ?? DEFAULT.PAGINATION.per_page);
     const offset = (page - 1) * per_page;
+
     const params: (string | number)[] = [];
     const whereClauses: string[] = [];
 
     if (query?.search) {
-      whereClauses.push(`MATCH(product.name) AGAINST (? IN NATURAL LANGUAGE MODE)`);
+      whereClauses.push(`MATCH(p.name) AGAINST (? IN NATURAL LANGUAGE MODE)`);
       params.push(query.search);
     }
-
     if (query?.status) {
-      whereClauses.push(`product.status = ?`);
+      whereClauses.push(`p.status = ?`);
       params.push(query.status);
     }
-
-    if (query?.min_price && !query?.max_price) {
-      whereClauses.push(`product.price >= ?`);
+    if (query?.min_price) {
+      whereClauses.push(`p.price >= ?`);
       params.push(query.min_price);
     }
-
-    if (!query?.min_price && query?.max_price) {
-      whereClauses.push(`product.price <= ?`);
+    if (query?.max_price) {
+      whereClauses.push(`p.price <= ?`);
       params.push(query.max_price);
     }
-
-    if (query?.min_price && query?.max_price && query.max_price > query.min_price) {
-      whereClauses.push(`product.price BETWEEN ? AND ?`);
-      params.push(query.min_price, query.max_price);
-    }
-
     if (query?.category) {
-      whereClauses.push(`category.id = ?`);
+      whereClauses.push(`c.id = ?`);
       params.push(query.category);
     }
 
@@ -264,84 +275,106 @@ export class ProductService {
     const sort_by = allowedSortFields.includes(query?.sort_by ?? '') ? query?.sort_by : 'created_at';
     const sort_order = ['ASC', 'DESC'].includes(query?.sort_order ?? '') ? query?.sort_order : 'DESC';
 
-    const baseQuery = `
-      FROM products product
-      LEFT JOIN categories category ON category.id = product.category_id
+    const countQuery = `
+      SELECT COUNT(p.id) as total
+      FROM products p
+      LEFT JOIN categories c ON c.id = p.category_id
       ${whereSQL}
     `;
-
-    // Count total
-    const countQuery = `SELECT COUNT(*) as total ${baseQuery}`;
     const countResult = await this.productRepository.query(countQuery, params);
     const total_count = Number(countResult[0]?.total ?? 0);
     const total_pages = Math.ceil(total_count / per_page);
-    const pagination = `LIMIT ? OFFSET ?`;
-    const isServerSide = query?.engine === 'server_side';
 
-    // Data query
     const dataQuery = `
+      WITH paginated_products AS (
+        SELECT p.id
+        FROM products p
+        LEFT JOIN categories c ON c.id = p.category_id
+        ${whereSQL}
+        ORDER BY p.${sort_by} ${sort_order}
+        LIMIT ? OFFSET ?
+      )
       SELECT
-        product.*,
-        category.name AS category_name,
-        category.created_at AS category_created_at,
-        category.updated_at AS category_updated_at
-      ${baseQuery}
-      ORDER BY product.${sort_by} ${sort_order}
-      ${isServerSide ? pagination : ';'}
+        p.id,
+        p.name,
+        p.barcode,
+        p.price,
+        p.cost_price,
+        p.tax_rate,
+        p.discount,
+        p.status,
+        p.created_at,
+        p.updated_at,
+        JSON_OBJECT(
+          'id', c.id,
+          'name', c.name,
+          'created_at', c.created_at,
+          'updated_at', c.updated_at
+        ) AS category
+      FROM paginated_products pp
+      JOIN products p ON p.id = pp.id
+      LEFT JOIN categories c ON c.id = p.category_id
+      ORDER BY p.${sort_by} ${sort_order}
     `;
 
-    const data = await this.productRepository.query<Product[]>(dataQuery, [
-      ...params,
-      isServerSide ? parseInt(per_page as unknown as string) : '',
-      isServerSide ? parseInt(offset as unknown as string) : '',
-    ]);
-    const mappedData = mapProductRows(data as unknown as RowProducts[]);
+    const dataParams = [...params, per_page, offset];
+    const data = await this.productRepository.query<Product[]>(dataQuery, dataParams);
+
     const meta: MetaResponse = {
       page,
       per_page,
       total_count,
       total_pages,
     };
-    return {
-      data: plainToInstance(ProductDto, mappedData, { excludeExtraneousValues: true }),
-      meta,
-    };
+
+    return { data, meta };
   }
 
-  async getCategories(): Promise<CategoryDto[]> {
-    const data = await this.categoryRepository.find();
-    return plainToInstance(CategoryDto, data, { excludeExtraneousValues: true });
+  /**
+   * @title get all category products to field select exist categories
+   * @returns unique name categories with incluedes id
+   */
+  async getCategories(): Promise<Category[]> {
+    const data = await this.categoryRepository.query<Category[]>(`
+      SELECT c.*
+      FROM categories c
+      JOIN (
+          SELECT name, MIN(id) AS id
+          FROM categories
+          GROUP BY name
+      ) x ON c.name = x.name AND c.id = x.id;
+    `);
+    return data;
   }
 
   async getIds(): Promise<number[]> {
     const data = await this.productRepository.query<{ id: number }[]>('SELECT id FROM products');
-    return data.map((product) => product.id);
+    return data.map((product) => Number(product.id));
   }
 
-  async createCategory(category: CreateCategoryDto): Promise<CategoryDto> {
-    const data = await this.categoryRepository.save({ name: category.name });
-    return plainToInstance(CategoryDto, data, { excludeExtraneousValues: true });
+  async createCategory(category: CreateCategoryDto): Promise<Category> {
+    return await this.categoryRepository.save({ name: category.name });
   }
 
-  async create(payloadProductDto: PayloadProductDto): Promise<ProductDto> {
-    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProductDto.category } });
+  async create(payloadProduct: CreateProductDto): Promise<Product> {
+    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProduct.category } });
     const product = await this.productRepository.save({
-      ...payloadProductDto,
+      ...payloadProduct,
       category,
     });
-    return plainToInstance(ProductDto, product, { excludeExtraneousValues: true });
+    return product;
   }
 
-  async findOneByID(id: number): Promise<ProductDto> {
+  async findOneByID(id: number): Promise<Product> {
     const products = await this.productRepository.findOneBy({ id });
     if (products === null) throw new NotFoundException('Product not found');
-    return plainToInstance(ProductDto, products, { excludeExtraneousValues: true });
+    return products;
   }
 
-  async update(id: number, payloadProductDto: PayloadProductDto): Promise<boolean> {
-    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProductDto.category } });
+  async update(id: number, payloadProduct: UpdateProductDto): Promise<boolean> {
+    const category = await this.categoryRepository.findOneOrFail({ where: { name: payloadProduct.category } });
     const product = await this.productRepository.update(id, {
-      ...payloadProductDto,
+      ...payloadProduct,
       category,
     });
     if (product.affected === 0) throw new NotFoundException();

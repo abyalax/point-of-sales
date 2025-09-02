@@ -11,7 +11,6 @@ export const basePaginationSchema = (entityKey: readonly [string, ...string[]]) 
     sort_by: z.enum(entityKey).optional(),
     order_by: z.enum(['ASC', 'DESC']).optional(),
     search: z.string().optional(),
-    engine: z.enum(['server_side', 'client_side']).default('server_side').optional(),
   });
 
 export const isValidStringPrice = () =>

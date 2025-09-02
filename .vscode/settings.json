@@ -7,8 +7,11 @@
   "search.exclude": {
     "**/routeTree.gen.ts": true,
     "node_modules": true,
+    ".tanstack": true,
     ".husky": true,
-    "backend/coverage": true
+    "/dist/": true,
+    "backend/coverage": true,
+    "frontend/.windsurfrules": true
   },
   "eslint.rules.customizations": [
     {

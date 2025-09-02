@@ -134,7 +134,7 @@ function RouteComponent() {
                     {formatCurrency(salesByYear?.total_revenue ?? '0')}
                   </Text>
                 </Skeleton>
-                <Link to="/transactions" style={{ color: 'blue' }}>
+                <Link to="/inventories/transactions" style={{ color: 'blue' }}>
                   view all
                 </Link>
               </Container>
@@ -148,7 +148,7 @@ function RouteComponent() {
                     {formatCurrency(salesByYear?.total_sales ?? '0')}
                   </Text>
                 </Skeleton>
-                <Link to="/transactions" style={{ color: 'blue' }}>
+                <Link to="/inventories/transactions" style={{ color: 'blue' }}>
                   view all
                 </Link>
               </Container>
@@ -161,7 +161,7 @@ function RouteComponent() {
                     {formatCurrency(salesByYear?.total_profit ?? '0')}
                   </Text>
                 </Skeleton>
-                <Link to="/transactions" style={{ color: 'blue' }}>
+                <Link to="/inventories/transactions" style={{ color: 'blue' }}>
                   view all
                 </Link>
               </Container>
@@ -174,7 +174,7 @@ function RouteComponent() {
                     {formatCurrency(salesByYear?.total_tax ?? '0')}
                   </Text>
                 </Skeleton>
-                <Link to="/transactions" style={{ color: 'blue' }}>
+                <Link to="/inventories/transactions" style={{ color: 'blue' }}>
                   view all
                 </Link>
               </Container>

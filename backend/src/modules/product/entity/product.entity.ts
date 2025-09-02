@@ -4,7 +4,7 @@ import { EProductStatus } from '../product.schema';
 import type { Category } from './category.entity';
 
 @Entity({ name: 'products' })
-@Index(['name'], { fulltext: true })
+@Index('product_name', ['name'], { fulltext: true })
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;

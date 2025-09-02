@@ -6,7 +6,7 @@ import type { TAxiosResponse, TResponse } from '~/common/types/response';
 
 type Result = UseQueryOptions<TAxiosResponse<TransactionPaginated>, TResponse, TransactionPaginated | undefined, QueryKey<QueryTransaction>[]>;
 
-export const queryFilterTransactions = (query: QueryTransaction = { engine: 'server_side' }): Result => ({
+export const queryFilterTransactions = (query: QueryTransaction): Result => ({
   queryKey: [QUERY_KEY.TRANSACTION.GET_ALL, query],
   queryFn: () => filterTransactions(query),
   select: (res) => res.data.data,

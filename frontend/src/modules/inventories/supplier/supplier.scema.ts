@@ -1,5 +1,5 @@
 import type { ICategory } from '~/modules/product/product.schema';
-import type { Inventory } from '../inventory/inventories.schema';
+import type { Inventories } from '../inventory/inventories.schema';
 
 export interface Supplier {
   id: number;
@@ -10,7 +10,7 @@ export interface Supplier {
   is_active: boolean;
   category_id: number;
   category: ICategory;
-  inventories: Inventory[];
+  inventories: Inventories[];
   created_at?: string;
   updated_at?: string;
 }

@@ -196,8 +196,8 @@ describe('Module Transaction', () => {
       const res = await request(app.getHttpServer()).post('/auth/login').send({ email: USER.email, password: USER.password });
 
       const cookies = res.headers['set-cookie'];
-      access_token = extractHttpOnlyCookie('access_token', cookies) ?? '';
-      refresh_token = extractHttpOnlyCookie('refresh_token', cookies) ?? '';
+      access_token = extractHttpOnlyCookie('access_token', cookies);
+      refresh_token = extractHttpOnlyCookie('refresh_token', cookies);
 
       await request(app.getHttpServer())
         .get('/transaction/ids')
@@ -206,16 +206,6 @@ describe('Module Transaction', () => {
         .expect((res) => {
           ids = res.body.data;
         });
-    });
-
-    test('POST Test Token Cookie for Request', async () => {
-      expect(refresh_token).toBeDefined();
-      expect(access_token).toBeDefined();
-      const id = ids[Math.floor(Math.random() * ids.length)];
-      await request(app.getHttpServer())
-        .get('/transaction/' + id)
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200);
     });
   });
 });

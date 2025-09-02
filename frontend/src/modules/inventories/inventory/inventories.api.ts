@@ -1,19 +1,20 @@
 import { api } from '~/lib/axios/api';
-import type { Inventory, PayloadInventory } from './inventories.schema';
+import type { Inventories, PayloadInventory, QueryInventory } from './inventories.schema';
 import type { TAxiosResponse } from '~/common/types/response';
+import type { Paginated } from '~/common/types/meta';
 
-export const getInventories = async (): Promise<TAxiosResponse<Inventory[]>> => {
-  return api.get('/inventories');
+export const getInventories = async (params: QueryInventory): Promise<TAxiosResponse<Paginated<Inventories>>> => {
+  return api.get('/inventories', { params });
 };
 
-export const updateInventory = (payload: PayloadInventory): Promise<TAxiosResponse<Inventory>> => {
-  return api.patch(`/inventories/${payload.id}`, payload);
+export const updateInventory = async (payload: PayloadInventory): Promise<TAxiosResponse<Inventories>> => {
+  return await api.patch(`/inventories/${payload.id}`, payload);
 };
 
-export const deleteInventory = (params: { id: string }): Promise<TAxiosResponse<boolean>> => {
-  return api.delete(`/inventories/${params.id}`);
+export const deleteInventory = async (params: { id: string }): Promise<TAxiosResponse<boolean>> => {
+  return await api.delete(`/inventories/${params.id}`);
 };
 
-export const createInventory = (payload: PayloadInventory): Promise<TAxiosResponse<Inventory>> => {
+export const createInventory = (payload: PayloadInventory): Promise<TAxiosResponse<Inventories>> => {
   return api.post('/inventories', payload);
 };

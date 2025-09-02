@@ -18,6 +18,11 @@ export const MUTATION_KEY = {
   TRANSACTION: {
     CREATE: 'create_transaction',
   },
+  INVENTORIES: {
+    INVENTORY: {
+      UPDATE: 'update_inventories',
+    },
+  },
 } as const;
 
 export type MutationKey = ExtractString<typeof MUTATION_KEY>;

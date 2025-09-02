@@ -11,6 +11,9 @@ export class Inventory {
   @Column({ nullable: false })
   product_id: number;
 
+  @Column({ type: 'varchar', length: 100 })
+  barcode: string;
+
   @Column({ type: 'int', default: 0, nullable: false })
   stock: number;
 

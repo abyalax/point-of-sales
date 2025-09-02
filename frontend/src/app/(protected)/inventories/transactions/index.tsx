@@ -11,7 +11,7 @@ import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
 import { useFilterTransactions } from './_hooks/use-filter-transactions';
 import { queryTransactionsSchema, type Transaction } from '~/modules/transaction/transaction.schema';
 
-export const Route = createFileRoute('/(protected)/transactions/')({
+export const Route = createFileRoute('/(protected)/inventories/transactions/')({
   component: RouteComponent,
   validateSearch: queryTransactionsSchema,
 });
@@ -66,8 +66,8 @@ function RouteComponent() {
         columnIds={columnIds}
         route={Route}
         path={{
-          detail: '/transactions/$id',
-          update: '/transactions/$id',
+          detail: '/inventories/transactions/$id',
+          update: '/inventories/transactions/$id',
         }}
         enableFeature={{
           engineSide: 'server_side',

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { REPOSITORY } from '~/common/constants/database';
 import { User } from './entity/user.entity';
@@ -39,6 +39,11 @@ export class UserService {
     return permissions;
   }
 
+  async getIds(): Promise<number[]> {
+    const rows = await this.userRepository.query<{ id: string }[]>(`SELECT id FROM users;`);
+    return rows.map((row) => Number(row.id));
+  }
+
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
@@ -56,18 +61,20 @@ export class UserService {
   }
 
   async findOneBy(params: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
-    return await this.userRepository.findOne({ where: params, relations: ['roles'] });
+    return await this.userRepository.findOneOrFail({ where: params, relations: ['roles'] });
   }
 
   async findOne(params: FindOneOptions<User>) {
-    return await this.userRepository.findOne(params);
+    return await this.userRepository.findOneOrFail(params);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     return await this.userRepository.update(id, updateUserDto);
   }
 
-  async remove(id: number) {
-    return await this.userRepository.delete(id);
+  async remove(id: number): Promise<boolean> {
+    const deleted = await this.userRepository.delete(id);
+    if (deleted.affected === 0) throw new NotFoundException('ID user to be deleted not found');
+    return true;
   }
 }

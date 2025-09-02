@@ -75,7 +75,7 @@ export const TransactionStateSchema = z.object({
   updated_at: z.string(),
 });
 
-export type TransactionState = z.infer<typeof TransactionStateSchema>;
+export type TransactionState = z.infer<typeof TransactionStateSchema> & { id: string };
 export interface Transaction {
   id: number;
   user: IUser;
@@ -162,6 +162,8 @@ export const ReportSalesSchema = z.object({
 
 export type ReportSales = z.infer<typeof ReportSalesSchema>;
 
+export type TransactionKeys = keyof Partial<Transaction>;
+
 const transactionKeys = [
   'status',
   'cashier',
@@ -172,7 +174,7 @@ const transactionKeys = [
   'payment_method',
   'created_at',
   'updated_at',
-] as const satisfies readonly [string, ...(keyof Partial<Transaction>)[]];
+] as const satisfies TransactionKeys[];
 
 export const queryTransactionsSchema = z.intersection(
   basePaginationSchema(transactionKeys),

@@ -1,20 +1,18 @@
-import { ReportSales, SalesByCategory, CartDtoSchema, ProductProfitable } from './transaction.schema';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+import { ReportSales, SalesByCategory, ProductProfitable } from './transaction.schema';
 import { TransactionItem } from './entities/transaction-item.entity';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
 import { QueryReportSales } from './dto/query-report-sales.dto';
 import { calculateTransaction } from './transaction.calculate';
+import { MetaResponse, Paginated } from '~/common/types/meta';
 import { Transaction } from './entities/transaction.entity';
 import { REPOSITORY } from '~/common/constants/database';
-import { TransactionDto } from './dto/transaction.dto';
-import { mapTransactionRows } from './transaction.map';
 import { rangeFilter } from '~/common/helpers/query';
-import { plainToInstance } from 'class-transformer';
-import { MetaResponse } from '~/common/types/meta';
 import { User } from '../user/entity/user.entity';
 import { CartDto } from './dto/carts.dto';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class TransactionService {
@@ -34,32 +32,34 @@ export class TransactionService {
     return data.map((e) => Number(e.id));
   }
 
-  async create(createTransactionDto: CartDto, userId: number): Promise<TransactionDto> {
-    CartDtoSchema.parse(createTransactionDto);
-    const calculate = calculateTransaction(createTransactionDto);
-    const user = await this.userRepository.findOneByOrFail({ id: userId });
-    const transaction_items: TransactionItem[] = [];
-
-    calculate.items.map((item) => {
-      const transactionItem = this.transactionItemRepository.create(item);
-      transaction_items.push(transactionItem);
-    });
-
-    const transaction = this.transactionRepository.create({
-      ...calculate,
-      user,
-      cashier: user.name,
-      items: transaction_items,
-    });
-
-    const saved = await this.transactionRepository.manager.transaction(async (manager) => {
-      return await manager.save(Transaction, transaction);
-    });
-
-    return plainToInstance(TransactionDto, saved);
+  async create(createTransactionDto: CartDto, userId: number): Promise<Transaction> {
+    try {
+      const calculate = calculateTransaction(createTransactionDto);
+      const user = await this.userRepository.findOneByOrFail({ id: userId });
+      const transaction_items: TransactionItem[] = calculate.items.map((item) => {
+        return this.transactionItemRepository.create(item);
+      });
+      const transaction = this.transactionRepository.create({
+        ...calculate,
+        user,
+        cashier: user.name,
+        items: transaction_items,
+      });
+      const saved = await this.transactionRepository.manager.transaction(async (manager) => {
+        const savedTransaction = await manager.save(Transaction, transaction);
+        for (const item of calculate.items) {
+          await manager.query(`UPDATE inventories SET stock = stock - ? WHERE product_id = ?`, [item.quantity, item.barcode]);
+        }
+        return savedTransaction;
+      });
+      return saved;
+    } catch (e) {
+      console.log(e);
+      throw new UnprocessableEntityException('Failed to process transaction. Please try again later.');
+    }
   }
 
-  async find(query: QueryTransactionDto): Promise<{ data: TransactionDto[]; meta: MetaResponse }> {
+  async find(query: QueryTransactionDto): Promise<Paginated<Transaction>> {
     const page = Number(query?.page);
     const per_page = Number(query?.per_page);
     const offset = (page - 1) * per_page;
@@ -115,50 +115,56 @@ export class TransactionService {
         LIMIT ? OFFSET ?
       )
       SELECT
-        t.id AS t_id,
-        t.status AS t_status,
-        t.sub_total AS t_sub_total,
-        t.total_discount AS t_total_discount,
-        t.total_price AS t_total_price,
-        t.total_profit AS t_total_profit,
-        t.total_tax AS t_total_tax,
-        t.last_price AS t_last_price,
-        t.payment_method AS t_payment_method,
-        t.pay_received AS t_pay_received,
-        t.pay_return AS t_pay_return,
-        t.notes AS t_notes,
-        t.created_at AS t_created_at,
-        t.updated_at AS t_updated_at,
+        t.id AS id,
+        t.cashier AS cashier,
+        t.status AS status,
+        t.sub_total AS sub_total,
+        t.total_discount AS total_discount,
+        t.total_price AS total_price,
+        t.total_profit AS total_profit,
+        t.total_tax AS total_tax,
+        t.last_price AS last_price,
+        t.payment_method AS payment_method,
+        t.pay_received AS pay_received,
+        t.pay_return AS pay_return,
+        t.notes AS notes,
+        t.created_at AS created_at,
+        t.updated_at AS updated_at,
 
-        u.id AS u_id,
-        u.name AS u_name,
-        u.email AS u_email,
+        JSON_OBJECT(
+          'id', u.id,
+          'name', u.name,
+          'email', u.email
+        ) AS user,
 
-        ti.id AS ti_id,
-        ti.barcode AS ti_barcode,
-        ti.name AS ti_name,
-        ti.category AS ti_category,
-        ti.quantity AS ti_quantity,
-        ti.price AS ti_price,
-        ti.cost_price AS ti_cost_price,
-        ti.sell_price AS ti_sell_price,
-        ti.final_price AS ti_final_price,
-        ti.discount AS ti_discount,
-        ti.tax_rate AS ti_tax_rate,
-        ti.created_at AS ti_created_at,
-        ti.updated_at AS ti_updated_at
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'id', ti.id,
+            'barcode', ti.barcode,
+            'name', ti.name,
+            'category', ti.category,
+            'quantity', ti.quantity,
+            'price', ti.price,
+            'cost_price', ti.cost_price,
+            'sell_price', ti.sell_price,
+            'final_price', ti.final_price,
+            'discount', ti.discount,
+            'tax_rate', ti.tax_rate,
+            'created_at', ti.created_at,
+            'updated_at', ti.updated_at
+          )
+        ) AS items
 
       FROM paginated_tx ptx
       JOIN transactions t ON t.id = ptx.id
       JOIN users u ON u.id = t.user_id
       LEFT JOIN transaction_items ti ON ti.transaction_id = t.id
+      GROUP BY t.id
       ORDER BY t.${sort_by} ${sort_order};
     `;
 
     const dataParams = [...params, per_page, offset];
     const data = await this.transactionRepository.query<Transaction[]>(dataQuery, dataParams);
-
-    const mappedData = mapTransactionRows(data);
 
     const meta: MetaResponse = {
       page,
@@ -167,7 +173,7 @@ export class TransactionService {
       total_pages,
     };
 
-    return { data: plainToInstance(TransactionDto, mappedData, { excludeExtraneousValues: true }), meta };
+    return { data, meta };
   }
 
   async productProfitable(query: FilterPeriodeDto): Promise<ProductProfitable[]> {
@@ -308,19 +314,13 @@ export class TransactionService {
     );
   }
 
-  async findByID(id: number): Promise<TransactionDto> {
+  async findByID(id: number): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id },
       loadEagerRelations: true,
     });
     if (transaction === null) throw new NotFoundException('Transaction not found');
-    return plainToInstance(TransactionDto, transaction, { excludeExtraneousValues: true });
-  }
-
-  async update(id: number, updateTransactionDto: TransactionDto): Promise<boolean> {
-    const transaction = await this.transactionRepository.update(id, updateTransactionDto);
-    if (transaction.affected === 0) throw new NotFoundException('Transaction not found');
-    return true;
+    return transaction;
   }
 
   async remove(id: number): Promise<boolean> {

@@ -60,7 +60,7 @@ const data: DataSidebar[] = [
     label: 'Inventories',
     icon: IconNotes,
     links: [
-      { label: 'Transactions', link: '/transactions' },
+      { label: 'Transactions', link: '/inventories/transactions' },
       { label: 'Inventory', link: '/inventories/inventory' },
       { label: 'Purchase', link: '/inventories/purchase' },
       { label: 'Supplier', link: '/inventories/supplier' },

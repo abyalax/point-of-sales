@@ -1,6 +1,6 @@
-export const extractHttpOnlyCookie = (name: 'access_token' | 'refresh_token', cookies: string | string[]) => {
+export const extractHttpOnlyCookie = (name: 'access_token' | 'refresh_token', cookies: string | string[]): string => {
   let access_token: string = '';
-  let getAccessToken: string | undefined;
+  let getAccessToken: string = '';
 
   if (!cookies) return '';
 
@@ -13,7 +13,7 @@ export const extractHttpOnlyCookie = (name: 'access_token' | 'refresh_token', co
       return access_token;
     }
   } else if (Array.isArray(cookies)) {
-    getAccessToken = cookies.find((cookie: string) => cookie.includes(`${name}=`));
+    getAccessToken = cookies.find((cookie: string) => cookie.includes(`${name}=`)) ?? '';
     if (getAccessToken) {
       const rawValue = getAccessToken.split(';')[0].split('=')[1];
       const decodedValue = decodeURIComponent(rawValue);
@@ -23,6 +23,7 @@ export const extractHttpOnlyCookie = (name: 'access_token' | 'refresh_token', co
   } else {
     return access_token;
   }
+  throw new Error('access_token failed to extract');
 };
 
 export function extractSignedCookieToken(cookieValue: string): string {

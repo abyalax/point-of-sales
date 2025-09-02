@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { UserDto } from '../user/dto/user.dto';
-import { plainToInstance } from 'class-transformer';
 import { SignUpDto } from './dto/sign-up.dto';
-import { PermissionsDto } from './dto/permission/get-permission.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtConfig } from '~/config/jwt.config';
+import { Permission } from './entity/permission.entity';
+import { User } from '../user/entity/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -17,18 +16,16 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<UserDto> {
+  async signUp(signUpDto: SignUpDto): Promise<User> {
     const userExist = await this.userService.findByEmail(signUpDto.email);
     if (userExist) throw new BadRequestException();
 
     const created = await this.userService.create(signUpDto);
     const user = await this.userService.findOne({ where: { id: created.id }, relations: ['roles'] });
-    return plainToInstance(UserDto, user, {
-      excludeExtraneousValues: true,
-    });
+    return user;
   }
 
-  async signIn(email: string, password: string): Promise<{ access_token: string; refresh_token: string; user: UserDto }> {
+  async signIn(email: string, password: string): Promise<{ access_token: string; refresh_token: string; user: User }> {
     const isUserExist = await this.userService.findByEmail(email);
     if (isUserExist === null) throw new NotFoundException('Email Not Found');
 
@@ -36,16 +33,13 @@ export class AuthService {
     if (!comparePassword) throw new UnauthorizedException('Invalid Password');
 
     const permissions = await this.userService.getFlattenPermissions(isUserExist.id);
-    const userDTO = plainToInstance(UserDto, isUserExist, {
-      excludeExtraneousValues: true,
-    });
 
-    const user: UserDto = {
-      id: userDTO.id,
-      name: userDTO.name,
-      email: userDTO.email,
+    const user = {
+      id: isUserExist.id,
+      name: isUserExist.name,
+      email: isUserExist.email,
       permissions: permissions,
-      roles: userDTO.roles,
+      roles: isUserExist.roles,
     };
     const payload = { email: isUserExist.email, sub: isUserExist.id };
     const jwt = this.configService.get<JwtConfig>('jwt')!;
@@ -80,10 +74,7 @@ export class AuthService {
     };
   }
 
-  async getFullPermissions(id: number): Promise<PermissionsDto[] | undefined> {
-    const permission = await this.userService.getFullPermissions(id);
-    return plainToInstance(PermissionsDto, permission, {
-      excludeExtraneousValues: true,
-    });
+  async getFullPermissions(id: number): Promise<Permission[] | undefined> {
+    return await this.userService.getFullPermissions(id);
   }
 }

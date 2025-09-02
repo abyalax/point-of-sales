@@ -39,6 +39,5 @@ export interface PurchaseOrder {
   items: PurchaseOrderItem[];
 }
 
-// TODO
 export type OmitPurchaseOrderItem = Omit<PurchaseOrderItem, 'purchaseOrder' | 'product' | 'id' | 'purchase_order_id'>;
 export type PayloadPurchaseOrder = Omit<PurchaseOrder, 'supplier' | 'items'> & { items: OmitPurchaseOrderItem[] };

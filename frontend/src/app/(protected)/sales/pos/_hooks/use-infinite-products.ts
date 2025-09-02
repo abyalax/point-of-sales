@@ -10,7 +10,6 @@ export const useInfiniteProducts = (query: QueryProducts) => {
       const res = await filterProducts({
         ...query,
         page: pageParam,
-        engine: 'server_side',
       });
       return res.data.data;
     },

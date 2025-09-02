@@ -20,6 +20,8 @@ export interface Product {
   status: EProductStatus;
   category: ICategory;
   stock: number;
+  min_stock: number;
+  max_stock: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -39,7 +41,9 @@ export interface ICategory {
   updated_at?: string;
 }
 
-const productKeys = ['name', 'price', 'status', 'category', 'stock'] as const satisfies readonly [string, ...(keyof Partial<Product>)[]];
+export type ProductKeys = keyof Partial<Product>;
+
+const productKeys = ['name', 'price', 'status', 'category', 'stock'] as const satisfies ProductKeys[];
 
 export const queryProductsSchema = z.intersection(
   basePaginationSchema(productKeys),

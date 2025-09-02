@@ -6,14 +6,14 @@ import { QueryReportSales } from './dto/query-report-sales.dto';
 import { Roles } from '~/common/decorators/roles.decorator';
 import { TransactionService } from './transaction.service';
 import { RolesGuard } from '~/common/guards/roles.guard';
-import { TransactionDto } from './dto/transaction.dto';
 import { AuthGuard } from '~/common/guards/auth.guard';
 import { TResponse } from '~/common/types/response';
 import { JwtGuard } from '~/common/guards/jwt.guard';
-import { MetaResponse } from '~/common/types/meta';
+import { Paginated } from '~/common/types/meta';
 import { CartDto } from './dto/carts.dto';
 import { Request } from 'express';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
+import { Transaction } from './entities/transaction.entity';
 
 @UseGuards(AuthGuard, JwtGuard, RolesGuard)
 @Roles('Cashier', 'Admin')
@@ -23,7 +23,7 @@ export class TransactionController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  async find(@Query() query: QueryTransactionDto): Promise<TResponse<{ data: TransactionDto[]; meta: MetaResponse }>> {
+  async find(@Query() query: QueryTransactionDto): Promise<TResponse<Paginated<Transaction>>> {
     const data = await this.transactionService.find(query);
     return {
       statusCode: HttpStatus.OK,
@@ -86,7 +86,7 @@ export class TransactionController {
   }
 
   @Get(':id')
-  async getByID(@Param('id') id: number): Promise<TResponse<TransactionDto>> {
+  async getByID(@Param('id') id: number): Promise<TResponse<Transaction>> {
     const transaction = await this.transactionService.findByID(id);
     return {
       statusCode: HttpStatus.OK,
@@ -97,7 +97,7 @@ export class TransactionController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  async create(@Req() req: Request, @Body() createTransactionDto: CartDto): Promise<TResponse<TransactionDto>> {
+  async create(@Req() req: Request, @Body() createTransactionDto: CartDto): Promise<TResponse<Transaction>> {
     const id: number | undefined = req.user?.id;
     if (!id) throw new UnauthorizedException(`Cashier Does'nt Authorized`);
     const data = await this.transactionService.create(createTransactionDto, id);

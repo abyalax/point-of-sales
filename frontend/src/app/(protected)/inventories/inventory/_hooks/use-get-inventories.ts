@@ -1,18 +1,19 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
-import type { Inventory } from '~/modules/inventories/inventory/inventories.schema';
-import type { TAxiosResponse, TResponse } from '~/common/types/response';
+import type { Inventories, QueryInventory } from '~/modules/inventories/inventory/inventories.schema';
 import { getInventories } from '~/modules/inventories/inventory/inventories.api';
+import type { TAxiosResponse, TResponse } from '~/common/types/response';
 import { QUERY_KEY, type QueryKey } from '~/common/const/querykey';
+import type { Paginated } from '~/common/types/meta';
 
-type Result = UseQueryOptions<TAxiosResponse<Inventory[]>, TResponse, Inventory[] | undefined, QueryKey[]>;
+type Result = UseQueryOptions<TAxiosResponse<Paginated<Inventories>>, TResponse, Paginated<Inventories> | undefined, QueryKey<QueryInventory>[]>;
 
-export const queryGetInventories = (): Result => ({
-  queryKey: [QUERY_KEY.INVENTORIES.GET_ALL],
-  queryFn: () => getInventories(),
+export const queryGetInventories = (query: QueryInventory): Result => ({
+  queryKey: [QUERY_KEY.INVENTORIES.GET_ALL, query],
+  queryFn: () => getInventories(query),
   select: (res) => res.data.data,
 });
 
-export const useGetInventories = () => {
-  return useQuery(queryGetInventories());
+export const useGetInventories = (query: QueryInventory) => {
+  return useQuery(queryGetInventories(query));
 };

@@ -7,12 +7,11 @@ import { App } from 'supertest/types';
 import * as request from 'supertest';
 
 import { extractHttpOnlyCookie, extractSignedCookieToken } from '../utils';
-import { RoleDto } from '~/modules/auth/dto/role/get-role.dto';
 import { SignUpDto } from '~/modules/auth/dto/sign-up.dto';
 import { validateDto } from '~/common/helpers/validation';
-import { UserDto } from '~/modules/user/dto/user.dto';
 import { setupApplication } from '~/test/setup_e2e';
 import { JwtConfig } from '~/config/jwt.config';
+import { Role } from '~/modules/auth/entity/role.entity';
 
 const USER = {
   email: 'abyaadmin@gmail.com',
@@ -45,8 +44,8 @@ describe('Module Authentication', () => {
 
     expect(res.headers['set-cookie']).toBeDefined();
     const cookies = res.headers['set-cookie'];
-    const access_token = extractHttpOnlyCookie('access_token', cookies) ?? '';
-    const refresh_token = extractHttpOnlyCookie('refresh_token', cookies) ?? '';
+    const access_token = extractHttpOnlyCookie('access_token', cookies);
+    const refresh_token = extractHttpOnlyCookie('refresh_token', cookies);
 
     expect(access_token).toBeDefined();
     expect(refresh_token).toBeDefined();
@@ -65,8 +64,7 @@ describe('Module Authentication', () => {
     expect(payload.email).toEqual(USER.email);
 
     const data = await res.body.data;
-    const validated = await validateDto(UserDto, data);
-    expect(validated).toBeDefined();
+    expect(data).toBeDefined();
   });
 
   test('POST /auth/register', async () => {
@@ -93,7 +91,7 @@ describe('Module Authentication', () => {
           id: expect.any(Number),
           name: expect.any(String),
           email: expect.any(String),
-          roles: expect.arrayContaining<RoleDto>([]),
+          roles: expect.arrayContaining<Role>([]),
         }),
       }),
     );

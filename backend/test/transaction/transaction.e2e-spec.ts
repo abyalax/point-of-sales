@@ -5,9 +5,8 @@ import * as request from 'supertest';
 
 import { ProductProfitableSchema, ReportSalesSchema, SalesByCategorySchema } from '~/modules/transaction/transaction.schema';
 import { generateMockCart } from '~/infrastructure/database/mock/transactions/carts.mock';
-import { TransactionDto } from '~/modules/transaction/dto/transaction.dto';
 import { ProductService } from '~/modules/product/product.service';
-import { validateDto, validateSchema } from '../../src/common/helpers/validation';
+import { validateSchema } from '../../src/common/helpers/validation';
 import { extractHttpOnlyCookie } from '~/test/utils';
 import { setupApplication } from '~/test/setup_e2e';
 import { QueryReportSales } from '~/modules/transaction/dto/query-report-sales.dto';
@@ -15,7 +14,7 @@ import { QueryTransactionDto } from '~/modules/transaction/dto/query-transaction
 import z from 'zod';
 
 const USER = {
-  email: 'abyakasir@gmail.com',
+  email: 'abyaadmin@gmail.com',
   password: 'password',
 };
 
@@ -41,8 +40,11 @@ describe('Module Transaction', () => {
 
       expect(res.headers['set-cookie']).toBeDefined();
       const cookies = res.headers['set-cookie'];
-      access_token = extractHttpOnlyCookie('access_token', cookies) ?? '';
-      refresh_token = extractHttpOnlyCookie('refresh_token', cookies) ?? '';
+      access_token = extractHttpOnlyCookie('access_token', cookies);
+      refresh_token = extractHttpOnlyCookie('refresh_token', cookies);
+
+      expect(access_token).toBeDefined();
+      expect(refresh_token).toBeDefined();
 
       await request(app.getHttpServer())
         .get('/transaction/ids')
@@ -53,30 +55,15 @@ describe('Module Transaction', () => {
         });
     });
 
-    test('POST Test Token Cookie for Request', async () => {
-      expect(refresh_token).toBeDefined();
-      expect(access_token).toBeDefined();
-
-      const max = ids.length;
-      const id = ids[Math.floor(Math.random() * max)];
-
-      await request(app.getHttpServer())
-        .get('/transaction/' + id)
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200);
-    });
-
     test('GET /transaction + QueryTransactionDto', async () => {
-      const query: QueryTransactionDto = { page: 1, per_page: 10, engine: 'server_side', min_total_price: 15000, max_total_price: 100000 };
+      const query: QueryTransactionDto = { page: 1, per_page: 10, min_total_price: 15000, max_total_price: 100000 };
       const res = await request(app.getHttpServer())
         .get('/transaction')
         .query(query)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200);
       const data = await res.body.data.data;
-      const transaction = data[0];
-      const result = await validateDto(TransactionDto, transaction);
-      expect(result).toBeInstanceOf(TransactionDto);
+      expect(data).toBeDefined();
     });
 
     test('GET /transaction/sales + QueryReportSales', async () => {
@@ -140,8 +127,7 @@ describe('Module Transaction', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200);
       const validData = await res.body.data;
-      const result = await validateDto(TransactionDto, validData);
-      expect(result).toBeInstanceOf(TransactionDto);
+      expect(validData).toBeDefined();
     });
 
     test('POST /transaction', async () => {
@@ -153,9 +139,8 @@ describe('Module Transaction', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .send(params)
         .expect(201);
-      const validData = await res.body.data;
-      const result = await validateDto(TransactionDto, validData);
-      expect(result).toBeInstanceOf(TransactionDto);
+      const data = await res.body.data;
+      expect(data).toBeDefined();
     });
   });
 

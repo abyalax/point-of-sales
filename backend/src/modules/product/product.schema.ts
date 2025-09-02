@@ -1,6 +1,5 @@
 import z from 'zod';
 import { stringNumber } from '~/common/schema';
-import type { MetaRequest } from '~/common/types/meta';
 
 export enum EProductStatus {
   AVAILABLE = 'Available',
@@ -15,44 +14,39 @@ export enum ESortBy {
   STOCK = 'stock',
 }
 
-interface IFilter {
-  price?: number;
-  status?: EProductStatus;
-  category?: string;
-  stock?: number;
-}
+export const CategorySchema = z.object({
+  id: z.coerce.number(),
+  name: z.string(),
+  products: z.array(z.any()).optional(),
+  suppliers: z.array(z.any()).optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+});
 
-export interface Product {
-  id: string;
-  name: string;
-  barcode: string;
-  price: string;
-  cost_price: string;
-  tax_rate: string;
-  discount: string;
-  status: EProductStatus;
-  category: ICategory;
-  stock: number;
-  created_at?: string;
-  updated_at?: string;
-}
+export const ProductSchema = z.object({
+  id: z.coerce.number(),
+  name: z.string(),
+  barcode: z.string(),
+  price: z.string(),
+  cost_price: z.string(),
+  tax_rate: z.string(),
+  discount: z.string(),
+  status: z.enum([EProductStatus.AVAILABLE, EProductStatus.UNAVAILABLE]),
+  category_id: z.coerce.number(),
+  category: CategorySchema,
+  inventories: z.array(z.any()).optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+});
 
-export interface ICategory {
-  id: string;
-  name: string;
-  products?: Product[];
-  created_at?: string;
-  updated_at?: string;
-}
+export const ProductTrendingSchema = z.object({
+  name: z.string(),
+  periode: z.coerce.number(),
+  id: z.coerce.number(),
+  total_qty: z.coerce.number(),
+});
 
-export interface IQueryProducts extends MetaRequest<Product>, IFilter {}
-
-export interface ProductTrending {
-  name: string;
-  periode: number;
-  id: number;
-  total_qty: number;
-}
+export type ProductTrending = z.infer<typeof ProductTrendingSchema>;
 
 export type ProductTrendPeriode = 'week' | 'month';
 

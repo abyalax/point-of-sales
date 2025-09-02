@@ -3,7 +3,7 @@ import type { Inventory } from '~/modules/inventories/entities/inventory.entity'
 import type { Category } from '~/modules/product/entity/category.entity';
 
 @Entity({ name: 'suppliers' })
-@Index(['name'], { fulltext: true })
+@Index('supplier_name', ['name'], { fulltext: true })
 export class Supplier {
   @PrimaryGeneratedColumn()
   id: number;

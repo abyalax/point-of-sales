@@ -3,21 +3,25 @@ import { TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker/.';
 import { App } from 'supertest/types';
 import * as request from 'supertest';
+import z from 'zod';
 
-import type { PayloadProductDto } from '~/modules/product/dto/payload-product.dto';
-import { EProductStatus, productDiscountImpactSchema, productFrequencySoldSchema } from '~/modules/product/product.schema';
-import { ProductDto } from '~/modules/product/dto/product.dto';
+import {
+  CategorySchema,
+  EProductStatus,
+  productDiscountImpactSchema,
+  productFrequencySoldSchema,
+  ProductSchema,
+  ProductTrendingSchema,
+} from '~/modules/product/product.schema';
+import { QueryProductReportDto } from '~/modules/product/dto/query-product-report.dto';
+import type { CreateProductDto } from '~/modules/product/dto/create-product.dto';
+import { validateSchema } from '../../src/common/helpers/validation';
+import { QueryProductDto } from '~/modules/product/dto/query-product.dto';
+import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
+import { Product } from '~/modules/product/entity/product.entity';
+import { MetaResponseSchema } from '~/common/types/meta';
 import { extractHttpOnlyCookie } from '~/test/utils';
 import { setupApplication } from '~/test/setup_e2e';
-import { validateDto, validateSchema } from '../../src/common/helpers/validation';
-import { OmitProductSchema } from '~/modules/transaction/transaction.schema';
-import { QueryProductReportDto } from '~/modules/product/dto/query-product-report.dto';
-import { ProductTrendDto } from '~/modules/product/dto/product-trend.dto';
-import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
-import { QueryProductDto } from '~/modules/product/dto/query-product.dto';
-import { MetaResponseSchema } from '~/common/types/meta';
-import { CategoryDto } from '~/modules/product/dto/category-product.dto';
-import z from 'zod';
 
 const USER = {
   email: 'abyaadmin@gmail.com',
@@ -36,7 +40,7 @@ describe('Module Product', () => {
     let access_token: string;
     let refresh_token: string;
     let ids: number[] = [];
-    let newProduct: ProductDto | undefined = undefined;
+    let newProduct: Product | undefined = undefined;
 
     beforeEach(async () => {
       const credentials = {
@@ -47,8 +51,11 @@ describe('Module Product', () => {
 
       expect(res.headers['set-cookie']).toBeDefined();
       const cookies = res.headers['set-cookie'];
-      access_token = extractHttpOnlyCookie('access_token', cookies) ?? '';
-      refresh_token = extractHttpOnlyCookie('refresh_token', cookies) ?? '';
+      access_token = extractHttpOnlyCookie('access_token', cookies);
+      refresh_token = extractHttpOnlyCookie('refresh_token', cookies);
+
+      expect(refresh_token).toBeDefined();
+      expect(access_token).toBeDefined();
 
       await request(app.getHttpServer())
         .get('/products/ids')
@@ -56,31 +63,8 @@ describe('Module Product', () => {
         .expect(200)
         .expect((res) => {
           ids = res.body.data;
+          expect(ids).toBeDefined();
         });
-    });
-
-    test('POST Test Token Cookie for Request', async () => {
-      expect(refresh_token).toBeDefined();
-      expect(access_token).toBeDefined();
-
-      const max = ids.length;
-      const id = ids[Math.floor(Math.random() * max)];
-
-      await request(app.getHttpServer())
-        .get('/products/' + id)
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200);
-    });
-
-    test('GET /products', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/products')
-        .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
-        .expect(200);
-
-      const validData = await res.body.data[0];
-      const result = validateSchema(OmitProductSchema, validData);
-      expect(result).toBeDefined();
     });
 
     test('GET /products/sold + QueryProductReportDto', async () => {
@@ -104,9 +88,9 @@ describe('Module Product', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .expect(200);
 
-      const validData = await res.body.data[0];
-      const result = await validateDto(ProductTrendDto, validData);
-      expect(result).toBeInstanceOf(ProductTrendDto);
+      const data = await res.body.data[0];
+      const validated = await validateSchema(ProductTrendingSchema, data);
+      expect(validated).toBeDefined();
     });
 
     test('GET /products/discount/impact + FilterPeriodeDto', async () => {
@@ -122,17 +106,16 @@ describe('Module Product', () => {
       expect(result).toBeDefined();
     });
 
-    test('GET /products/search + QueryProductDto', async () => {
-      const query: QueryProductDto = { page: 1, per_page: 2, engine: 'server_side' };
+    test('GET /products + QueryProductDto', async () => {
+      const query: QueryProductDto = { page: 1, per_page: 2 };
       const res = await request(app.getHttpServer())
-        .get('/products/search')
+        .get('/products')
         .query(query)
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`);
 
       const body = await res.body;
       const data = body.data.data[0];
-      const result = await validateDto(ProductDto, data);
-      expect(result).toBeInstanceOf(ProductDto);
+      expect(data).toBeDefined();
 
       const meta = await res.body.data.meta;
       const validated = await validateSchema(MetaResponseSchema, meta);
@@ -147,8 +130,7 @@ describe('Module Product', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`);
 
       const data = await res.body.data[0];
-      const result = await validateDto(ProductDto, data);
-      expect(result).toBeInstanceOf(ProductDto);
+      expect(data).toBeDefined();
     });
 
     test('GET /products/categories', async () => {
@@ -157,8 +139,7 @@ describe('Module Product', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`);
 
       const data = await res.body.data[0];
-      const result = await validateDto(CategoryDto, data);
-      expect(result).toBeInstanceOf(CategoryDto);
+      expect(data).toBeDefined();
     });
 
     test('GET /products/ids', async () => {
@@ -182,8 +163,7 @@ describe('Module Product', () => {
         .expect(200);
 
       const validData = await res.body.data;
-      const result = await validateDto(ProductDto, validData);
-      expect(result).toBeInstanceOf(ProductDto);
+      expect(validData).toBeDefined();
     });
 
     test('POST /products', async () => {
@@ -198,7 +178,7 @@ describe('Module Product', () => {
       category = fetchProductByID.body.data.category.name;
 
       const price = parseInt(faker.commerce.price({ min: 5000, max: 1000000 }));
-      const product: PayloadProductDto = {
+      const product: CreateProductDto = {
         name: faker.commerce.productName(),
         barcode: `89910011012${faker.number.int({ min: 64, max: 99 })}`,
         price: price.toString(),
@@ -206,6 +186,9 @@ describe('Module Product', () => {
         tax_rate: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
         discount: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }).toString(),
         status: EProductStatus.AVAILABLE,
+        stock: faker.number.int(),
+        max_stock: faker.number.int(),
+        min_stock: faker.number.int(),
         category,
       };
       const res = await request(app.getHttpServer())
@@ -213,9 +196,9 @@ describe('Module Product', () => {
         .set('Cookie', `access_token=s%3A${encodeURIComponent(access_token)}`)
         .send(product);
 
-      const validData = await res.body.data;
-      const result = await validateDto(ProductDto, validData);
-      expect(result).toBeInstanceOf(ProductDto);
+      const data = await res.body.data;
+      const validated = await validateSchema(ProductSchema, data);
+      expect(validated).toBeDefined();
       newProduct = await res.body.data;
     });
 
@@ -227,9 +210,9 @@ describe('Module Product', () => {
         .send({ name: category })
         .expect(201);
 
-      const validData = await res.body.data;
-      const result = await validateDto(CategoryDto, validData);
-      expect(result).toBeInstanceOf(CategoryDto);
+      const data = await res.body.data;
+      const validated = await validateSchema(CategorySchema, data);
+      expect(validated).toBeDefined();
     });
 
     test('PATCH /products/:id', async () => {

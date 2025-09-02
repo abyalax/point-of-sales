@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { Transition, Text, Select, UnstyledButton, Tooltip, SegmentedControl, HoverCard, Container } from '@mantine/core';
+import { Transition, Text, Select, UnstyledButton, Tooltip, Container } from '@mantine/core';
 import { Autocomplete, Button, Flex, Group, Pagination, Pill, Table as TableMantine } from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -53,7 +53,7 @@ const defaultFeature: EnableFeature<any> = {
 };
 
 export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TableProps<T>) => {
-  const [engine, setEngine] = useState<EngineSide>(enableFeature.engineSide ?? 'client_side');
+  const [engine] = useState<EngineSide>(enableFeature.engineSide ?? 'client_side');
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [globalFilter, setGlobalFilter] = useState<string | undefined>(undefined);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -124,19 +124,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
         page: next.pageIndex + 1,
         per_page: next.pageSize,
       },
-    });
-  };
-
-  const onEngineChange = (updater: Updater<EngineSide>) => {
-    const next = typeof updater === 'function' ? updater('server_side') : updater;
-    setEngine(updater);
-    navigate({
-      search: {
-        ...search,
-        engine: next,
-      },
-      replace: true,
-      viewTransition: true,
     });
   };
 
@@ -222,19 +209,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     if (search.search !== undefined && isClientControl) setGlobalFilter(search.search);
   }, [search.search, isClientControl, setGlobalFilter]);
 
-  useEffect(() => {
-    if (!search.engine) {
-      navigate({
-        search: {
-          ...search,
-          engine: 'server_side',
-        },
-        replace: true,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <Container unstyled style={{ padding: '10px', borderRadius: '10px' }}>
       <Flex justify="space-between" align="center" mb={6}>
@@ -249,29 +223,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                 data={searchData}
                 value={globalFilter}
                 onChange={setGlobalFilter}
-                rightSection={
-                  <HoverCard width={280} shadow="md">
-                    <HoverCard.Target>
-                      <SegmentedControl
-                        mr={0}
-                        size="xs"
-                        value={engine}
-                        onChange={() => onEngineChange(engine === 'client_side' ? 'server_side' : 'client_side')}
-                        data={[
-                          { label: 'Local Search', value: 'client_side' },
-                          { label: 'Global Search', value: 'server_side' },
-                        ]}
-                      />
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown>
-                      <Text size="sm" style={{ textAlign: 'center' }}>
-                        {engine === 'client_side'
-                          ? 'Local Search Increase Speed Control But Leaks Memory For Cache Data'
-                          : 'Global Search Increase Memory Control But Decrease Speed'}
-                      </Text>
-                    </HoverCard.Dropdown>
-                  </HoverCard>
-                }
               />
             </Flex>
           )}

@@ -1,13 +1,13 @@
 import { Body, Request, Controller, HttpCode, HttpStatus, Post, Get, UseGuards, UnauthorizedException, Res } from '@nestjs/common';
 import { Request as RequestExpress, Response as ResponseExpress } from 'express';
-import { PermissionsDto } from './dto/permission/get-permission.dto';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { TResponse } from '~/common/types/response';
-import { UserDto } from '../user/dto/user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
-import { plainToInstance } from 'class-transformer';
+import { Permission } from '~/modules/auth/entity/permission.entity';
+import { User } from '../user/entity/user.entity';
+import { JwtGuard } from '~/common/guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +15,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async signUp(@Body() signUpDto: SignUpDto): Promise<TResponse<UserDto>> {
+  async signUp(@Body() signUpDto: SignUpDto): Promise<TResponse<User>> {
     const user = await this.authService.signUp(signUpDto);
     return {
       statusCode: HttpStatus.CREATED,
@@ -25,7 +25,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.ACCEPTED)
   @Post('login')
-  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) response: ResponseExpress): Promise<TResponse<UserDto>> {
+  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) response: ResponseExpress): Promise<TResponse<User>> {
     const data = await this.authService.signIn(signInDto.email, signInDto.password);
     response.cookie('refresh_token', data.refresh_token, {
       httpOnly: true,
@@ -35,9 +35,9 @@ export class AuthController {
       httpOnly: true,
       signed: true,
     });
-    const res: TResponse<UserDto> = {
+    const res: TResponse<User> = {
       statusCode: HttpStatus.ACCEPTED,
-      data: plainToInstance(UserDto, data.user, { excludeExtraneousValues: true }),
+      data: data.user,
     };
     return res;
   }
@@ -75,9 +75,10 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, JwtGuard)
   @Get('permissions')
-  async getFullPermissions(@Request() req: RequestExpress): Promise<TResponse<PermissionsDto[] | undefined>> {
+  async getFullPermissions(@Request() req: RequestExpress): Promise<TResponse<Permission[] | undefined>> {
+    console.log(req.user);
     const id = req.user?.id;
     if (!id) throw new UnauthorizedException();
     const permission = await this.authService.getFullPermissions(id);

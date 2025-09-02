@@ -29,9 +29,8 @@ export function generateDates({ year = defaultYear, months = defaultMonth, maxPe
         const hour = Math.floor(Math.random() * (21 - 8 + 1)) + 8;
         const minute = Math.floor(Math.random() * 60);
         const second = Math.floor(Math.random() * 60);
-        const ms = Math.floor(Math.random() * 1000);
 
-        dates.push(new Date(year, month - 1, chosenDay, hour, minute, second, ms));
+        dates.push(new Date(year, month - 1, chosenDay, hour, minute, second));
       }
     }
   }

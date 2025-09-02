@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Generated1756462111501 implements MigrationInterface {
-  name = 'Generated1756462111501';
+export class Generated1756797940448 implements MigrationInterface {
+  name = 'Generated1756797940448';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -14,7 +14,7 @@ export class Generated1756462111501 implements MigrationInterface {
       `CREATE TABLE \`purchase_payments\` (\`id\` int NOT NULL AUTO_INCREMENT, \`purchase_order_id\` int NOT NULL, \`status\` enum ('paid', 'unpaid', 'partial') NOT NULL DEFAULT 'unpaid', \`amount\` decimal(10,2) NOT NULL, \`payment_date\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`inventories\` (\`id\` int NOT NULL AUTO_INCREMENT, \`product_id\` int NOT NULL, \`stock\` int NOT NULL DEFAULT '0', \`min_stock\` int NOT NULL DEFAULT '0', \`max_stock\` int NOT NULL DEFAULT '0', \`supplier_id\` int NULL, \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`inventories\` (\`id\` int NOT NULL AUTO_INCREMENT, \`product_id\` int NOT NULL, \`barcode\` varchar(100) NOT NULL, \`stock\` int NOT NULL DEFAULT '0', \`min_stock\` int NOT NULL DEFAULT '0', \`max_stock\` int NOT NULL DEFAULT '0', \`supplier_id\` int NULL, \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `CREATE TABLE \`inventory_logs\` (\`id\` int NOT NULL AUTO_INCREMENT, \`inventory_id\` int NOT NULL, \`log_type\` enum ('Order', 'Pre Order', 'Sales', 'Cancel', 'Adjustment') NOT NULL, \`change_qty\` int NOT NULL, \`ref_id\` int NULL, \`status_delivery\` enum ('Pending', 'Delivered', 'Dropped', 'Completed', 'Cancel') NULL, \`status_payment\` enum ('Paid', 'Unpaid') NULL, \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
@@ -26,16 +26,16 @@ export class Generated1756462111501 implements MigrationInterface {
       `CREATE TABLE \`transactions\` (\`id\` int NOT NULL AUTO_INCREMENT, \`cashier\` varchar(100) NOT NULL, \`status\` enum ('Draft', 'Pending', 'Completed', 'Cancelled', 'Refunded') NOT NULL, \`sub_total\` decimal(10,2) NOT NULL, \`total_discount\` decimal(10,2) NOT NULL, \`total_price\` decimal(10,2) NOT NULL, \`total_profit\` decimal(10,2) NOT NULL, \`total_tax\` decimal(10,2) NOT NULL, \`last_price\` decimal(10,2) NOT NULL, \`pay_received\` decimal(10,2) NOT NULL, \`pay_return\` decimal(10,2) NOT NULL, \`payment_method\` enum ('Cash', 'Qris', 'Debit', 'Ewallet') NOT NULL, \`notes\` varchar(100) NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`user_id\` int NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`suppliers\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`address\` varchar(255) NOT NULL, \`phone\` varchar(15) NOT NULL, \`email\` varchar(100) NOT NULL, \`is_active\` tinyint NOT NULL DEFAULT 1, \`category_id\` int NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`IDX_5b5720d9645cee7396595a16c9\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`suppliers\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`address\` varchar(255) NOT NULL, \`phone\` varchar(15) NOT NULL, \`email\` varchar(100) NOT NULL, \`is_active\` tinyint NOT NULL DEFAULT 1, \`category_id\` int NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`supplier_name\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `CREATE TABLE \`permissions\` (\`id\` int NOT NULL AUTO_INCREMENT, \`key_name\` varchar(80) NOT NULL, \`name_permission\` varchar(80) NOT NULL, UNIQUE INDEX \`IDX_4be56d0cb4f14292b2b5942d3b\` (\`key_name\`), UNIQUE INDEX \`IDX_e77c25aaad297ba331155532fa\` (\`name_permission\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`categories\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`IDX_8b0be371d28245da6e4f4b6187\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`categories\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`category_name\` (\`name\`), UNIQUE INDEX \`IDX_8b0be371d28245da6e4f4b6187\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`products\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`barcode\` varchar(100) NOT NULL, \`price\` decimal(10,2) NOT NULL, \`cost_price\` decimal(10,2) NOT NULL, \`tax_rate\` decimal(5,4) NOT NULL, \`discount\` decimal(5,4) NOT NULL, \`status\` enum ('Available', 'UnAvailable') NOT NULL, \`category_id\` int NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`IDX_4c9fb58de893725258746385e1\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`products\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`barcode\` varchar(100) NOT NULL, \`price\` decimal(10,2) NOT NULL, \`cost_price\` decimal(10,2) NOT NULL, \`tax_rate\` decimal(5,4) NOT NULL, \`discount\` decimal(5,4) NOT NULL, \`status\` enum ('Available', 'UnAvailable') NOT NULL, \`category_id\` int NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), FULLTEXT INDEX \`product_name\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `CREATE TABLE \`users\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(100) NOT NULL, \`email\` varchar(100) NOT NULL, \`password\` varchar(100) NOT NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
@@ -120,14 +120,15 @@ export class Generated1756462111501 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE \`user_roles\``);
     await queryRunner.query(`DROP TABLE \`roles\``);
     await queryRunner.query(`DROP TABLE \`users\``);
-    await queryRunner.query(`DROP INDEX \`IDX_4c9fb58de893725258746385e1\` ON \`products\``);
+    await queryRunner.query(`DROP INDEX \`product_name\` ON \`products\``);
     await queryRunner.query(`DROP TABLE \`products\``);
     await queryRunner.query(`DROP INDEX \`IDX_8b0be371d28245da6e4f4b6187\` ON \`categories\``);
+    await queryRunner.query(`DROP INDEX \`category_name\` ON \`categories\``);
     await queryRunner.query(`DROP TABLE \`categories\``);
     await queryRunner.query(`DROP INDEX \`IDX_e77c25aaad297ba331155532fa\` ON \`permissions\``);
     await queryRunner.query(`DROP INDEX \`IDX_4be56d0cb4f14292b2b5942d3b\` ON \`permissions\``);
     await queryRunner.query(`DROP TABLE \`permissions\``);
-    await queryRunner.query(`DROP INDEX \`IDX_5b5720d9645cee7396595a16c9\` ON \`suppliers\``);
+    await queryRunner.query(`DROP INDEX \`supplier_name\` ON \`suppliers\``);
     await queryRunner.query(`DROP TABLE \`suppliers\``);
     await queryRunner.query(`DROP TABLE \`transactions\``);
     await queryRunner.query(`DROP TABLE \`purchase_orders\``);

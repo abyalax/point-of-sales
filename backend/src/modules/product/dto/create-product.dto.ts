@@ -1,45 +1,51 @@
-import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { EProductStatus } from '../product.schema';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
-export class PayloadProductDto {
+// TODO: add min stock and max stock
+@Exclude()
+export class CreateProductDto {
   @Expose()
   @IsString()
-  @IsOptional()
   name: string;
 
   @Expose()
   @IsString()
-  @IsOptional()
   barcode: string;
 
   @Expose()
   @IsNumberString()
-  @IsOptional()
   price: string;
 
   @Expose()
-  @IsOptional()
   @IsNumberString()
   cost_price: string;
 
   @Expose()
   @IsNumberString()
-  @IsOptional()
   tax_rate: string;
 
   @Expose()
   @IsNumberString()
-  @IsOptional()
   discount: string;
 
   @Expose()
   @IsEnum(EProductStatus)
-  @IsOptional()
   status: EProductStatus;
 
   @Expose()
   @IsString()
-  @IsOptional()
   category: string;
+
+  @Expose()
+  @IsNumber()
+  stock: number;
+
+  @Expose()
+  @IsNumber()
+  min_stock: number;
+
+  @Expose()
+  @IsNumber()
+  max_stock: number;
 }

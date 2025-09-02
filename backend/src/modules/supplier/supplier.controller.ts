@@ -5,13 +5,18 @@ import { UpdateSupplierDto } from './dto/update-supplier.dto';
 import { TResponse } from '~/common/types/response';
 import { Supplier } from './entities/supplier.entity';
 
-@Controller('supplier')
+@Controller('suppliers')
 export class SupplierController {
   constructor(private readonly supplierService: SupplierService) {}
 
+  @HttpCode(HttpStatus.CREATED)
   @Post()
-  create(@Body() createSupplierDto: CreateSupplierDto) {
-    return this.supplierService.create(createSupplierDto);
+  async create(@Body() createSupplierDto: CreateSupplierDto): Promise<TResponse<Supplier>> {
+    const data = await this.supplierService.create(createSupplierDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      data,
+    };
   }
 
   @HttpCode(HttpStatus.OK)
@@ -24,18 +29,43 @@ export class SupplierController {
     };
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Get('ids')
+  async getIds(): Promise<TResponse<number[]>> {
+    const data = await this.supplierService.getIds();
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.supplierService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<TResponse<Supplier>> {
+    const data = await this.supplierService.findOne(Number(id));
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
+  @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSupplierDto: UpdateSupplierDto) {
-    return this.supplierService.update(+id, updateSupplierDto);
+  async update(@Param('id') id: string, @Body() updateSupplierDto: UpdateSupplierDto): Promise<TResponse<boolean>> {
+    const data = await this.supplierService.update(Number(id), updateSupplierDto);
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.supplierService.remove(+id);
+  async remove(@Param('id') id: string): Promise<TResponse<boolean>> {
+    const data = await this.supplierService.remove(Number(id));
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      data,
+    };
   }
 }

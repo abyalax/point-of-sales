@@ -1,8 +1,6 @@
 import z from 'zod';
 import { stringNumber } from '../schema';
 
-export type EngineSide = 'client_side' | 'server_side';
-
 export type SortOrder = 'ASC' | 'DESC';
 
 interface Pagination {
@@ -16,11 +14,8 @@ interface Sorting<E> {
 interface GlobalFilter {
   search?: string;
 }
-interface Config {
-  engine?: EngineSide;
-}
 
-export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter, Config {}
+export interface MetaRequest<E> extends Pagination, Sorting<E>, GlobalFilter {}
 
 export const MetaResponseSchema = z.object({
   page: stringNumber('page must be a valid number'),
@@ -30,3 +25,8 @@ export const MetaResponseSchema = z.object({
 });
 
 export type MetaResponse = z.infer<typeof MetaResponseSchema>;
+
+export interface Paginated<T = unknown> {
+  data: T[];
+  meta: MetaResponse;
+}

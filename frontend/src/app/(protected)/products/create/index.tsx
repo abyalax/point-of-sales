@@ -74,9 +74,10 @@ function RouteComponent() {
     onSubmitPreventDefault: 'always',
   });
 
+  // TODO: Add Field min stock and max stock for inventories
   const submitProduct = () =>
     formProduct.onSubmit((values) => {
-      mutateCreateProduct(values);
+      mutateCreateProduct({ ...values, min_stock: 0, max_stock: 0 });
       navigate({ to: '/products' });
     })();
 

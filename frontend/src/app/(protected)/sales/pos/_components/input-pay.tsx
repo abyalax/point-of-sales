@@ -17,19 +17,21 @@ import Big from 'big.js';
 export function InputPay() {
   const navigate = useNavigate();
   const { mutateAsync: createTransaction } = useCreateTransaction({
-    onSuccess: () => {
+    onSuccess: (data) => {
       notifications.show({
         title: 'Success',
+        color: 'green',
         message: (
           <p>
             Successfully save transaction{' '}
-            <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underlined' }} onClick={() => navigate({ to: '/products' })}>
+            <span
+              style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underlined' }}
+              onClick={() => navigate({ to: '/inventories/transactions/$id', params: { id: String(data.data.data?.id) } })}
+            >
               See
             </span>
           </p>
         ),
-        autoClose: false,
-        color: 'green',
       });
     },
     onError: (error) => {

@@ -8,7 +8,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { formatCurrency } from '~/utils/format';
 import { useGetTransaction } from '../_hooks/use-get-transaction-by-id';
 
-export const Route = createFileRoute('/(protected)/transactions/$id/')({
+export const Route = createFileRoute('/(protected)/inventories/transactions/$id/')({
   component: RouteComponent,
 });
 
@@ -27,6 +27,11 @@ function RouteComponent() {
             <Table.Tr>
               <Table.Th w={160}>Cashier</Table.Th>
               <Table.Td>{transaction?.cashier}</Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Th>Total Price</Table.Th>
+              <Table.Td>{formatCurrency(transaction?.total_price ?? '')}</Table.Td>
             </Table.Tr>
 
             <Table.Tr>
@@ -77,8 +82,8 @@ function RouteComponent() {
                 <TableTd>{formatCurrency(item.cost_price)}</TableTd>
                 <TableTd>{formatCurrency(item.sell_price)}</TableTd>
                 <TableTd>{formatCurrency(item.final_price)}</TableTd>
-                <TableTd>{item.tax_rate} Rate</TableTd>
-                <TableTd>{item.discount}</TableTd>
+                <TableTd>{parseFloat(item.tax_rate) * 100} %</TableTd>
+                <TableTd>{parseFloat(item.discount) * 100} %</TableTd>
               </TableTr>
             ))}
           </TableTbody>

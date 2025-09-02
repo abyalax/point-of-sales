@@ -1,20 +1,20 @@
-import { Button, Container, Flex, NumberInput, Table } from '@mantine/core';
 import { Select, Modal, TextInput, Group, Switch, Text } from '@mantine/core';
-import { Form, useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
+import { Button, Container, Flex, NumberInput, Table } from '@mantine/core';
 import { createFileRoute } from '@tanstack/react-router';
+import { useDisclosure } from '@mantine/hooks';
+import { Form, useForm } from '@mantine/form';
 
 import { zodResolver } from 'mantine-form-zod-resolver';
 import { FaMinus, FaPlus } from 'react-icons/fa';
+import Big from 'big.js';
 import z from 'zod';
 
+import { queryProductByID, useGetProduct } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
+import { useCreateCategory } from '~/app/(protected)/products/create/_hooks/use-create-category';
 import { useGetProductCategories } from '~/app/(protected)/products/_hooks/use-get-categories';
 import { useUpdateProduct } from '~/app/(protected)/products/$id/_hooks/use-update-product';
-import { useCreateCategory } from '~/app/(protected)/products/create/_hooks/use-create-category';
-import { queryProductByID, useGetProduct } from '~/app/(protected)/products/_hooks/use-get-product-by-id';
 import { EProductStatus } from '~/modules/product/product.schema';
 import { formatCurrency } from '~/utils/format';
-import Big from 'big.js';
 
 export const Route = createFileRoute('/(protected)/products/$id/update/')({
   component: RouteComponent,
@@ -32,12 +32,14 @@ function RouteComponent() {
   const { mutate: mutateUpdateProduct } = useUpdateProduct();
   const { mutate: mutateCreateCategory } = useCreateCategory();
   const { data: product } = useGetProduct(params);
+
   const categories = dataCategories?.map((e) => {
     return {
       label: e.name,
       value: e.name,
     };
   });
+  console.log({ categories });
 
   const schema = z.object({
     name: z.string().min(3, 'Must be at least 3 characters'),
@@ -81,9 +83,15 @@ function RouteComponent() {
     onSubmitPreventDefault: 'always',
   });
 
+  // TODO: Adding Field Min Stock and Max Stock Products
   const submitProduct = () =>
     formProduct.onSubmit((values) => {
-      mutateUpdateProduct(values);
+      mutateUpdateProduct({
+        ...values,
+        id: product?.id,
+        min_stock: 0,
+        max_stock: 0,
+      });
       navigate({ to: '/products' });
     })();
 

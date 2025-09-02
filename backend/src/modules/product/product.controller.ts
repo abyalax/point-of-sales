@@ -1,21 +1,21 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { CategoryDto, CreateCategoryDto } from './dto/category-product.dto';
+import { ProductDiscountImpact, ProductFrequencySold, ProductTrending } from './product.schema';
+import { CreateCategoryDto } from './dto/create-category.dto';
 import { QueryProductReportDto } from './dto/query-product-report.dto';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { QueryProductTrendDto } from './dto/query-product-trending';
-import { OmitProduct } from '../transaction/transaction.schema';
-import { PayloadProductDto } from './dto/payload-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 import { Roles } from '~/common/decorators/roles.decorator';
 import { AuthGuard } from '../../common/guards/auth.guard';
-import { ProductTrendDto } from './dto/product-trend.dto';
 import { QueryProductDto } from './dto/query-product.dto';
 import { RolesGuard } from '~/common/guards/roles.guard';
 import { JwtGuard } from '~/common/guards/jwt.guard';
 import { TResponse } from '~/common/types/response';
-import { MetaResponse } from '~/common/types/meta';
 import { ProductService } from './product.service';
-import { ProductDto } from './dto/product.dto';
-import { ProductDiscountImpact, ProductFrequencySold } from './product.schema';
+import { Product } from './entity/product.entity';
+import { Paginated } from '~/common/types/meta';
+import { Category } from './entity/category.entity';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @UseGuards(AuthGuard, JwtGuard, RolesGuard)
 @Roles('Cashier', 'Admin')
@@ -24,9 +24,9 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Get()
-  async get(): Promise<TResponse<OmitProduct[]>> {
-    const products = await this.productService.getAll();
+  @Get('')
+  async find(@Query() query: QueryProductDto): Promise<TResponse<Paginated<Product>>> {
+    const products = await this.productService.find(query);
     return {
       statusCode: HttpStatus.OK,
       data: products,
@@ -46,7 +46,7 @@ export class ProductController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/trending')
-  async getProductTrends(@Query() query: QueryProductTrendDto): Promise<TResponse<ProductTrendDto[]>> {
+  async getProductTrends(@Query() query: QueryProductTrendDto): Promise<TResponse<ProductTrending[]>> {
     const data = await this.productService.getProductTrends(query.type_periode);
     if (data.length === 0) throw new NotFoundException('Data Products Not Found');
     return {
@@ -67,18 +67,8 @@ export class ProductController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('/search')
-  async search(@Query() query: QueryProductDto): Promise<TResponse<{ data: ProductDto[]; meta: MetaResponse }>> {
-    const products = await this.productService.find(query);
-    return {
-      statusCode: HttpStatus.OK,
-      data: products,
-    };
-  }
-
-  @HttpCode(HttpStatus.OK)
   @Get('/search/name')
-  async searchByName(@Query() query: { search: string }): Promise<TResponse<ProductDto[]>> {
+  async searchByName(@Query() query: { search: string }): Promise<TResponse<Product[]>> {
     const products = await this.productService.searchByName(query);
     return {
       statusCode: HttpStatus.OK,
@@ -88,7 +78,7 @@ export class ProductController {
 
   @HttpCode(HttpStatus.OK)
   @Get('categories')
-  async getCategories(): Promise<TResponse<CategoryDto[]>> {
+  async getCategories(): Promise<TResponse<Category[]>> {
     const data = await this.productService.getCategories();
     return {
       statusCode: HttpStatus.OK,
@@ -96,10 +86,11 @@ export class ProductController {
     };
   }
 
+  // TODO: Create inventories to when create product
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  async create(@Body() payloadProductDto: PayloadProductDto): Promise<TResponse<ProductDto>> {
-    const product = await this.productService.create(payloadProductDto);
+  async create(@Body() CreateProductDto: CreateProductDto): Promise<TResponse<Product>> {
+    const product = await this.productService.create(CreateProductDto);
     return {
       statusCode: HttpStatus.CREATED,
       data: product,
@@ -108,7 +99,7 @@ export class ProductController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('/categories')
-  async createCategory(@Body() createCategoryDto: CreateCategoryDto): Promise<TResponse<CategoryDto>> {
+  async createCategory(@Body() createCategoryDto: CreateCategoryDto): Promise<TResponse<Category>> {
     const data = await this.productService.createCategory(createCategoryDto);
     return {
       statusCode: HttpStatus.CREATED,
@@ -128,8 +119,8 @@ export class ProductController {
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  async findOneByID(@Param('id') id: number): Promise<TResponse<ProductDto>> {
-    const product = await this.productService.findOneByID(id);
+  async findOneByID(@Param('id') id: string): Promise<TResponse<Product>> {
+    const product = await this.productService.findOneByID(Number(id));
     return {
       statusCode: HttpStatus.OK,
       data: product,
@@ -138,8 +129,8 @@ export class ProductController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() PayloadProductDto: PayloadProductDto): Promise<TResponse<boolean>> {
-    const isUpdated = await this.productService.update(id, PayloadProductDto);
+  async update(@Param('id') id: number, @Body() payload: UpdateProductDto): Promise<TResponse<boolean>> {
+    const isUpdated = await this.productService.update(id, payload);
     return {
       statusCode: HttpStatus.NO_CONTENT,
       data: isUpdated,

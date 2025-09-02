@@ -12,20 +12,20 @@ import { Route as rootRouteImport } from './app/__root';
 import { Route as protectedRouteRouteImport } from './app/(protected)/route';
 import { Route as IndexRouteImport } from './app/index';
 import { Route as publicAuthRouteRouteImport } from './app/(public)/auth/route';
-import { Route as protectedTransactionsIndexRouteImport } from './app/(protected)/transactions/index';
 import { Route as protectedProductsIndexRouteImport } from './app/(protected)/products/index';
 import { Route as publicAuthRegisterRouteImport } from './app/(public)/auth/register';
 import { Route as publicAuthLoginRouteImport } from './app/(public)/auth/login';
-import { Route as protectedTransactionsIdIndexRouteImport } from './app/(protected)/transactions/$id/index';
 import { Route as protectedSalesPosIndexRouteImport } from './app/(protected)/sales/pos/index';
 import { Route as protectedSalesOverviewIndexRouteImport } from './app/(protected)/sales/overview/index';
 import { Route as protectedProductsOverviewIndexRouteImport } from './app/(protected)/products/overview/index';
 import { Route as protectedProductsCreateIndexRouteImport } from './app/(protected)/products/create/index';
 import { Route as protectedProductsIdIndexRouteImport } from './app/(protected)/products/$id/index';
+import { Route as protectedInventoriesTransactionsIndexRouteImport } from './app/(protected)/inventories/transactions/index';
 import { Route as protectedInventoriesSupplierIndexRouteImport } from './app/(protected)/inventories/supplier/index';
 import { Route as protectedInventoriesPurchaseIndexRouteImport } from './app/(protected)/inventories/purchase/index';
 import { Route as protectedInventoriesInventoryIndexRouteImport } from './app/(protected)/inventories/inventory/index';
 import { Route as protectedProductsIdUpdateIndexRouteImport } from './app/(protected)/products/$id/update/index';
+import { Route as protectedInventoriesTransactionsIdIndexRouteImport } from './app/(protected)/inventories/transactions/$id/index';
 
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
@@ -41,11 +41,6 @@ const publicAuthRouteRoute = publicAuthRouteRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any);
-const protectedTransactionsIndexRoute = protectedTransactionsIndexRouteImport.update({
-  id: '/transactions/',
-  path: '/transactions/',
-  getParentRoute: () => protectedRouteRoute,
-} as any);
 const protectedProductsIndexRoute = protectedProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
@@ -60,11 +55,6 @@ const publicAuthLoginRoute = publicAuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => publicAuthRouteRoute,
-} as any);
-const protectedTransactionsIdIndexRoute = protectedTransactionsIdIndexRouteImport.update({
-  id: '/transactions/$id/',
-  path: '/transactions/$id/',
-  getParentRoute: () => protectedRouteRoute,
 } as any);
 const protectedSalesPosIndexRoute = protectedSalesPosIndexRouteImport.update({
   id: '/sales/pos/',
@@ -91,6 +81,11 @@ const protectedProductsIdIndexRoute = protectedProductsIdIndexRouteImport.update
   path: '/products/$id/',
   getParentRoute: () => protectedRouteRoute,
 } as any);
+const protectedInventoriesTransactionsIndexRoute = protectedInventoriesTransactionsIndexRouteImport.update({
+  id: '/inventories/transactions/',
+  path: '/inventories/transactions/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 const protectedInventoriesSupplierIndexRoute = protectedInventoriesSupplierIndexRouteImport.update({
   id: '/inventories/supplier/',
   path: '/inventories/supplier/',
@@ -111,6 +106,11 @@ const protectedProductsIdUpdateIndexRoute = protectedProductsIdUpdateIndexRouteI
   path: '/products/$id/update/',
   getParentRoute: () => protectedRouteRoute,
 } as any);
+const protectedInventoriesTransactionsIdIndexRoute = protectedInventoriesTransactionsIdIndexRouteImport.update({
+  id: '/inventories/transactions/$id/',
+  path: '/inventories/transactions/$id/',
+  getParentRoute: () => protectedRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof protectedRouteRouteWithChildren;
@@ -118,16 +118,16 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof publicAuthLoginRoute;
   '/auth/register': typeof publicAuthRegisterRoute;
   '/products': typeof protectedProductsIndexRoute;
-  '/transactions': typeof protectedTransactionsIndexRoute;
   '/inventories/inventory': typeof protectedInventoriesInventoryIndexRoute;
   '/inventories/purchase': typeof protectedInventoriesPurchaseIndexRoute;
   '/inventories/supplier': typeof protectedInventoriesSupplierIndexRoute;
+  '/inventories/transactions': typeof protectedInventoriesTransactionsIndexRoute;
   '/products/$id': typeof protectedProductsIdIndexRoute;
   '/products/create': typeof protectedProductsCreateIndexRoute;
   '/products/overview': typeof protectedProductsOverviewIndexRoute;
   '/sales/overview': typeof protectedSalesOverviewIndexRoute;
   '/sales/pos': typeof protectedSalesPosIndexRoute;
-  '/transactions/$id': typeof protectedTransactionsIdIndexRoute;
+  '/inventories/transactions/$id': typeof protectedInventoriesTransactionsIdIndexRoute;
   '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesByTo {
@@ -136,16 +136,16 @@ export interface FileRoutesByTo {
   '/auth/login': typeof publicAuthLoginRoute;
   '/auth/register': typeof publicAuthRegisterRoute;
   '/products': typeof protectedProductsIndexRoute;
-  '/transactions': typeof protectedTransactionsIndexRoute;
   '/inventories/inventory': typeof protectedInventoriesInventoryIndexRoute;
   '/inventories/purchase': typeof protectedInventoriesPurchaseIndexRoute;
   '/inventories/supplier': typeof protectedInventoriesSupplierIndexRoute;
+  '/inventories/transactions': typeof protectedInventoriesTransactionsIndexRoute;
   '/products/$id': typeof protectedProductsIdIndexRoute;
   '/products/create': typeof protectedProductsCreateIndexRoute;
   '/products/overview': typeof protectedProductsOverviewIndexRoute;
   '/sales/overview': typeof protectedSalesOverviewIndexRoute;
   '/sales/pos': typeof protectedSalesPosIndexRoute;
-  '/transactions/$id': typeof protectedTransactionsIdIndexRoute;
+  '/inventories/transactions/$id': typeof protectedInventoriesTransactionsIdIndexRoute;
   '/products/$id/update': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRoutesById {
@@ -156,16 +156,16 @@ export interface FileRoutesById {
   '/(public)/auth/login': typeof publicAuthLoginRoute;
   '/(public)/auth/register': typeof publicAuthRegisterRoute;
   '/(protected)/products/': typeof protectedProductsIndexRoute;
-  '/(protected)/transactions/': typeof protectedTransactionsIndexRoute;
   '/(protected)/inventories/inventory/': typeof protectedInventoriesInventoryIndexRoute;
   '/(protected)/inventories/purchase/': typeof protectedInventoriesPurchaseIndexRoute;
   '/(protected)/inventories/supplier/': typeof protectedInventoriesSupplierIndexRoute;
+  '/(protected)/inventories/transactions/': typeof protectedInventoriesTransactionsIndexRoute;
   '/(protected)/products/$id/': typeof protectedProductsIdIndexRoute;
   '/(protected)/products/create/': typeof protectedProductsCreateIndexRoute;
   '/(protected)/products/overview/': typeof protectedProductsOverviewIndexRoute;
   '/(protected)/sales/overview/': typeof protectedSalesOverviewIndexRoute;
   '/(protected)/sales/pos/': typeof protectedSalesPosIndexRoute;
-  '/(protected)/transactions/$id/': typeof protectedTransactionsIdIndexRoute;
+  '/(protected)/inventories/transactions/$id/': typeof protectedInventoriesTransactionsIdIndexRoute;
   '/(protected)/products/$id/update/': typeof protectedProductsIdUpdateIndexRoute;
 }
 export interface FileRouteTypes {
@@ -176,16 +176,16 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/products'
-    | '/transactions'
     | '/inventories/inventory'
     | '/inventories/purchase'
     | '/inventories/supplier'
+    | '/inventories/transactions'
     | '/products/$id'
     | '/products/create'
     | '/products/overview'
     | '/sales/overview'
     | '/sales/pos'
-    | '/transactions/$id'
+    | '/inventories/transactions/$id'
     | '/products/$id/update';
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -194,16 +194,16 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/products'
-    | '/transactions'
     | '/inventories/inventory'
     | '/inventories/purchase'
     | '/inventories/supplier'
+    | '/inventories/transactions'
     | '/products/$id'
     | '/products/create'
     | '/products/overview'
     | '/sales/overview'
     | '/sales/pos'
-    | '/transactions/$id'
+    | '/inventories/transactions/$id'
     | '/products/$id/update';
   id:
     | '__root__'
@@ -213,16 +213,16 @@ export interface FileRouteTypes {
     | '/(public)/auth/login'
     | '/(public)/auth/register'
     | '/(protected)/products/'
-    | '/(protected)/transactions/'
     | '/(protected)/inventories/inventory/'
     | '/(protected)/inventories/purchase/'
     | '/(protected)/inventories/supplier/'
+    | '/(protected)/inventories/transactions/'
     | '/(protected)/products/$id/'
     | '/(protected)/products/create/'
     | '/(protected)/products/overview/'
     | '/(protected)/sales/overview/'
     | '/(protected)/sales/pos/'
-    | '/(protected)/transactions/$id/'
+    | '/(protected)/inventories/transactions/$id/'
     | '/(protected)/products/$id/update/';
   fileRoutesById: FileRoutesById;
 }
@@ -255,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicAuthRouteRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/(protected)/transactions/': {
-      id: '/(protected)/transactions/';
-      path: '/transactions';
-      fullPath: '/transactions';
-      preLoaderRoute: typeof protectedTransactionsIndexRouteImport;
-      parentRoute: typeof protectedRouteRoute;
-    };
     '/(protected)/products/': {
       id: '/(protected)/products/';
       path: '/products';
@@ -282,13 +275,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/login';
       preLoaderRoute: typeof publicAuthLoginRouteImport;
       parentRoute: typeof publicAuthRouteRoute;
-    };
-    '/(protected)/transactions/$id/': {
-      id: '/(protected)/transactions/$id/';
-      path: '/transactions/$id';
-      fullPath: '/transactions/$id';
-      preLoaderRoute: typeof protectedTransactionsIdIndexRouteImport;
-      parentRoute: typeof protectedRouteRoute;
     };
     '/(protected)/sales/pos/': {
       id: '/(protected)/sales/pos/';
@@ -325,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedProductsIdIndexRouteImport;
       parentRoute: typeof protectedRouteRoute;
     };
+    '/(protected)/inventories/transactions/': {
+      id: '/(protected)/inventories/transactions/';
+      path: '/inventories/transactions';
+      fullPath: '/inventories/transactions';
+      preLoaderRoute: typeof protectedInventoriesTransactionsIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
     '/(protected)/inventories/supplier/': {
       id: '/(protected)/inventories/supplier/';
       path: '/inventories/supplier';
@@ -353,36 +346,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedProductsIdUpdateIndexRouteImport;
       parentRoute: typeof protectedRouteRoute;
     };
+    '/(protected)/inventories/transactions/$id/': {
+      id: '/(protected)/inventories/transactions/$id/';
+      path: '/inventories/transactions/$id';
+      fullPath: '/inventories/transactions/$id';
+      preLoaderRoute: typeof protectedInventoriesTransactionsIdIndexRouteImport;
+      parentRoute: typeof protectedRouteRoute;
+    };
   }
 }
 
 interface protectedRouteRouteChildren {
   protectedProductsIndexRoute: typeof protectedProductsIndexRoute;
-  protectedTransactionsIndexRoute: typeof protectedTransactionsIndexRoute;
   protectedInventoriesInventoryIndexRoute: typeof protectedInventoriesInventoryIndexRoute;
   protectedInventoriesPurchaseIndexRoute: typeof protectedInventoriesPurchaseIndexRoute;
   protectedInventoriesSupplierIndexRoute: typeof protectedInventoriesSupplierIndexRoute;
+  protectedInventoriesTransactionsIndexRoute: typeof protectedInventoriesTransactionsIndexRoute;
   protectedProductsIdIndexRoute: typeof protectedProductsIdIndexRoute;
   protectedProductsCreateIndexRoute: typeof protectedProductsCreateIndexRoute;
   protectedProductsOverviewIndexRoute: typeof protectedProductsOverviewIndexRoute;
   protectedSalesOverviewIndexRoute: typeof protectedSalesOverviewIndexRoute;
   protectedSalesPosIndexRoute: typeof protectedSalesPosIndexRoute;
-  protectedTransactionsIdIndexRoute: typeof protectedTransactionsIdIndexRoute;
+  protectedInventoriesTransactionsIdIndexRoute: typeof protectedInventoriesTransactionsIdIndexRoute;
   protectedProductsIdUpdateIndexRoute: typeof protectedProductsIdUpdateIndexRoute;
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedProductsIndexRoute: protectedProductsIndexRoute,
-  protectedTransactionsIndexRoute: protectedTransactionsIndexRoute,
   protectedInventoriesInventoryIndexRoute: protectedInventoriesInventoryIndexRoute,
   protectedInventoriesPurchaseIndexRoute: protectedInventoriesPurchaseIndexRoute,
   protectedInventoriesSupplierIndexRoute: protectedInventoriesSupplierIndexRoute,
+  protectedInventoriesTransactionsIndexRoute: protectedInventoriesTransactionsIndexRoute,
   protectedProductsIdIndexRoute: protectedProductsIdIndexRoute,
   protectedProductsCreateIndexRoute: protectedProductsCreateIndexRoute,
   protectedProductsOverviewIndexRoute: protectedProductsOverviewIndexRoute,
   protectedSalesOverviewIndexRoute: protectedSalesOverviewIndexRoute,
   protectedSalesPosIndexRoute: protectedSalesPosIndexRoute,
-  protectedTransactionsIdIndexRoute: protectedTransactionsIdIndexRoute,
+  protectedInventoriesTransactionsIdIndexRoute: protectedInventoriesTransactionsIdIndexRoute,
   protectedProductsIdUpdateIndexRoute: protectedProductsIdUpdateIndexRoute,
 };
 

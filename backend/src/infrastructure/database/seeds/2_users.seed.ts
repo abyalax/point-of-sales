@@ -15,6 +15,11 @@ const mockPermissions: Permission[] = [
   { id: 6, key: 'transaction:read', name: 'Read Transaction', roles: [] },
   { id: 7, key: 'transaction:update', name: 'Update Transaction', roles: [] },
   { id: 8, key: 'transaction:delete', name: 'Delete Transaction', roles: [] },
+
+  { id: 9, key: 'inventories:create', name: 'Create Inventories', roles: [] },
+  { id: 10, key: 'inventories:read', name: 'Read Inventories', roles: [] },
+  { id: 11, key: 'inventories:update', name: 'Update Inventories', roles: [] },
+  { id: 12, key: 'inventories:delete', name: 'Delete Inventories', roles: [] },
 ];
 
 const mockRoles: Role[] = [
@@ -83,6 +88,37 @@ const mockRolePermissions = [
     8  => transaction:delete
    */
   { id_role: 3, id_permission: 6 },
+
+  /**
+   * Admin (1)
+    9  => inventories:create   ✅
+    10  => inventories:read    ✅
+    11  => inventories:update
+    12  => inventories:delete
+   */
+  { id_role: 1, id_permission: 9 },
+  { id_role: 1, id_permission: 10 },
+  { id_role: 1, id_permission: 11 },
+  { id_role: 1, id_permission: 12 },
+
+  /**
+   * Kasir (2)
+    9  => inventories:create   ✅
+    10  => inventories:read    ✅
+    11  => inventories:update
+    12  => inventories:delete
+   */
+  { id_role: 2, id_permission: 9 },
+  { id_role: 2, id_permission: 10 },
+
+  /**
+   * Karyawan (3)
+    9  => inventories:create
+    10  => inventories:read    ✅
+    11  => inventories:update
+    12  => inventories:delete
+   */
+  { id_role: 3, id_permission: 9 },
 ];
 
 const mockUser = async (): Promise<User[]> => {
@@ -97,24 +133,40 @@ const mockUser = async (): Promise<User[]> => {
     roles: [],
     transactions: [],
   };
-  const cashier: User = {
+  const karyawan1: User = {
     id: 2,
-    name: 'Abya Kasir',
-    email: 'abyakasir@gmail.com',
-    password: passwordHashed,
-    roles: [],
-    transactions: [],
-  };
-  const karyawan: User = {
-    id: 3,
     name: 'Abya Karyawan',
     email: 'abyakaryawan@gmail.com',
     password: passwordHashed,
     roles: [],
     transactions: [],
   };
+  const cashier1: User = {
+    id: 3,
+    name: 'Abya Kasir',
+    email: 'abyakasir@gmail.com',
+    password: passwordHashed,
+    roles: [],
+    transactions: [],
+  };
+  const cashier2: User = {
+    id: 4,
+    name: 'John Kasir',
+    email: 'johnkasir@gmail.com',
+    password: passwordHashed,
+    roles: [],
+    transactions: [],
+  };
+  const cashier3: User = {
+    id: 5,
+    name: 'Letta Kasir',
+    email: 'lettakasir@gmail.com',
+    password: passwordHashed,
+    roles: [],
+    transactions: [],
+  };
 
-  return [admin, cashier, karyawan];
+  return [admin, cashier1, cashier2, karyawan1, cashier3];
 };
 
 const mockUserRoles = [

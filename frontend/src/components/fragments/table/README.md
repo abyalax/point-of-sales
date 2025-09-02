@@ -37,27 +37,16 @@ import { queryProductsSchema, type QueryProducts } from '~/api/product/type';
 export const Route = createFileRoute('/(protected)/products/')({
   component: RouteComponent,
   validateSearch: queryProductsSchema,
-  beforeLoad: async ({ context, search }) => {
-    const params: QueryProducts = {
-      page: search.page ?? 1,
-      per_page: search.per_page ?? 10,
-      filters: search.filters,
-      sort_by: search.sort_by,
-      search: search.search,
-    };
-    await context.queryClient.ensureQueryData(queryProducts(params));
-  },
 });
 ```
 
 Lihat contoh `queryProductsSchema` dan type query search disini
 
 ```
-└── 📁api
+└── 📁modules
     └── 📁product
-        ├── api.ts
-        ├── data.ts
-        ├── type.ts
+        ├── product.api.ts
+        └── product.schema.ts
 ```
 
 ---
@@ -65,30 +54,114 @@ Lihat contoh `queryProductsSchema` dan type query search disini
 ### 2. Komponen Page (`RouteComponent`)
 
 ```tsx
-import useGetProducts from './_hooks/use-get-products';
-import { useColumn } from './_hooks/use-column';
-import { Table } from '~/components/fragments/table';
-import type { Product } from '~/api/product/type';
-
 function RouteComponent() {
   const search = Route.useSearch();
-  const { data } = useGetProducts(search);
-  const { columns, columnIds, initialColumnVisibility } = useColumn();
+  const navigate = Route.useNavigate();
+  const defaultVisible: TProductColumn[] = ['name', 'price', 'status', 'category', 'select', 'stock'];
+  const { columns, columnIds, initialColumnVisibility } = useColumn({ defaultVisible });
+  const { data: dataProducts, isLoading: isLoadingProducts } = useFilterProducts({
+    ...search,
+    sort_by: search.sort_by as keyof Partial<Product>,
+  });
+  const { data: dataCategories, isLoading } = useGetProductCategories();
+
+  const categories = dataCategories?.map((e) => {
+    return {
+      label: e.name,
+      value: e.id.toString(),
+    };
+  });
+
+  const onMinPriceChange = useDebouncedCallback((value: number) => {
+    navigate({ search: (prev) => ({ ...prev, min_price: value }), replace: true, viewTransition: true });
+  }, DEFAULT.DEBOUNCE_INPUT);
+
+  const onMaxPriceChange = useDebouncedCallback((value: number) => {
+    navigate({ search: (prev) => ({ ...prev, max_price: value }), replace: true, viewTransition: true });
+  }, DEFAULT.DEBOUNCE_INPUT);
+
+  const onStatusChange = (e: string) => {
+    navigate({
+      search: (prev) => ({ ...prev, status: e === '' ? undefined : e }),
+      replace: true,
+      viewTransition: true,
+    });
+  };
+
+  const onCategoryChange = (e: string | null) => {
+    const value = e === '' ? undefined : Number(e);
+    navigate({
+      search: (prev) => ({ ...prev, category: value }),
+      replace: true,
+      viewTransition: true,
+    });
+  };
 
   return (
-    <Table<Product>
-      data={data}
-      columns={columns}
-      columnIds={columnIds}
-      initialColumnVisibility={initialColumnVisibility}
-      route={Route}
-      path={{
-        detail: '/products/$id',
-        create: '/products/create',
-        update: '/products/$id',
-      }}
-      control="server_side"
-    />
+    <Skeleton visible={isLoadingProducts}>
+      {isLoadingProducts && <Loader />}
+      <Table
+        data={dataProducts}
+        columns={columns}
+        columnIds={columnIds}
+        route={Route}
+        path={{
+          detail: '/products/$id',
+          update: '/products/$id',
+        }}
+        enableFeature={{
+          engineSide: 'server_side',
+          pagination: true,
+          search: { fieldSearchable: 'name' },
+          columnVisibilitySelector: { initialColumnVisibility },
+          virtualizer: { virtualizeAt: 1000 },
+          menufilter: (
+            <Menu position="bottom-start">
+              <Menu.Target>
+                <Tooltip label="Filter Data">
+                  <Button variant="light">
+                    <FaFilter />
+                  </Button>
+                </Tooltip>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Fieldset legend="Filter Data">
+                  <Flex gap={'md'} direction={'column'}>
+                    {isLoading ? null : (
+                      <Select
+                        onChange={onCategoryChange}
+                        clearable
+                        onClear={() => onCategoryChange('')}
+                        checkIconPosition="left"
+                        value={search.category?.toString()}
+                        allowDeselect
+                        searchable
+                        data={categories}
+                        label="Category"
+                        placeholder="Select Category"
+                      />
+                    )}
+                    <Flex gap={'md'}>
+                      <NumberInput value={search.min_price} placeholder="Min Price" label="Min Price" onChange={(e) => onMinPriceChange(Number(e))} />
+                      <NumberInput value={search.max_price} placeholder="Max Price" label="Max Price" onChange={(e) => onMaxPriceChange(Number(e))} />
+                    </Flex>
+                    <SegmentedControl
+                      value={search.status}
+                      onChange={onStatusChange}
+                      data={[
+                        { label: 'Available', value: EProductStatus.AVAILABLE },
+                        { label: 'UnAvailable', value: EProductStatus.UNAVAILABLE },
+                        { label: 'All', value: '' },
+                      ]}
+                    />
+                  </Flex>
+                </Fieldset>
+              </Menu.Dropdown>
+            </Menu>
+          ),
+        }}
+      />
+    </Skeleton>
   );
 }
 ```
@@ -164,43 +237,58 @@ export const useColumn = () => {
 ## 🔁 Fetch Data Produk: `useGetProducts`
 
 ```ts
-import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '~/api/product';
-import type { QueryProducts } from '~/api/product/type';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { filterProducts } from '~/modules/product/product.api';
+import type { ProductPaginated, QueryProducts } from '~/modules/product/product.schema';
+import { QUERY_KEY, type QueryKey } from '~/common/const/querykey';
+import type { TAxiosResponse, TResponse } from '~/common/types/response';
 
-export const queryProducts = (query: QueryProducts = {}) => ({
-  queryKey: ['product.getAll', query],
-  queryFn: () => getProducts(query),
+type Result = UseQueryOptions<TAxiosResponse<ProductPaginated>, TResponse, ProductPaginated | undefined, QueryKey<QueryProducts>[]>;
+
+export const queryFilterProducts = (query: QueryProducts): Result => ({
+  queryKey: [QUERY_KEY.PRODUCT.GET_ALL, query],
+  queryFn: () => filterProducts(query),
+  select: (res) => res.data.data,
 });
 
-const useGetProducts = (query: QueryProducts = {}) => {
-  return useQuery(queryProducts(query));
+export const useFilterProducts = (query: QueryProducts = {}) => {
+  return useQuery(queryFilterProducts(query));
 };
-
-export default useGetProducts;
 ```
 
 ---
 
 ## ⚙️ Properti Komponen `Table`
 
-| Properti                  | Tipe                             | Deskripsi                                 |
-| ------------------------- | -------------------------------- | ----------------------------------------- |
-| `data`                    | `Array<T>`                       | Data yang akan ditampilkan                |
-| `columns`                 | `ColumnDef<T, any>[]`            | Kolom untuk tabel                         |
-| `columnIds`               | `string[]`                       | ID kolom yang tersedia                    |
-| `initialColumnVisibility` | `Record<string, boolean>`        | Kontrol visibilitas kolom                 |
-| `route`                   | `RouteObject`                    | Route saat ini (untuk akses search param) |
-| `path.detail`             | `string`                         | Path detail view (`/products/$id`)        |
-| `path.create`             | `string`                         | Path create view (`/products/create`)     |
-| `path.update`             | `string`                         | Path update view (`/products/$id`)        |
-| `control`                 | `'server_side' \| 'client_side'` | Mode kontrol data                         |
+### Props
+
+| Properti        | Tipe                                 | Deskripsi                                                                                                |
+| --------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `route`         | `AnyRoute`                           | Route saat ini (untuk akses search param)                                                                |
+| `enableFeature` | `EnableFeature<T>`                   | Opsi tambahan untuk mengontrol fitur tabel (lihat detail di bawah)                                       |
+| `columns`       | `ColumnDef<T, any>[]`                | Daftar kolom untuk tabel                                                                                 |
+| `columnIds`     | `(string \| undefined)[]`            | ID kolom yang tersedia (mengikuti urutan `columns`)                                                      |
+| `data`          | `{ data: T[]; meta: MetaResponse }?` | Data yang ditampilkan dalam tabel beserta informasi meta (opsional, khusus untuk server-side pagination) |
+| `path.detail`   | `FileRouteTypes['to']?`              | Path detail view, misal `/products/$id` (opsional)                                                       |
+| `path.create`   | `FileRouteTypes['to']?`              | Path create view, misal `/products/create` (opsional)                                                    |
+| `path.update`   | `FileRouteTypes['to']?`              | Path update view, misal `/products/$id` (opsional)                                                       |
+
+### Enable Feature
+
+| Properti                   | Tipe                                                    | Deskripsi                                                                                                  |
+| -------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `search`                   | `{ fieldSearchable: keyof T; debounceSearch?: number }` | Mengaktifkan pencarian dengan field tertentu, bisa ditambahkan delay pencarian (`debounceSearch` dalam ms) |
+| `virtualizer`              | `{ virtualizeAt: number }`                              | Mengaktifkan virtual rendering saat jumlah data melebihi `virtualizeAt`                                    |
+| `columnVisibilitySelector` | `{ initialColumnVisibility: Record<string, boolean> }`  | Mengatur visibilitas awal kolom serta menyediakan selector untuk mengubah visibilitas                      |
+| `engineSide`               | `'client_side' \| 'server_side'`                        | Mode kontrol data (client-side atau server-side)                                                           |
+| `pagination`               | `boolean`                                               | Menentukan apakah tabel menggunakan pagination                                                             |
+| `menufilter`               | `ReactNode`                                             | Komponen filter tambahan yang ditampilkan di atas tabel                                                    |
 
 ---
 
 ## 📎 Catatan Tambahan
 
 - Kolom dengan ID `"select"` adalah custom column untuk checkbox select (dengan `getToggleSelectedHandler`).
-- Pastikan `route` dan `validateSearch` diset di level TanStack Router untuk mendukung query param.
+- Pastikan `route` dan `validateSearch` diset di level TanStack Router untuk mendukung type safety and validated query param (isi dengan schema zod) .
 
 ---
