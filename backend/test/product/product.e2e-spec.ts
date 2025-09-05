@@ -81,7 +81,7 @@ describe('Module Product', () => {
     });
 
     test('GET /products/trending + QueryProductReportDto', async () => {
-      const query: QueryProductReportDto = { year: 2024, month: 5 };
+      const query: QueryProductReportDto = { year: 2024 };
       const res = await request(app.getHttpServer())
         .get('/products/trending')
         .query(query)

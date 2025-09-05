@@ -7,7 +7,9 @@ import { NestFactory } from '@nestjs/core';
 import { GlobalExceptionFilter } from './common/filters/global.filter';
 import { AppModule } from './app.module';
 import { CookieConfig } from './config/cookie.config';
+import { configDotenv } from 'dotenv';
 
+configDotenv();
 let port: number;
 
 async function bootstrap() {
@@ -16,7 +18,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const cookie = configService.get<CookieConfig>('cookie')!;
-  port = configService.get<number>('port')!;
+  const envPort = Number(process.env.PORT);
+  port = configService.get<number>('port') ?? envPort;
 
   app.use(cookieParser(cookie.secret));
   app.useGlobalFilters(globalException);
