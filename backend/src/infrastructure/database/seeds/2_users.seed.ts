@@ -133,18 +133,18 @@ const mockUser = async (): Promise<User[]> => {
     roles: [],
     transactions: [],
   };
-  const karyawan1: User = {
+  const cashier1: User = {
     id: 2,
-    name: 'Abya Karyawan',
-    email: 'abyakaryawan@gmail.com',
+    name: 'Abya Kasir',
+    email: 'abyakasir@gmail.com',
     password: passwordHashed,
     roles: [],
     transactions: [],
   };
-  const cashier1: User = {
+  const karyawan1: User = {
     id: 3,
-    name: 'Abya Kasir',
-    email: 'abyakasir@gmail.com',
+    name: 'Abya Karyawan',
+    email: 'abyakaryawan@gmail.com',
     password: passwordHashed,
     roles: [],
     transactions: [],
@@ -171,7 +171,11 @@ const mockUser = async (): Promise<User[]> => {
 
 const mockUserRoles = [
   { id_user: 1, id_role: 1 }, // Admin
+
   { id_user: 2, id_role: 2 }, // Cashier
+  { id_user: 4, id_role: 2 }, // Cashier
+  { id_user: 5, id_role: 2 }, // Cashier
+
   { id_user: 3, id_role: 3 }, // Karyawan
 ];
 

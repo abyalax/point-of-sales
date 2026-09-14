@@ -13,16 +13,18 @@ import { Supplier } from '~/modules/supplier/entities/supplier.entity';
 import { Permission } from '~/modules/auth/entity/permission.entity';
 import { Category } from '~/modules/product/entity/category.entity';
 import { Product } from '~/modules/product/entity/product.entity';
-import { DatabaseConfig } from '~/config/database.config';
+import { DatabaseConfig } from '~/infrastructure/config/database.config';
 import { User } from '~/modules/user/entity/user.entity';
 import { Role } from '~/modules/auth/entity/role.entity';
+
+let dataSource: DataSource;
 
 export const MySQLConnection = {
   provide: 'mysql_connection',
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
     const database = configService.get<DatabaseConfig>('database')!;
-    const dataSource = new DataSource({
+    dataSource = new DataSource({
       type: 'mysql',
       host: database.host,
       port: database.port,
@@ -30,7 +32,8 @@ export const MySQLConnection = {
       password: database.password,
       database: database.database,
       synchronize: false,
-      dateStrings: true,
+      dateStrings: false,
+      timezone: 'Z',
       entities: [
         Category,
         Inventory,
@@ -49,6 +52,10 @@ export const MySQLConnection = {
     });
     return dataSource.initialize();
   },
+};
+
+export const closeConnection = async () => {
+  if (dataSource?.isInitialized) await dataSource.destroy();
 };
 
 export const createDatabaseProviders = (provide: string, options: DataSourceOptions): Provider[] => {

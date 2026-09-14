@@ -4,9 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { InventoriesController } from './inventories.controller';
 import { InventoriesService } from './inventories.service';
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import databaseConfig from '~/config/database.config';
-import cookieConfig from '~/config/cookie.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
+import databaseConfig from '~/infrastructure/config/database.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
 import { REPOSITORY } from '~/common/constants/database';
 import { mockRepository } from '~/test/common/mock';
 

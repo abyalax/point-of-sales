@@ -1,4 +1,4 @@
-import { Body, Request, Controller, HttpCode, HttpStatus, Post, Get, UseGuards, UnauthorizedException, Res } from '@nestjs/common';
+import { Body, Request, Controller, HttpCode, HttpStatus, Post, Get, UseGuards, UnauthorizedException, Res, Inject } from '@nestjs/common';
 import { Request as RequestExpress, Response as ResponseExpress } from 'express';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { TResponse } from '~/common/types/response';
@@ -8,10 +8,15 @@ import { AuthService } from './auth.service';
 import { Permission } from '~/modules/auth/entity/permission.entity';
 import { User } from '../user/entity/user.entity';
 import { JwtGuard } from '~/common/guards/jwt.guard';
+import { PinoLogger } from 'nestjs-pino';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    @Inject(PinoLogger)
+    private readonly logger: PinoLogger,
+    private readonly authService: AuthService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
@@ -51,7 +56,7 @@ export class AuthController {
       httpOnly: true,
       signed: true,
     });
-    console.log('refreshing token');
+    this.logger.debug('refreshing token');
     response.status(200).json({
       statusCode: HttpStatus.ACCEPTED,
     });
@@ -78,7 +83,6 @@ export class AuthController {
   @UseGuards(AuthGuard, JwtGuard)
   @Get('permissions')
   async getFullPermissions(@Request() req: RequestExpress): Promise<TResponse<Permission[] | undefined>> {
-    console.log(req.user);
     const id = req.user?.id;
     if (!id) throw new UnauthorizedException();
     const permission = await this.authService.getFullPermissions(id);

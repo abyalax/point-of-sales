@@ -2,12 +2,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
 import { REPOSITORY } from '~/common/constants/database';
-import databaseConfig from '~/config/database.config';
+import databaseConfig from '~/infrastructure/config/database.config';
 import { SupplierService } from './supplier.service';
 import { mockRepository } from '~/test/common/mock';
-import cookieConfig from '~/config/cookie.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
 
 describe('SupplierService', () => {
   let service: SupplierService;

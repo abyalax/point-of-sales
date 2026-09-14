@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from '@nestjs/jwt';
 import { QueryFailedError, EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
 import { ZodError } from 'zod';
 import { EMessage } from '../types/response';
 
-type ErrorConstructor<T extends Error = Error> = new (...args: unknown[]) => T;
-type ExceptionHandler<T = unknown> = (e: T) => {
+type ErrorConstructor<T extends Error = Error> = new (...args: any[]) => T;
+type ExceptionHandler<T extends Error = Error> = (e: T) => {
   statusCode: number;
   message: unknown;
   error: unknown;
 };
 
-export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
+export const handlers = new Map<ErrorConstructor, ExceptionHandler<any>>([
   [
     NotBeforeError,
     (e: NotBeforeError) => {

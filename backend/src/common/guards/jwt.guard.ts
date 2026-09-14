@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { UserService } from '~/modules/user/user.service';
 import { EMessage } from '../types/response';
 import { ConfigService } from '@nestjs/config';
-import { JwtConfig } from '~/config/jwt.config';
+import { JwtConfig } from '~/infrastructure/config/jwt.config';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -36,7 +36,7 @@ export class JwtGuard implements CanActivate {
         };
         return true;
       }
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Token Invalid');
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         throw new UnauthorizedException('Token expired');

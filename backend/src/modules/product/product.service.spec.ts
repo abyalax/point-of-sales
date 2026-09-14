@@ -8,9 +8,9 @@ import { mockRepository } from '~/test/common/mock';
 import { ProductService } from './product.service';
 import { AuthModule } from '../auth/auth.module';
 
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import databaseConfig from '~/config/database.config';
-import cookieConfig from '~/config/cookie.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
+import databaseConfig from '~/infrastructure/config/database.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
 
 describe('ProductService', () => {
   let service: ProductService;

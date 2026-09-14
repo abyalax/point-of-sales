@@ -28,8 +28,8 @@ export class User {
   transactions?: Transaction[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  created_at?: string;
+  created_at?: Date;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', default: () => 'CURRENT_TIMESTAMP(6)', nullable: false })
-  updated_at?: string;
+  updated_at?: Date;
 }

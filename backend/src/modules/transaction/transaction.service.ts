@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
-import { ReportSales, SalesByCategory, ProductProfitable } from './transaction.schema';
+import { ReportSales, SalesByCategory, ProductProfitable, OmitTransactionItem } from './transaction.schema';
 import { TransactionItem } from './entities/transaction-item.entity';
 import { FilterPeriodeDto } from '~/common/dto/filter-periode.dto';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
@@ -32,31 +32,111 @@ export class TransactionService {
     return data.map((e) => Number(e.id));
   }
 
+  /**
+    CREATE TRANSACTION
+    calculate cart
+        ↓
+    get cashier
+        ↓
+    create transaction object
+        ↓
+    BEGIN DATABASE TRANSACTION
+        ↓
+    save transaction
+        ↓
+    decrease inventory
+        ↓
+    COMMIT
+        ↓
+    if error
+        ↓
+    ROLLBACK
+   *
+   */
   async create(createTransactionDto: CartDto, userId: number): Promise<Transaction> {
     try {
-      const calculate = calculateTransaction(createTransactionDto);
-      const user = await this.userRepository.findOneByOrFail({ id: userId });
-      const transaction_items: TransactionItem[] = calculate.items.map((item) => {
-        return this.transactionItemRepository.create(item);
+      const calculation = calculateTransaction(createTransactionDto);
+
+      const user = await this.userRepository.findOneByOrFail({
+        id: userId,
       });
+
+      const transactionItems = calculation.items.map((item) => this.transactionItemRepository.create(item));
+
       const transaction = this.transactionRepository.create({
-        ...calculate,
+        ...calculation,
         user,
         cashier: user.name,
-        items: transaction_items,
+        items: transactionItems,
       });
-      const saved = await this.transactionRepository.manager.transaction(async (manager) => {
+
+      return await this.transactionRepository.manager.transaction(async (manager) => {
         const savedTransaction = await manager.save(Transaction, transaction);
-        for (const item of calculate.items) {
-          await manager.query(`UPDATE inventories SET stock = stock - ? WHERE product_id = ?`, [item.quantity, item.barcode]);
-        }
+
+        await this.decreaseInventoryStock(manager, calculation.items);
+
         return savedTransaction;
       });
-      return saved;
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error(error);
+
       throw new UnprocessableEntityException('Failed to process transaction. Please try again later.');
     }
+  }
+
+  private async decreaseInventoryStock(manager: EntityManager, items: OmitTransactionItem[]): Promise<void> {
+    const quantities = this.aggregateQuantities(items);
+
+    const entries = [...quantities.entries()];
+
+    if (entries.length === 0) {
+      return;
+    }
+
+    const barcodes = entries.map(([barcode]) => barcode);
+
+    const updateCases = entries.map(() => 'WHEN ? THEN stock - ?').join(' ');
+
+    const requiredStockCases = entries.map(() => 'WHEN ? THEN ?').join(' ');
+
+    const query = `
+    UPDATE inventories
+    SET stock = CASE barcode
+      ${updateCases}
+      ELSE stock
+    END
+    WHERE barcode IN (${barcodes.map(() => '?').join(', ')})
+      AND stock >= CASE barcode
+        ${requiredStockCases}
+        ELSE 0
+      END
+  `;
+
+    const parameters = [
+      ...entries.flatMap(([barcode, quantity]) => [barcode, quantity]),
+
+      ...barcodes,
+
+      ...entries.flatMap(([barcode, quantity]) => [barcode, quantity]),
+    ];
+
+    const result = await manager.query(query, parameters);
+
+    if (result.affectedRows !== entries.length) {
+      throw new UnprocessableEntityException('Inventory not found or insufficient stock');
+    }
+  }
+
+  private aggregateQuantities(items: OmitTransactionItem[]): Map<string, number> {
+    const quantities = new Map<string, number>();
+
+    for (const item of items) {
+      const currentQuantity = quantities.get(item.barcode) ?? 0;
+
+      quantities.set(item.barcode, currentQuantity + item.quantity);
+    }
+
+    return quantities;
   }
 
   async find(query: QueryTransactionDto): Promise<Paginated<Transaction>> {

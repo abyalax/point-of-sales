@@ -1,15 +1,27 @@
-version: '3.8'
 services:
-  mysql:
+  mysql_pos:
     image: mysql:8.0
     container_name: mysql_pos
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_point_of_sales
-      MYSQL_USER: user_pos
-      MYSQL_PASSWORD: pass_pos
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - '3306:3306'
+      - '127.0.0.1:3306:3306'
+    command:
+      - --general_log=1
+      - --general_log_file=/dev/stdout
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - mysql_dev_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${DATABASE_ROOT_PASSWORD}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_dev_data:
+    driver: local

@@ -1,6 +1,13 @@
+import { Logger } from '@nestjs/common';
 import { dataSource } from '../typeorm.config';
 
 dataSource
   .initialize()
-  .then(() => console.log('Connected into the database...'))
-  .catch((error) => console.log(error));
+  .then(() => {
+    const logger = new Logger('Database Connection');
+    logger.log('Connected into the database...');
+  })
+  .catch((error) => {
+    const logger = new Logger('Database Connection');
+    logger.error(error);
+  });

@@ -10,7 +10,7 @@ import { extractHttpOnlyCookie, extractSignedCookieToken } from '../utils';
 import { SignUpDto } from '~/modules/auth/dto/sign-up.dto';
 import { validateDto } from '~/common/helpers/validation';
 import { setupApplication } from '~/test/setup_e2e';
-import { JwtConfig } from '~/config/jwt.config';
+import { JwtConfig } from '~/infrastructure/config/jwt.config';
 import { Role } from '~/modules/auth/entity/role.entity';
 
 const USER = {

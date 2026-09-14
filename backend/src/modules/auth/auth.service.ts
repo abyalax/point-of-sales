@@ -4,7 +4,7 @@ import { UserService } from '../user/user.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { JwtConfig } from '~/config/jwt.config';
+import { JwtConfig } from '~/infrastructure/config/jwt.config';
 import { Permission } from './entity/permission.entity';
 import { User } from '../user/entity/user.entity';
 

@@ -9,19 +9,19 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "useDefineForClassFields": false,
     "paths": {
-      "~/test/*": ["test/*"],
+      "~/test/*": ["./test/*"],
       "~/shared/*": ["../shared/*"],
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "../shared/**/*", "eslint.config.mjs", "typeorm.seed.ts", "jest.config.js", "test/**/*"],

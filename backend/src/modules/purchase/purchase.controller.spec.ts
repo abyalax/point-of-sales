@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
 import { PurchaseController } from './purchase.controller';
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import databaseConfig from '~/config/database.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
+import databaseConfig from '~/infrastructure/config/database.config';
 import { PurchaseService } from './purchase.service';
-import cookieConfig from '~/config/cookie.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
 import { REPOSITORY } from '~/common/constants/database';
 import { mockRepository } from '~/test/common/mock';
 

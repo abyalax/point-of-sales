@@ -9,9 +9,10 @@ import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
 
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import databaseConfig from '~/config/database.config';
-import cookieConfig from '~/config/cookie.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
+import databaseConfig from '~/infrastructure/config/database.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
+import { LoggerModule } from '~/common/logger/logger.module';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -20,6 +21,7 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         UserModule,
+        LoggerModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [databaseConfig, jwtConfig, cookieConfig],

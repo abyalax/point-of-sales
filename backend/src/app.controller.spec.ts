@@ -11,9 +11,9 @@ import { UserModule } from './modules/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import jwtConfig, { JwtConfig } from './config/jwt.config';
-import databaseConfig from './config/database.config';
-import cookieConfig from './config/cookie.config';
+import jwtConfig, { JwtConfig } from './infrastructure/config/jwt.config';
+import databaseConfig from './infrastructure/config/database.config';
+import cookieConfig from './infrastructure/config/cookie.config';
 
 describe('AppController', () => {
   let appController: AppController;

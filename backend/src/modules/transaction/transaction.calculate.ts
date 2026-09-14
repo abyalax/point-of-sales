@@ -56,8 +56,8 @@ export function calculateTransaction(cartState: CartState): OmitTransaction {
     const discount = new Big(item.discount);
     const tax_rate = new Big(item.tax_rate);
 
-    const sell_price = price.minus(price.times(discount)); // harga jual (net)
-    const final_price = sell_price.plus(sell_price.times(tax_rate)); // harga akhir + pajak
+    const sell_price = price.minus(price.times(discount)); // net
+    const final_price = sell_price.plus(sell_price.times(tax_rate)); // + pajak
 
     return {
       name: item.name,

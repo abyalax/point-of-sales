@@ -7,9 +7,9 @@ import { mockRepository } from '~/test/common/mock';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
-import jwtConfig, { JwtConfig } from '~/config/jwt.config';
-import databaseConfig from '~/config/database.config';
-import cookieConfig from '~/config/cookie.config';
+import jwtConfig, { JwtConfig } from '~/infrastructure/config/jwt.config';
+import databaseConfig from '~/infrastructure/config/database.config';
+import cookieConfig from '~/infrastructure/config/cookie.config';
 
 describe('UserController', () => {
   let controller: UserController;

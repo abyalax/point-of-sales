@@ -1,13 +1,16 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { EMessage } from '../types/response';
 import { ConfigService } from '@nestjs/config';
-import { JwtConfig } from '~/config/jwt.config';
+import { JwtConfig } from '~/infrastructure/config/jwt.config';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
+    @Inject(PinoLogger)
+    private readonly logger: PinoLogger,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -27,7 +30,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException(EMessage.TOKEN_INVALID);
       }
     } catch (_e) {
-      console.log('AuthGuard: ', _e.message);
+      this.logger.debug('AuthGuard: ', (_e as Error).message);
       throw new UnauthorizedException(EMessage.TOKEN_EXPIRED);
     }
   }

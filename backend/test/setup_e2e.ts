@@ -5,7 +5,7 @@ import { AppModule } from '~/app.module';
 import { Server } from 'http';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { CookieConfig } from '~/config/cookie.config';
+import { CookieConfig } from '~/infrastructure/config/cookie.config';
 
 let cachedApp: NestExpressApplication | null = null;
 let cachedModule: TestingModule | null = null;
